@@ -79,32 +79,23 @@ $prestationsCount = $prestationsStmt->fetch()['total'];
 
             <div class="stats-summary">
                 <div class="stat-card">
-                    <div class="stat-icon charges">
-                        <i class="fas fa-chalkboard-teacher"></i>
-                    </div>
                     <div class="stat-value"><?php echo $teachersCount; ?></div>
                     <div class="stat-label">Enseignants</div>
                 </div>
 
-                <div class="stat-card">
-                    <div class="stat-icon horaires">
-                        <i class="fas fa-book"></i>
-                    </div>
+                <div class="stat-card horaires">
                     <div class="stat-value"><?php echo $coursesCount; ?></div>
                     <div class="stat-label">Cours Programmés</div>
                 </div>
 
-                <div class="stat-card">
-                    <div class="stat-icon prestations">
-                        <i class="fas fa-file-invoice"></i>
-                    </div>
+                <div class="stat-card prestations">
                     <div class="stat-value"><?php echo $prestationsCount; ?></div>
                     <div class="stat-label">Fiches de Prestation</div>
                 </div>
             </div>
 
             <div class="section-chief-section">
-                <h3 class="section-title"><i class="fas fa-tasks"></i> Responsabilités du Chef de Section</h3>
+                <h3 class="section-title">Responsabilités du Chef de Section</h3>
                 <p>En tant que chef de section, vous êtes responsable de :</p>
                 <ul>
                     <li>Élaborer la charge horaire des enseignants</li>
@@ -115,7 +106,7 @@ $prestationsCount = $prestationsStmt->fetch()['total'];
             </div>
 
             <div class="section-chief-section">
-                <h3 class="section-title"><i class="fas fa-bolt"></i> Accès Rapide</h3>
+                <h3 class="section-title">Accès Rapide</h3>
                 <div class="section-chief-actions">
                     <a href="horaire.php" class="btn btn-primary"><i class="fas fa-clock"></i> Gérer les Horaires</a>
                     <a href="chargehoraire.php" class="btn btn-success"><i class="fas fa-hourglass-half"></i> Charges Horaire</a>
