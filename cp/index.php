@@ -268,6 +268,7 @@ try {
             
             <div class="cp-actions">
                 <a href="prestation.php" class="btn btn-primary"><i class="fas fa-file-invoice"></i> Gérer les Prestations</a>
+                <a href="form_prestation_cp.php" class="btn btn-info"><i class="fas fa-plus-circle"></i> Nouvelle Prestation</a>
                 <a href="horaire.php" class="btn btn-info"><i class="fas fa-clock"></i> Consulter tous les Horaires</a>
                 <a href="../print/ficheprestation.php" target="_blank" class="btn btn-success"><i class="fas fa-print"></i> Imprimer Rapport</a>
             </div>

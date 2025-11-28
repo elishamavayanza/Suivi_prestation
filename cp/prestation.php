@@ -232,9 +232,10 @@ $stmt_fiches = $pdo->prepare($sql_fiches);
             </div>
             
             <div class="cp-actions">
-<a href="index.php" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Retour au tableau de bord</a>
+                <a href="form_prestation_cp.php" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Nouvelle Fiche de Prestation</a>
+                <a href="index.php" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Retour au tableau de bord</a>
                 <button class="btn btn-primary" onclick="window.print()"><i class="fas fa-print"></i> Imprimer la liste</button>
-               <a href="../print/ficheprestation.php" target="_blank" class="btn btn-success"><i class="fas fa-file-pdf"></i> Exporter en PDF</a>
+                <a href="../print/ficheprestation.php" target="_blank" class="btn btn-success"><i class="fas fa-file-pdf"></i> Exporter en PDF</a>
             </div>
         </main>
     </div>

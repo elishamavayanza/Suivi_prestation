@@ -85,6 +85,7 @@ if(isset($_SESSION['role']) && $_SESSION['role']!="None"){
                  <li><a href="cp/horaire.php">Gérer les horaires</a></li>
                  <li><a href="prestation.php">Fiche de prestation</a></li>
                  <li><a href="cp/prestation.php">Gérer les prestations</a></li>
+                 <li><a href="cp/form_prestation_cp.php">Nouvelle prestation</a></li>
 			         
 			<?php
 		}
