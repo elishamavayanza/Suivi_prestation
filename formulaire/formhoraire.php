@@ -1,4 +1,3 @@
- 
 <?php
 include("../script/connexion.php");
 		$cours=mysqli_query($con,"SELECT * FROM cours");
@@ -13,7 +12,7 @@ if(isset($_POST['ajouter'])){
 					echo "<script>alert('Horaire postee  avec succes');</script>;";
 				}else
 				{
-					echo "<center>".mysqli_error()."</center>";
+					echo "<center>".mysqli_error($con)."</center>";
 				}
 }
 if(isset($_POST['modifier'])){
@@ -38,15 +37,15 @@ if(isset($_POST['modifier'])){
 					echo "<script>alert('Publication modifiee avec succes');</script>;";
 				}else
 				{
-					echo "<center>".mysqli_error()."</center>";
+					echo "<center>".mysqli_error($con)."</center>";
 				}
 }
 if(isset($_GET['supp'])){
-	include("connexion_inscription.php");
+	include("../script/connexion.php");
 	if(mysqli_query($con,"DELETE FROM tbpublication WHERE Id=".$_GET['supp'])){
 		echo "<script>alert('Supprimé avec succees');</script>;";
 	}else{
-		echo "<center>".mysqli_error()."</center>";
+		echo "<center>".mysqli_error($con)."</center>";
 	}
 }
 ?>
@@ -156,7 +155,7 @@ if(isset($_GET['supp'])){
               <input type="date" name="dte" id="name" value="<?php if(isset($_GET['modif'])) echo $res['Titre'];?>" size="25">
 			  <label for="name">Enseignant </label>
 
-              <!--input type="text" name="enseignant" id="name" value="<?php if(isset($_GET['modif'])) echo $res['Titre'];?>" size="25"-->
+              <!--input type="text" name="enseignant" id="name" value="<?php if(isset($_GET['modif'])) echo $res['Titre'];?>" size="25-->
 			  <select name="enseignant" id="name" >
 			 <?php 
 				while($row=mysqli_fetch_array($ens)){
@@ -195,5 +194,3 @@ if(isset($_GET['supp'])){
            </form>
 			</div>
         </nav>
-  
-       

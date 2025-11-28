@@ -1,5 +1,17 @@
 <?php 
     include("nav_dash.php");
+    
+    // Connexion à la base de données
+    include("../script/connexion.php");
+    
+    // Requête pour obtenir tous les horaires
+    $horaires_result = mysqli_query($con, "
+        SELECT h.*, c.nomComplet as cours_nom, m.nomComplet as mention_nom, p.nomComplet as promo_nom
+        FROM horaire h
+        LEFT JOIN cours c ON h.idcours = c.code_cours
+        LEFT JOIN mention m ON h.codemention = m.code_mention
+        LEFT JOIN promotion p ON h.codepromotion = p.sigle_promotion
+    ");
 ?>
 
 <main class="main-content">
@@ -33,30 +45,20 @@
                 </tr>
             </thead>
             <tbody>
+                <?php while ($horaire = mysqli_fetch_assoc($horaires_result)): ?>
                 <tr>
-                    <td>Algorithmique</td>
-                    <td>Informatique</td>
-                    <td>L1</td>
-                    <td>Lundi 08h00-10h00</td>
-                    <td>Jean Dupont</td>
-                    <td>Muhanga</td>
+                    <td><?php echo htmlspecialchars($horaire['cours_nom'] ?? $horaire['idcours']); ?></td>
+                    <td><?php echo htmlspecialchars($horaire['mention_nom'] ?? $horaire['codemention']); ?></td>
+                    <td><?php echo htmlspecialchars($horaire['promo_nom'] ?? $horaire['codepromotion']); ?></td>
+                    <td><?php echo htmlspecialchars($horaire['jourheure']); ?></td>
+                    <td><?php echo htmlspecialchars($horaire['enseignant']); ?></td>
+                    <td><?php echo htmlspecialchars($horaire['site']); ?></td>
                     <td class="table-actions">
                         <button class="btn btn-primary"><i class="fas fa-edit"></i> Modifier</button>
                         <button class="btn btn-danger"><i class="fas fa-trash"></i> Supprimer</button>
                     </td>
                 </tr>
-                <tr>
-                    <td>Mathématiques</td>
-                    <td>Mathématiques</td>
-                    <td>L2</td>
-                    <td>Mardi 10h00-12h00</td>
-                    <td>Marie Lambert</td>
-                    <td>Muhanga</td>
-                    <td class="table-actions">
-                        <button class="btn btn-primary"><i class="fas fa-edit"></i> Modifier</button>
-                        <button class="btn btn-danger"><i class="fas fa-trash"></i> Supprimer</button>
-                    </td>
-                </tr>
+                <?php endwhile; ?>
             </tbody>
         </table>
     </div>

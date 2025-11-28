@@ -1,5 +1,11 @@
 <?php 
     include("nav_dash.php");
+    
+    // Connexion à la base de données
+    include("../script/connexion.php");
+    
+    // Requête pour obtenir tous les enseignants
+    $enseignants_result = mysqli_query($con, "SELECT * FROM enseignant");
 ?>
 
 <main class="main-content">
@@ -33,30 +39,20 @@
                 </tr>
             </thead>
             <tbody>
+                <?php while ($enseignant = mysqli_fetch_assoc($enseignants_result)): ?>
                 <tr>
-                    <td>ENS001</td>
-                    <td>Jean Dupont</td>
-                    <td>jean.dupont@univ.edu</td>
-                    <td>+243 999 888 777</td>
-                    <td>Professeur titulaire</td>
-                    <td>Informatique</td>
+                    <td><?php echo htmlspecialchars($enseignant['matriculeEnseignant']); ?></td>
+                    <td><?php echo htmlspecialchars($enseignant['nom'] . ' ' . $enseignant['postnom'] . ' ' . $enseignant['prenom']); ?></td>
+                    <td><?php echo htmlspecialchars($enseignant['adresseMail']); ?></td>
+                    <td><?php echo htmlspecialchars($enseignant['telephone']); ?></td>
+                    <td><?php echo htmlspecialchars($enseignant['grade']); ?></td>
+                    <td><?php echo htmlspecialchars($enseignant['domainEnseignant']); ?></td>
                     <td class="table-actions">
                         <button class="btn btn-primary"><i class="fas fa-edit"></i> Modifier</button>
                         <button class="btn btn-danger"><i class="fas fa-trash"></i> Supprimer</button>
                     </td>
                 </tr>
-                <tr>
-                    <td>ENS002</td>
-                    <td>Marie Lambert</td>
-                    <td>marie.lambert@univ.edu</td>
-                    <td>+243 888 777 666</td>
-                    <td>Maître assistant</td>
-                    <td>Mathématiques</td>
-                    <td class="table-actions">
-                        <button class="btn btn-primary"><i class="fas fa-edit"></i> Modifier</button>
-                        <button class="btn btn-danger"><i class="fas fa-trash"></i> Supprimer</button>
-                    </td>
-                </tr>
+                <?php endwhile; ?>
             </tbody>
         </table>
     </div>

@@ -1,5 +1,11 @@
 <?php 
     include("nav_dash.php");
+    
+    // Connexion à la base de données
+    include("../script/connexion.php");
+    
+    // Requête pour obtenir toutes les années académiques
+    $annees_result = mysqli_query($con, "SELECT * FROM annee");
 ?>
 
 <main class="main-content">
@@ -24,33 +30,25 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Année académique</th>
                     <th>Date de début</th>
                     <th>Date de fin</th>
+                    <th>Description</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
+                <?php while ($annee = mysqli_fetch_assoc($annees_result)): ?>
                 <tr>
-                    <td>1</td>
-                    <td>2024-2025</td>
-                    <td>01/10/2024</td>
-                    <td>30/06/2025</td>
+                    <td><?php echo htmlspecialchars($annee['code_annee']); ?></td>
+                    <td><?php echo date('d/m/Y', strtotime($annee['dt_debut'])); ?></td>
+                    <td><?php echo date('d/m/Y', strtotime($annee['dt_fin'])); ?></td>
+                    <td><?php echo htmlspecialchars($annee['description']); ?></td>
                     <td class="table-actions">
                         <button class="btn btn-primary"><i class="fas fa-edit"></i> Modifier</button>
                         <button class="btn btn-danger"><i class="fas fa-trash"></i> Supprimer</button>
                     </td>
                 </tr>
-                <tr>
-                    <td>2</td>
-                    <td>2025-2026</td>
-                    <td>01/10/2025</td>
-                    <td>30/06/2026</td>
-                    <td class="table-actions">
-                        <button class="btn btn-primary"><i class="fas fa-edit"></i> Modifier</button>
-                        <button class="btn btn-danger"><i class="fas fa-trash"></i> Supprimer</button>
-                    </td>
-                </tr>
+                <?php endwhile; ?>
             </tbody>
         </table>
     </div>

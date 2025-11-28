@@ -1,7 +1,7 @@
 <?php 
 $host ="localhost";
-$user ="root";
-$password ="";
+$user ="admin";
+$password ="admin";
 $db ="suivi_prestation";
 $port = 3306;
 $con = mysqli_connect($host,$user,$password,$db,$port);

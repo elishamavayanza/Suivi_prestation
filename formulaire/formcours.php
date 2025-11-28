@@ -1,55 +1,83 @@
+<?php
+include("../script/connexion.php");
 
-    <div class="formulaire">
+// Récupérer les mentions et sections pour les listes déroulantes
+$mentions = mysqli_query($con, "SELECT * FROM mention");
+$sections = mysqli_query($con, "SELECT * FROM section");
+$promotions = mysqli_query($con, "SELECT * FROM promotion");
+?>
+
+<div class="formulaire">
+    <form id="coursForm" action="../script/addcours.php" method="POST">
+        <div class="form-row">
+            <div class="form-col">
+                <label for="code_cours">Code du cours :</label>
+                <input type="text" id="code_cours" name="code_cours" class="form-control" required>
+            </div>
+            
+            <div class="form-col">
+                <label for="nomComplet">Nom complet :</label>
+                <input type="text" id="nomComplet" name="nomComplet" class="form-control" required>
+            </div>
+        </div>
         
-        <form id="connexionForm" action="../script/addcours.php" method="POST">
-            <label for="section">Section : </label>
-            <select name="section" id="section">
-               <?php
-                 $sql ="select *from Section";
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute(array());
-                $res =null;
-                    while($res=$stmt->fetch()){
-                        ?>
-                        <option  value="<?php echo $res['code_section'];?>"><?php echo $res['nomComplet']; ?></option>
-                    <?php  } 
-                    ?>
-            </select>
-            <label for="mention">Mention : </label>
-            <select name="mention" id="mention">
-                <?php
-                 $sql ="select *from mention";
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute(array());
-                $res =null;
-                    while($res=$stmt->fetch()){ ?>
-                        <option  value="<?php echo $res['code_mention'];?>"><?php echo $res['nomComplet']; ?></option>
-                    <?php  } 
-                    ?>
-            </select>
-            <label for="promotion">Promotion : </label>
-            <select name="promotion" id="promotion">
-                <?php
-                $sql ="select *from promotion";
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute(array());
-                $res =null;
-                    while($res=$stmt->fetch()){
-                        ?>
-                        <option  value="<?php echo $res['id'];?>"><?php echo $res['nomComplet']; ?></option>
-                    <?php  } 
-                    ?>
-            </select>
-            <label for="code">Code cours</label>
-            <input type="text" id="code" name="code" required placeholder="">
-            <label for="sigle">Sigle </label>
-            <input type="text" id="sigle" name="sigle" required placeholder="">
-            <label for="nomComplet">Nom complet: </label>
-            <input type="text" id="nomComplet" name="nomComplet" required placeholder="">
-            <label for="nomComplet">Nombre d'heure : </label>
-            <input type="text" id="nomComplet" name="nbreHeure" required placeholder="">
-            <label for="description">Description : </label>
-            <input type="description" id="description" name="description" required placeholder="">
-            <button type="submit">Nouvel cours</button>
-        </form>
-    </div>
+        <div class="form-row">
+            <div class="form-col">
+                <label for="nbreHeure">Nombre d'heures :</label>
+                <input type="number" id="nbreHeure" name="nbreHeure" class="form-control" required>
+            </div>
+            
+            <div class="form-col">
+                <label for="ponderation">Pondération :</label>
+                <input type="number" id="ponderation" name="ponderation" class="form-control" required>
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-col">
+                <label for="code_mention">Mention :</label>
+                <select name="code_mention" id="code_mention" class="form-control" required>
+                    <option value="">Sélectionner une mention</option>
+                    <?php while($mention = mysqli_fetch_assoc($mentions)): ?>
+                    <option value="<?php echo $mention['code_mention']; ?>">
+                        <?php echo htmlspecialchars($mention['nomComplet']); ?>
+                    </option>
+                    <?php endwhile; ?>
+                </select>
+            </div>
+            
+            <div class="form-col">
+                <label for="code_section">Section :</label>
+                <select name="code_section" id="code_section" class="form-control" required>
+                    <option value="">Sélectionner une section</option>
+                    <?php while($section = mysqli_fetch_assoc($sections)): ?>
+                    <option value="<?php echo $section['code_section']; ?>">
+                        <?php echo htmlspecialchars($section['nomComplet']); ?>
+                    </option>
+                    <?php endwhile; ?>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-col">
+                <label for="promotion">Promotion :</label>
+                <select name="promotion" id="promotion" class="form-control" required>
+                    <option value="">Sélectionner une promotion</option>
+                    <?php while($promo = mysqli_fetch_assoc($promotions)): ?>
+                    <option value="<?php echo $promo['sigle_promotion']; ?>">
+                        <?php echo htmlspecialchars($promo['nomComplet']); ?>
+                    </option>
+                    <?php endwhile; ?>
+                </select>
+            </div>
+            
+            <div class="form-col">
+                <label for="description">Description :</label>
+                <input type="text" id="description" name="description" class="form-control" required>
+            </div>
+        </div>
+        
+        <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i> Ajouter Cours</button>
+    </form>
+</div>
