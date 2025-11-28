@@ -12,19 +12,19 @@ $userId = $_SESSION['username'];
 
 // Compter le nombre d'enseignants sous la responsabilité du chef de section
 $teachersCountQuery = "SELECT COUNT(*) as total FROM utilisateur WHERE role = 'Enseignant'";
-$teachersStmt = $conn->prepare($teachersCountQuery);
+$teachersStmt = $pdo->prepare($teachersCountQuery);
 $teachersStmt->execute();
-$teachersCount = $teachersStmt->fetch()['total'];
+$teachersCount =$teachersStmt->fetch()['total'];
 
 // Compter le nombre de cours programmés
 $coursesCountQuery = "SELECT COUNT(*) as total FROM cours";
-$coursesStmt = $conn->prepare($coursesCountQuery);
+$coursesStmt = $pdo->prepare($coursesCountQuery);
 $coursesStmt->execute();
 $coursesCount = $coursesStmt->fetch()['total'];
 
 // Compter le nombre de prestations
 $prestationsCountQuery = "SELECT COUNT(*) as total FROM entetefiche";
-$prestationsStmt = $conn->prepare($prestationsCountQuery);
+$prestationsStmt = $pdo->prepare($prestationsCountQuery);
 $prestationsStmt->execute();
 $prestationsCount = $prestationsStmt->fetch()['total'];
 ?>
@@ -35,7 +35,7 @@ $prestationsCount = $prestationsStmt->fetch()['total'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tableau de bord Chef de Section</title>
-    <link rel="stylesheet" href="chef_section_styles.css">
+    <link rel="stylesheet" href="chef_section_cp_style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
@@ -61,8 +61,8 @@ $prestationsCount = $prestationsStmt->fetch()['total'];
                 <ul>
                     <li><a href="index.php" class="active"><i class="fas fa-home"></i> <span>Tableau de bord</span></a></li>
                     <li><a href="horaire.php"><i class="fas fa-clock"></i> <span>Gestion des Horaires</span></a></li>
-                    <li><a href="chargehoraire.php"><i class="fas fa-hourglass-half"></i> <span>Charges Horaire</span></a></li>
-                    <li><a href="prestation.php"><i class="fas fa-file-invoice"></i> <span>Fiches de Prestation</span></a></li>
+                    <li><a href="chargehoraire.php"><iclass="fas fa-hourglass-half"></i> <span>Charges Horaire</span></a></li>
+                    <li><a href="prestation.php"><iclass="fas fa-file-invoice"></i> <span>Fiches de Prestation</span></a></li>
                 </ul>
             </nav>
         </aside>
@@ -85,36 +85,36 @@ $prestationsCount = $prestationsStmt->fetch()['total'];
 
                 <div class="stat-card horaires">
                     <div class="stat-value"><?php echo $coursesCount; ?></div>
-                    <div class="stat-label">Cours Programmés</div>
+                   <div class="stat-label">Cours Programmés</div>
                 </div>
 
                 <div class="stat-card prestations">
-                    <div class="stat-value"><?php echo $prestationsCount; ?></div>
+<div class="stat-value"><?php echo $prestationsCount; ?></div>
                     <div class="stat-label">Fiches de Prestation</div>
                 </div>
-            </div>
+</div>
 
             <div class="section-chief-section">
-                <h3 class="section-title">Responsabilités du Chef de Section</h3>
+                <h3 class="section-title">Responsabilités duChef de Section</h3>
                 <p>En tant que chef de section, vous êtes responsable de :</p>
                 <ul>
-                    <li>Élaborer la charge horaire des enseignants</li>
+                    <li>Élaborer la chargehoraire des enseignants</li>
                     <li>Programmer les cours (établir les horaires)</li>
-                    <li>Consulter les fiches de prestation quotidiennement</li>
+<li>Consulter les fiches de prestation quotidiennement</li>
                     <li>Valider les fiches de prestation après finalisation des cours</li>
-                </ul>
+               </ul>
             </div>
 
             <div class="section-chief-section">
                 <h3 class="section-title">Accès Rapide</h3>
                 <div class="section-chief-actions">
                     <a href="horaire.php" class="btn btn-primary"><i class="fas fa-clock"></i> Gérer les Horaires</a>
-                    <a href="chargehoraire.php" class="btn btn-success"><i class="fas fa-hourglass-half"></i> Charges Horaire</a>
+                    <a href="chargehoraire.php" class="btn btn-success"><iclass="fas fa-hourglass-half"></i> Charges Horaire</a>
                     <a href="prestation.php" class="btn btn-warning"><i class="fas fa-file-invoice"></i> Fiches de Prestation</a>
                 </div>
             </div>
         </main>
-    </div>
+   </div>
 
     <footer class="section-chief-footer">
         <p>&copy; 2025 Système de Suivi de Prestation. Tous droits réservés.</p>
