@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Tabslet-master2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/layout/scripts/tabslet/Tabslet-master.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

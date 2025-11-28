@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="suivi_prestation">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/fpdf186.zip!/" />
+      <root url="jar://$PROJECT_DIR$/suivi_prestation.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

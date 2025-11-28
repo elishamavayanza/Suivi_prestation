@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Nivo-Lightbox-master">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/layout/scripts/nivo-lightbox/Nivo-Lightbox-master.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
