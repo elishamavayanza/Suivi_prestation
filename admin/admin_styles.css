@@ -358,6 +358,7 @@ body {
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.08);
   overflow: hidden;
+  margin-bottom: 30px;
 }
 
 .admin-table table {
@@ -470,6 +471,15 @@ body {
     align-items: flex-start;
     gap: 10px;
   }
+  
+  /* Pour les très grandes tables, permettre le défilement horizontal */
+  .admin-table {
+    overflow-x: auto;
+  }
+  
+  .admin-table table {
+    min-width: 800px;
+  }
 }
 
 @media (max-width: 576px) {
@@ -537,4 +547,14 @@ body {
   background: #d1ecf1;
   color: #0c5460;
   border: 1px solid #bee5eb;
+}
+
+/* Pour les très grandes tables comme analyse */
+.admin-table table td, .admin-table table th {
+  font-size: 0.85rem;
+  padding: 8px 10px;
+}
+
+.admin-table table th {
+  white-space: nowrap;
 }

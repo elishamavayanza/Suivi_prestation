@@ -1,19 +1,43 @@
-
-    <div class="formulaire">
-      
-        <form id="connexionForm" action="../script/addisp.php" method="POST">
-            <label for="arreter">Numero min</label>
-            <input type="text" id="arrete" name="arrete" required placeholder="">
-            <label for="sigle">Sigle</label>
-            <input type="Text" id="sigle" name="sigle" required placeholder="">
-            <label for="nomComplet">Denomination</label>
-            <input type="Text" id="nomComplet" name="nomComplet" required placeholder="">
-            <label for="adresse">Description</label>
-            <input type="Text" id="description" name="description" required placeholder="">
-             <label for="adresse">Boite Postal</label>
-            <input type="Text" id="boitepostale" name="boitepostale" required placeholder="">
-             <label for="adresse">Date Creation</label>
-            <input type="date" id="dtcreation" name="dtcreation" required placeholder="">
-            <button type="submit">Ajouter ISP</button>
-        </form>
-    </div>
+<div class="formulaire">
+    <form id="ispForm" action="../script/addisp.php" method="POST">
+        <div class="form-row">
+            <div class="form-col">
+                <label for="arrete">Numéro ministère :</label>
+                <input type="text" id="arrete" name="arrete" class="form-control" required placeholder="Ex: Min-ESU/CAB-234">
+            </div>
+            
+            <div class="form-col">
+                <label for="sigle">Sigle :</label>
+                <input type="text" id="sigle" name="sigle" class="form-control" required placeholder="Ex: ISP-MB">
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-col">
+                <label for="nomComplet">Dénomination complète :</label>
+                <input type="text" id="nomComplet" name="nomComplet" class="form-control" required placeholder="Ex: Institut Supérieur Pédagogique de Muhanga">
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-col">
+                <label for="description">Description :</label>
+                <input type="text" id="description" name="description" class="form-control" required placeholder="Description de l'ISP">
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-col">
+                <label for="boitepostale">Boîte postale :</label>
+                <input type="text" id="boitepostale" name="boitepostale" class="form-control" required placeholder="Ex: B.P. 234">
+            </div>
+            
+            <div class="form-col">
+                <label for="dtcreation">Date de création :</label>
+                <input type="date" id="dtcreation" name="dtcreation" class="form-control" required>
+            </div>
+        </div>
+        
+        <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i> Ajouter ISP</button>
+    </form>
+</div>
