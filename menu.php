@@ -81,10 +81,10 @@ if(isset($_SESSION['role']) && $_SESSION['role']!="None"){
 		}else if($_SESSION['role']=="Chefpromotion"){
 			?>
 			<!--<li><a href="pubhoraire.php">Publier Horaire</a></li>-->
-            <li class="active"><a href="index.php">Accueil</a></li>
-            <li><a href="editerhoraire.php">horaire</a></li>
-            <!--li ><a href="listepresence.php">Liste de presence</a></li-->
-			      <li ><a href="prestation.php">Fiche de prestion</a></li>
+              <li class="active"><a href="index.php">Accueil</a></li>
+                 <li><a href="cp/horaire.php">Gérer les horaires</a></li>
+                 <li><a href="prestation.php">Fiche de prestation</a></li>
+                 <li><a href="cp/prestation.php">Gérer les prestations</a></li>
 			         
 			<?php
 		}
