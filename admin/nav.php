@@ -1,4 +1,4 @@
-<div class="content-center">
+<divclass="content-center">
         <section>
             <nav class="container-nav">
             <h1>
@@ -6,7 +6,7 @@
                 </h1>
             <img src="../image/logo.jpg" alt="">
             <!--button onclick="openModal('../formulaire/formannee.php')">Annee</button-->
-                <ul> 
+               <ul> 
                     <li>
                         <a href="index.php">Accueil</a>
                     </li>
@@ -24,7 +24,7 @@
                         <a href="isp.php">Isp-Muhangi</a>
                     </li>
                     <li>
-                        <a href="section.php">Section</a>
+                        <ahref="section.php">Section</a>
                     </li>
                     <li>
                         <a href="mention.php">Mention</a>
@@ -42,7 +42,7 @@
                        <a href="horaire.php"> Horaire </a> 
                     </li>
                     <li>
-                        <a href="analyse.php">Analyse</a>
+                        <ahref="analyse.php">Analyse</a>
                     </li> 
                     <li>
                         <a href="../index.php">Utilisteur</a>

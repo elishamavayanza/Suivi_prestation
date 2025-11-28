@@ -1,10 +1,11 @@
 
 <div>
-    <footer>
-        &copyright, ulpgl
-    </footer>
-</div>
-</div>
+    <footer class="admin-footer">
+       <p>&copy; 2025 Système de suivi des prestations de cours. Tous droits réservés.</p>
+   </footer>
+</div><!-- Fermeture de .admin-container -->
+</body>
+</html>
 <script>
     function openModal(url){
         fetch(url)

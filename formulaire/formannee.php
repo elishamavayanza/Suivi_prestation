@@ -1,20 +1,24 @@
-
-    <div  class="formulaire">
-        <!--div class="modal" id="overlay">
-        <button id="closeBtn" onclick="closeModal()">X</button>
-        <div class="modalcontent"-->
-            <form id="connexionForm" action="../script/addyear.php" method="POST">
-            <h2>Nouvelle annee academique</h2>
-            <label for="arreter">Code Annee</label>
-            <input type="text" id="arrete" name="code_annee" required placeholder="">
-            <label for="_date">Debut </label>
-            <input type="date" id="_date" name="dt_debut" required placeholder="">
-            <label for="date_">Fin : </label>
-            <input type="date" id="date_" name="dt_fin" required placeholder="">
-            <label for="description">Description : </label>
-            <input type="description" id="description" name="description" required placeholder="">
-            <button type="submit"> Nouvelle Annee</button>
-        </form>
-        <!--/div>
-        </div-->
-    </div>
+<div class="formulaire">
+    <form id="anneeForm" action="../script/addyear.php" method="POST">
+        <div class="form-row">
+            <div class="form-col">
+                <label for="annee_academique">Année académique :</label>
+                <input type="text" id="annee_academique" name="annee_academique" class="form-control" placeholder="Ex: 2025-2026" required>
+            </div>
+            
+            <div class="form-col">
+                <label for="date_debut">Date de début :</label>
+                <input type="date" id="date_debut" name="date_debut" class="form-control" required>
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-col">
+                <label for="date_fin">Date de fin :</label>
+                <input type="date" id="date_fin" name="date_fin" class="form-control" required>
+            </div>
+        </div>
+        
+        <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i> Ajouter Année</button>
+    </form>
+</div>
