@@ -91,10 +91,10 @@ if(isset($_SESSION['role']) && $_SESSION['role']!="None"){
 		}
 		else if($_SESSION['role']=="Chefdesection"){
 			?>
-            <li class="active"><a href="index.php">Accueil</a></li>
-            <li><a href="afficherhoraire.php">horaire</a></li>
-            <li><a href="chargehoraire.php">Charge horaire</a></li>
-			      <li><a href="cours.php">Programmer Cours</a></li>
+            <li class="active"><a href="chefsection/index.php">Accueil</a></li>
+            <li><a href="chefsection/horaire.php">Gérer les horaires</a></li>
+            <li><a href="chefsection/chargehoraire.php">Charges horaire</a></li>
+			      <li><a href="chefsection/prestation.php">Fiches de prestation</a></li>
             
 			<?php
 		}else if($_SESSION['role']=="SGA"){
