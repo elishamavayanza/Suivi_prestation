@@ -1,0 +1,76 @@
+.content-prestation{
+    width:auto;
+    display:  flex;
+}
+.form-prestation{
+    width:40%;
+    text-decoration-color: black;
+    border: solid red 1px;
+}
+.txt{
+   width: 96%;
+    padding:3%;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    color: black;
+    text-decoration-color: black;
+}
+
+.btn {
+    width: 97%;
+    padding: 1.5%;
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px;
+    margin-top: 15px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.btn:hover {
+    background: #218838;
+}
+.btn[type="submit"] {
+    background-color: #3543BDFF; 
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+/* fenetre modale */
+ #promptCompat{ 
+                display: none; 
+                } 
+                #promptCompat.no_dialog{ 
+                        box-shadow: 0 0 5px 2px red; 
+                        padding: 10px; 
+                        display: block; 
+                        text-align: center; 
+                        font-weight: bold; 
+                } 
+                .boutons{ 
+                        padding: 10px; 
+                } 
+                dialog{ 
+                        width: 50%;
+                        border-radius: 10px; 
+                        box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3); 
+                } 
+                dialog::backdrop{ 
+                        background-color: rgba(0, 0, 0, 0.6); 
+                } 
+
+    /** le tableau */
+
+    .contente-table{
+      
+        color: black;
+        text-decoration-color: black;
+    }
