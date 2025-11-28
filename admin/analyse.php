@@ -52,8 +52,20 @@
                 <?php      
                 // Fonction pour afficher les évaluations
                 function afficher($table, $con){
+                    // Vérifier si la table existe avant d'essayer de la requêter
+                    $checkTable = mysqli_query($con, "SHOW TABLES LIKE '$table'");
+                    if(mysqli_num_rows($checkTable) == 0) {
+                        echo "<tr><td colspan='24'>La table '$table' n'existe pas dans la base de données.</td></tr>";
+                        return;
+                    }
+
                     $sql = "SELECT * FROM $table ORDER BY id DESC";
                     $result = mysqli_query($con, $sql);
+                    
+                    if (!$result) {
+                        echo "<tr><td colspan='24'>Erreur lors de la récupération des données: " . mysqli_error($con) . "</td></tr>";
+                        return;
+                    }
                     
                     while($data = mysqli_fetch_assoc($result)){        
                         echo "<tr>";
@@ -92,6 +104,11 @@
                 // Fonction pour afficher les moyennes
                 function afficherM($sql, $con){
                     $result = mysqli_query($con, $sql);
+                    
+                    if (!$result) {
+                        echo "<tr><td colspan='3'>Erreur lors de la récupération des données: " . mysqli_error($con) . "</td></tr>";
+                        return;
+                    }
                     
                     while($data = mysqli_fetch_assoc($result)){        
                         echo "<tr>";

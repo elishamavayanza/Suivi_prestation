@@ -267,6 +267,43 @@ INSERT INTO `etudiant` (`matriculeEtudiant`, `nom`, `postnom`, `prenom`, `genre`
 -- --------------------------------------------------------
 
 --
+-- Structure de la table `evaluations`
+--
+
+DROP TABLE IF EXISTS `evaluations`;
+CREATE TABLE IF NOT EXISTS `evaluations` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `matriculeEtudiant` varchar(50) DEFAULT NULL,
+  `enseignant` varchar(255) DEFAULT NULL,
+  `cours` varchar(255) DEFAULT NULL,
+  `r1` int DEFAULT NULL,
+  `r2` int DEFAULT NULL,
+  `r3` int DEFAULT NULL,
+  `r4` int DEFAULT NULL,
+  `r5` int DEFAULT NULL,
+  `r6` int DEFAULT NULL,
+  `r7` int DEFAULT NULL,
+  `r8` int DEFAULT NULL,
+  `r9` int DEFAULT NULL,
+  `r10` int DEFAULT NULL,
+  `r11` int DEFAULT NULL,
+  `r12` int DEFAULT NULL,
+  `r13` int DEFAULT NULL,
+  `r14` int DEFAULT NULL,
+  `r15` int DEFAULT NULL,
+  `r16` int DEFAULT NULL,
+  `r17` int DEFAULT NULL,
+  `r18` int DEFAULT NULL,
+  `r19` int DEFAULT NULL,
+  `r20` int DEFAULT NULL,
+  `commentaire` text,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Structure de la table `honoraire`
 --
 
