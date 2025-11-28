@@ -25,7 +25,7 @@
     </header>
 
     <!-- Container -->
-    <div class="admin-container">
+<div class="admin-container">
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
@@ -33,7 +33,7 @@
                 <h2>Administration</h2>
                 <p>Gestion du système</p>
             </div>
-            <nav class="nav-menu">
+           <nav class="nav-menu">
                 <ul>
                     <li><a href="index.php" class="<?php echo ($current_page == 'index.php') ? 'active' : ''; ?>"><i class="fas fa-home"></i> <span>Tableau de bord</span></a></li>
                     <li><a href="annee.php" class="<?php echo ($current_page == 'annee.php') ? 'active' : ''; ?>"><i class="fas fa-calendar-alt"></i> <span>Années académiques</span></a></li>
@@ -47,6 +47,7 @@
                     <li><a href="cours.php" class="<?php echo ($current_page == 'cours.php') ? 'active' : ''; ?>"><i class="fas fa-book"></i> <span>Cours</span></a></li>
                     <li><a href="horaire.php" class="<?php echo ($current_page == 'horaire.php') ? 'active' : ''; ?>"><i class="fas fa-clock"></i> <span>Horaires</span></a></li>
                     <li><a href="analyse.php" class="<?php echo ($current_page == 'analyse.php') ? 'active' : ''; ?>"><i class="fas fa-chart-bar"></i> <span>Analyse</span></a></li>
+                    <li><a href="utilisateurs.php" class="<?php echo ($current_page == 'utilisateurs.php') ? 'active' : ''; ?>"><i class="fas fa-users-cog"></i> <span>Gérer les Utilisateurs</span></a></li>
                 </ul>
             </nav>
         </aside>

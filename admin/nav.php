@@ -1,4 +1,4 @@
-<divclass="content-center">
+<div class="content-center">
         <section>
             <nav class="container-nav">
             <h1>
@@ -14,17 +14,17 @@
                        <a href="annee.php"> Annee </a> 
                     </li>  
                     <li>
-                        <a href="etudiant.php">Ajouter etudiant </a>
+                        <a href="etudiant.php">Ajouter etudiant</a>
                     </li>
                     <li>
-                        <a href="enseignant.php">Ajouter enseignant </a>
+                        <a href="enseignant.php">Ajouter enseignant</a>
                     </li>
                                      
                     <li>
                         <a href="isp.php">Isp-Muhangi</a>
                     </li>
                     <li>
-                        <ahref="section.php">Section</a>
+                        <a href="section.php">Section</a>
                     </li>
                     <li>
                         <a href="mention.php">Mention</a>
@@ -39,13 +39,16 @@
                         <a href="cours.php">Cours</a>
                     </li>
                     <li>
-                       <a href="horaire.php"> Horaire </a> 
+                        <a href="horaire.php">Horaire</a>
                     </li>
                     <li>
-                        <ahref="analyse.php">Analyse</a>
+                        <a href="analyse.php">Analyse</a>
+                    </li>
+                    <li>
+                        <a href="utilisateurs.php">Gérer les Utilisateurs</a>
                     </li> 
                     <li>
-                        <a href="../index.php">Utilisteur</a>
+                        <a href="../index.php">Utilisateur</a>
                     </li> 
                 </ul>     
             </nav>
