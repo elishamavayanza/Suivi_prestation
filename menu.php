@@ -21,14 +21,13 @@
     <nav>
       <ul>
         
-       <?php
-            if(isset($_SESSION['username']) && $_SESSION['username']!="None"){
+       <?phpif(isset($_SESSION['username']) && $_SESSION['username']!="None"){
                 echo "<li><a href='script/logout.php'>Deconnexion</a></li>";
             } else {
                 echo " <li><a href='login.php'>Connexion</a></li>";
             }
             ?>
-      </ul>
+     </ul>
     </nav>
     </div>
 </div>
@@ -54,13 +53,13 @@
   </header>
 </div>
 <div class="wrapper row2">
-  <div class="rounded">
+<div class="rounded">
   <span style="float:right;color:green"><?php 
   #include("layout/scripts/pvc.php");
   if(isset($_SESSION['role']) && $_SESSION['role']!="None"){
 	  echo $_SESSION['username']."/".$_SESSION['role'];
   } else {
-        echo "Disconned";
+        echo"Disconned";
   }
   ?></span>
  <nav id="mainav" class="clear"> 
@@ -74,9 +73,9 @@ if(isset($_SESSION['role']) && $_SESSION['role']!="None"){
 				
 			?>
             <li class="active"><a href="index.php">Accueil</a></li>
-            <li><a href="horaire.php">Horaire</a></li>			     
+            <li><a href="admin/horaire.php">Horaire</a></li>
              <li ><a href="admin/index.php">Admin</a></li>
-            <!--li ><a href="rapports.php">Rapports</a></li>
+            <!--li><a href="rapports.php">Rapports</a></li>
              <li ><a href="configuration.php">Configuration</a></li-->
 			<?php
 		}else if($_SESSION['role']=="Chefpromotion"){
@@ -101,7 +100,7 @@ if(isset($_SESSION['role']) && $_SESSION['role']!="None"){
 			?>
             <li class="active"><a href="index.php">Accueil</a></li>
             <li><a href="horiaire.php">Horaire</a></li>
-            <li><a href="chargehoraire.php">Charge horaire</a></li>
+<li><a href="chargehoraire.php">Charge horaire</a></li>
             <!--li><a href="cours.php">Programmer Cours</a></li-->
             <!--li ><a href="admin/index.php">Admin</a></li-->
            
@@ -117,19 +116,19 @@ if(isset($_SESSION['role']) && $_SESSION['role']!="None"){
 			?>
             <li class="active"><a href="index.php">Accueil</a></li>
             <li><a href="horaire.php">Horaire</a></li>
-			      <li><a href="coursfini.php">Cours Fini</a></li>
+<li><a href="coursfini.php">Cours Fini</a></li>
              
 			<?php
 		} else if($_SESSION['role']=="Enseignant"){
 			?>
-            <li class="active"><a href="index.php">Accueil</a></li>
-             <li><a href="horaire.php">Horaire</a></li>			        
-             <!--li><a href="prestation.php">Prestation</a></li-->
-             <li><a href="description.php">Description</a></li>
-             <li ><a href="affichechargehoraire.php">Charge horaire</a></li>
+            <li class="active"><a href="enseignant/index_ens.php">Accueil</a></li>
+             <li><a href="enseignant/horaire_ens.php">Horaire</a></li>
+             <!--li><a href="enseignant/prestation_ens.php">Prestation</a></li-->
+             <li><a href="enseignant/description_ens.php">Description</a></li>
+             <li><a href="enseignant/charge_horaire_ens.php">Charge horaire</a></li>
 			<?php
 		} 
-    }
+   }
         else {
 		
 		?>
@@ -137,8 +136,7 @@ if(isset($_SESSION['role']) && $_SESSION['role']!="None"){
         <!--li class="active"><a href="index.php">Accueil</a></li>
         <li><a href="horaire.php">Horaire</a></li>
         <li><a href="sign.php">s'inscription</a></li-->
-        
-        <!--li><a href="apropos.php">Apropos</a></li-->
+<!--li><a href="apropos.php">Apropos</a></li-->
         <?php 
         header("Location:login.php");
         }
