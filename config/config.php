@@ -1,99 +1,108 @@
-<?php 
-#include("config.php");
-    class Db_Connexion{
-       private $host = null;
-       private $database = null;
-       private $user =null;
-       private $password = null;
-       private $charset = null;
-       private $port = null;
-       public     $pdo =null;
-        function __constructor(){
-            $this->host = 'localhost';
-            $this->database= '....';
-            $this->user ='root';
-            $this->password ='';
-            $this->charset='utf8mb4';
-            $this->port ='3306';
-        }
-    /*    public Db_Connexion($host,$data,$user,$pass,$char,$port){
-            $this->host = $host;
-            $this->database= $data;
-            $this->user =$user;
-            $this->password =$pass;
-            $this->charset=$char;
-            $this->port =$port;
-        }*/
+<?php
+//#include("config.php");
+class Db_Connexion{
+    private $host = null;
+    private $database = null;
+    private $user = null;
+    private $password = null;
+    private $charset = null;
+    private $port = null;
+    public $pdo = null;
 
-        public function setHost($_host){
-            $this->host = $_host;
-        }
-        public function getHost(){
-            return $this->host;
-        }
-        public function setDatabase($_database){
-            $this->database =$_database;
-        }
-        public function getDatabase(){
-            return $this->adatabase;
-        }
-        public function setUser($_user){
-            $this->user=$_user;
-        }
-        public function getUser(){
-            return $user;
-        }
-
-        public function setPassword($_password){
-            $this->password = $_password;
-        }
-        public function getPassword(){
-            return $this->password;
-        }
-        public function setCharset($_charset){
-            $this->charset=$_charset;
-        }
-        public function getCharset(){
-            return $this->charset;
-        }
-        public function setPort($_port){
-            $this->port=$_port;
-        }
-        public function getPort(){
-            return $this->port;
-        }
-/*
-        public function connexion(){
-            $pdo =null;
-            $dsn ="mysql:host=$host;port=$port;dbname=$database;charset=$charset";
-            try{ 
-                $pdo = new PDO($dsn,$user,$password);       
-            }catch(PDOException $e){
-                printf("Échec de la connexion : %s\n", $e->getMessage());       
-            }
-        }
-        */
-        public function connexion($host,$db,$user,$pass,$char,$port){
-        
-            $this->host = $host;
-            $this->database= $db;
-            $this->user =$user;
-            $this->password =$pass;
-            $this->charset=$char;
-            $this->port =$port;
-            $dsn ="mysql:host=$host;port=$port;dbname=$db;charset=$char";
-            try{ 
-                $this->pdo = new PDO($dsn,$user,$pass);       
-            }catch(PDOException $e){
-                printf("Échec de la connexion : %s\n", $e->getMessage());       
-            }
-        }
-
+    function __construct(){
+        $this->host = 'localhost';
+        $this->database = 'suivi_prestation';
+        $this->user = 'admin';
+        $this->password = 'admin';
+        $this->charset = 'utf8mb4';
+        $this->port = '3306';
     }
 
-    $con = new Db_Connexion();
-    $con->connexion('localhost','db_evaluation','root','','utf8mb4','3306');
-    #var_dump($con->pdo);
-    
-    #var_dump($con);
-    #print"test--".($con->getHost());
+    public function setHost($_host){
+        $this->host = $_host;
+    }
+    public function getHost(){
+        return $this->host;
+    }
+    public function setDatabase($_database){
+        $this->database = $_database;
+    }
+    public function getDatabase(){
+        return $this->database; // Correction: était $this->adatabase
+    }
+    public function setUser($_user){
+        $this->user = $_user;
+    }
+    public function getUser(){
+        return $this->user; // Correction: était return $user
+    }
+    public function setPassword($_password){
+        $this->password = $_password;
+    }
+    public function getPassword(){
+        return $this->password;
+    }
+    public function setCharset($_charset){
+        $this->charset = $_charset;
+    }
+    public function getCharset(){
+        return $this->charset;
+    }
+    public function setPort($_port){
+        $this->port = $_port;
+    }
+    public function getPort(){
+        return $this->port;
+    }
+
+    // Méthode de connexion utilisant les propriétés de la classe
+    public function connect(){
+        $dsn = "mysql:host={$this->host};port={$this->port};dbname={$this->database};charset={$this->charset}";
+        try{
+            $this->pdo = new PDO($dsn, $this->user, $this->password);
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            return $this->pdo;
+        } catch(PDOException $e){
+            printf("Échec de la connexion : %s\n", $e->getMessage());
+            return null;
+        }
+    }
+
+    // Méthode alternative avec paramètres
+    public function connexion($host = null, $db = null, $user = null, $pass = null, $char = null, $port = null){
+        // Utilise les paramètres fournis ou les valeurs par défaut
+        $this->host = isset($host) ? $host : $this->host;
+        $this->database = isset($db) ? $db : $this->database;
+        $this->user = isset($user) ? $user : $this->user;
+        $this->password = isset($pass) ? $pass : $this->password;
+        $this->charset = isset($char) ? $char : $this->charset;
+        $this->port = isset($port) ? $port : $this->port;
+
+        $dsn = "mysql:host={$this->host};port={$this->port};dbname={$this->database};charset={$this->charset}";
+        try{
+            $this->pdo = new PDO($dsn, $this->user, $this->password);
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            return $this->pdo;
+        } catch(PDOException $e){
+            printf("Échec de la connexion : %s\n", $e->getMessage());
+            return null;
+        }
+    }
+}
+
+// Utilisation
+$con = new Db_Connexion();
+$con->connexion(); // Utilise les valeurs par défaut (suivi_prestation, admin, admin)
+
+// Ou directement avec la méthode connect()
+// $con->connect();
+
+// Vérification de la connexion
+if($con->pdo) {
+    echo "Connexion à la base de données 'suivi_prestation' réussie!";
+} else {
+    echo "Échec de la connexion à la base de données";
+}
+
+//var_dump($con->pdo);
+?>

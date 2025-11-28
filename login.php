@@ -16,8 +16,22 @@
 
             <label for="Mot_passe">Mot de passe</label>
             <input type="password" id="passe_word" name="password" required placeholder="1234567890">
+            
+            <label for="role">Rôle</label>
+            <select name="role" id="role" required>
+                <option value="">Sélectionnez un rôle</option>
+                <option value="Admin">Admin</option>
+                <option value="Chefdesection">Chef de section</option>
+                <option value="Chefpromotion">Chef de promotion</option>
+                <option value="SGA">SGA</option>
+                <option value="AB">AB</option>
+                <option value="secretaire">Secrétaire</option>
+                <option value="Enseignant">Enseignant</option>
+                <option value="Etudiant">Etudiant</option>
+            </select>
+
             <div class="check_box">
-                <input type="checkbox" name=""id>
+                <input type="checkbox" name="" id="">
                 <label for="">Se souvenir de moi</label>                    
             </div>
             <button type="submit">Connection</button>
