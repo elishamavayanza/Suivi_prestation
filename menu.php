@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
 <link rel="stylesheet" href="bootstap/js/bootstrap.min.js">
 <link href="layout/styles/layout.css" rel="stylesheet" type="text/css" media="all">
+<link href="layout/styles/header.css" rel="stylesheet" type="text/css" media="all">
 </head>
 <body id="top">
 <div class="container"> 
@@ -35,7 +36,7 @@
   <header id="header" class="clear"> 
        <div id="logo" class="fl_left">
 	<div>
-	 <img src="image/logo.jpg" style="width:50px;height:50px;margin:12px;margin-left:-50px;margin-bottom:-35px;border-radius:30px/30px;"width="50px" height="50px"/>
+	 <img src="image/logo.jpg" width="50px" height="50px"/>
       <h1><a href="index.php">Isp-Muhangi</a></h1>
     <p>ISP-MUHANGI A BUTEMBO</p>	 
 	 </div>

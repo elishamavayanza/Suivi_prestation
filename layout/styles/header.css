@@ -1,0 +1,223 @@
+@charset "utf-8";
+/*
+Template Name: Academic Education V2 - Header Styles
+Author: Modified for ISP-Muhangi
+*/
+
+/* Header Improvements
+--------------------------------------------------------------------------------------------------------------- */
+#header {
+  background: linear-gradient(135deg, #06213F 0%, #0a3463 100%);
+  padding: 15px 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-bottom: 3px solid #55ABDA;
+}
+
+#header .wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+#header #logo {
+  flex: 1;
+  min-width: 200px;
+}
+
+#header #logo div {
+  display: flex;
+  align-items: center;
+}
+
+#header #logo img {
+  width: 70px;
+  height: 70px;
+  margin: 0 15px 0 0;
+  border-radius: 50%;
+  border: 3px solid #55ABDA;
+  box-shadow: 0 0 10px rgba(85, 171, 218, 0.5);
+  transition: transform 0.3s ease;
+}
+
+#header #logo img:hover {
+  transform: scale(1.05);
+}
+
+#header #logo h1 {
+  margin: 0;
+  padding: 0;
+  font-size: 28px;
+  line-height: 1.2em;
+  font-weight: 700;
+  font-variant: small-caps;
+  color: #fff;
+}
+
+#header #logo h1 a {
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+#header #logo h1 a:hover {
+  color: #55ABDA;
+}
+
+#header #logo p {
+  margin: 5px 0 0 0;
+  padding: 0;
+  color: #55ABDA;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+#header form {
+  display: flex;
+  width: auto;
+  max-width: 300px;
+  margin-left: 20px;
+}
+
+#header fieldset {
+  display: flex;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+#header input {
+  flex: 1;
+  height: 40px;
+  padding: 5px 15px;
+  border: none;
+  border-radius: 30px 0 0 30px;
+  font-size: 14px;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #06213F;
+}
+
+#header button {
+  width: auto;
+  height: 40px;
+  padding: 0 20px;
+  border: none;
+  border-radius: 0 30px 30px 0;
+  background-color: #55ABDA;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#header button:hover {
+  background-color: #3a8bc2;
+}
+
+#header button em {
+  font-style: normal;
+}
+
+/* Top Bar Improvements
+--------------------------------------------------------------------------------------------------------------- */
+#topbar {
+  background-color: #0a3463;
+  padding: 8px 0;
+  text-align: right;
+}
+
+#topbar ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#topbar li {
+  display: inline-block;
+  margin-left: 15px;
+  padding-right: 0;
+  border: none;
+}
+
+#topbar li a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 5px 10px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+#topbar li a:hover {
+  background-color: #55ABDA;
+  color: #fff;
+}
+
+/* Responsive Improvements
+--------------------------------------------------------------------------------------------------------------- */
+@media screen and (max-width: 750px) {
+  #header .wrapper {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  #header #logo {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  #header #logo div {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  #header #logo img {
+    margin: 0 auto 10px auto;
+  }
+  
+  #header form {
+    max-width: 100%;
+    margin: 15px 0 0 0;
+    width: 100%;
+  }
+  
+  #header input {
+    min-width: 0;
+  }
+  
+  #topbar {
+    text-align: center;
+  }
+  
+  #topbar li {
+    margin: 0 5px;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  #header #logo h1 {
+    font-size: 22px;
+  }
+  
+  #header #logo p {
+    font-size: 14px;
+  }
+  
+  #header form {
+    flex-direction: column;
+  }
+  
+  #header input {
+    border-radius: 30px;
+    margin-bottom: 10px;
+  }
+  
+  #header button {
+    border-radius: 30px;
+    padding: 0;
+    height: 40px;
+  }
+}
