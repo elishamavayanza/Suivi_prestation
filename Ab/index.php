@@ -7,6 +7,33 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != "AB") {
     header("Location: ../login.php");
     exit();
 }
+
+// Récupérer les statistiques du tableau de bord
+try {
+    // Nombre total de fiches de prestation
+    $stmt = $pdo->prepare("SELECT COUNT(*) as total FROM entetefiche");
+    $stmt->execute();
+    $prestationsCount = $stmt->fetch()['total'];
+    
+    // Nombre total de fiches d'honoraires
+    $stmt = $pdo->prepare("SELECT COUNT(*) as total FROM honoraire");
+    $stmt->execute();
+    $honorairesCount = $stmt->fetch()['total'];
+    
+    // Montant total des honoraires
+    $stmt = $pdo->prepare("SELECT SUM(montant) as total FROM honoraire");
+    $stmt->execute();
+    $honorairesTotal = $stmt->fetch()['total'] ?? 0;
+    
+    // Nombre total d'enseignants
+    $stmt = $pdo->prepare("SELECT COUNT(*) as total FROM enseignant");
+    $stmt->execute();
+    $enseignantsCount = $stmt->fetch()['total'];
+    
+} catch (PDOException $e) {
+    echo "Erreur de base de données: " . $e->getMessage();
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -23,15 +50,79 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != "AB") {
     <div class="ab-header">
         <h1><i class="fas fa-user-tie"></i> Interface AB - Gestion des Prestations et Honoraires</h1>
         <div class="header-actions">
-            <a href="../script/logout.php"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+            <div class="user-info">
+                <div class="user-avatar"><?php echo substr($_SESSION['username'], 0, 1); ?></div>
+                <div>
+                    <div>Bienvenue, <?php echo $_SESSION['username']; ?></div>
+                    <div>Administrateur Budget</div>
+                </div>
+            </div>
+            <a href="../script/logout.php"><i class="fas fa-sign-out-alt"></i> <span>Déconnexion</span></a>
         </div>
     </div>
     
     <div class="ab-container">
+        <!-- Sidebar Navigation -->
+        <div class="ab-sidebar">
+            <div class="ab-sidebar-header">
+                <div class="user-avatar"><?php echo substr($_SESSION['username'], 0, 1); ?></div>
+                <h2><?php echo $_SESSION['username']; ?></h2>
+                <p>Administrateur Budget</p>
+            </div>
+            <div class="ab-nav-menu">
+                <ul>
+                    <li>
+                        <a href="index.php" class="active">
+                            <i class="fas fa-home"></i>
+                            <span>Tableau de bord</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="financial_reports.php">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Rapports Financiers</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="manage_honoraires.php">
+                            <i class="fas fa-money-check-alt"></i>
+                            <span>Gérer les Honoraires</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
         <div class="main-content">
-            <div class="user-info">
-                <div><i class="fas fa-user"></i> Bienvenue, <?php echo $_SESSION['username']; ?></div>
-                <div><i class="fas fa-user-tag"></i> Rôle: <?php echo $_SESSION['role']; ?> (Administrateur Budget)</div>
+            <div class="content-header">
+                <h2><i class="fas fa-home"></i> Tableau de bord</h2>
+                <ul class="breadcrumb">
+                    <li><a href="#">Accueil</a></li>
+                    <li>Tableau de bord</li>
+                </ul>
+            </div>
+            
+            <!-- Statistiques du tableau de bord -->
+            <div class="stats-summary">
+                <div class="stat-card">
+                    <div class="stat-value"><?php echo $prestationsCount; ?></div>
+                    <div class="stat-label">Fiches de Prestation</div>
+                </div>
+
+                <div class="stat-card charges">
+                    <div class="stat-value"><?php echo $enseignantsCount; ?></div>
+                    <div class="stat-label">Enseignants</div>
+                </div>
+
+                <div class="stat-card prestations">
+                    <div class="stat-value"><?php echo $honorairesCount; ?></div>
+                    <div class="stat-label">Fiches d'Honoraires</div>
+                </div>
+
+                <div class="stat-card horaires">
+                    <div class="stat-value"><?php echo number_format($honorairesTotal, 2); ?> $</div>
+                    <div class="stat-label">Total Honoraires</div>
+                </div>
             </div>
             
             <div class="content-header">
@@ -42,7 +133,8 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != "AB") {
                 </ul>
             </div>
             
-            <div class="card prestations">
+            <div class="section-chief-section">
+                <h3 class="section-title"><i class="fas fa-list"></i> Sélectionner une fiche de prestation</h3>
                 <div class="form-group">
                     <label for="fiche"><i class="fas fa-list"></i> Sélectionner une fiche de prestation :</label>
                     <select name="entetefiche" id="fiche" class="form-control">
@@ -61,9 +153,9 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != "AB") {
                 </div>
                 
                 <div id="prestation-details" style="display: none;">
-                    <h3><i class="fas fa-info-circle"></i> Détails de la fiche de prestation</h3>
-                    <div class="table-container">
-                        <table id="prestation-table">
+                    <h3 class="section-title"><i class="fas fa-info-circle"></i> Détails de la fiche de prestation</h3>
+                    <div class="table-container section-chief-table">
+                        <table>
                             <thead>
                                 <tr>
                                     <th>Date</th>
@@ -75,13 +167,13 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != "AB") {
                                     <th>Signature Enseignant</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="prestation-table-body">
                                 <!-- Les données seront chargées dynamiquement -->
                             </tbody>
                         </table>
                     </div>
                     
-                    <div class="action-buttons">
+                    <div class="section-chief-actions">
                         <button class="btn btn-success" id="generate-honoraire">
                             <i class="fas fa-file-invoice-dollar"></i> Générer la Fiche d'Honoraires
                         </button>
@@ -100,16 +192,25 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != "AB") {
                 </ul>
             </div>
             
-            <div class="card honoraires">
+            <div class="section-chief-actions">
+                <a href="financial_reports.php" class="btn btn-info">
+                    <i class="fas fa-chart-line"></i> Voir les Rapports Financiers
+                </a>
+                <a href="manage_honoraires.php" class="btn btn-secondary">
+                    <i class="fas fa-cogs"></i> Gérer les Honoraires
+                </a>
+            </div>
+            
+            <div class="section-chief-section">
                 <div id="honoraire-section" style="display: none;">
-                    <h3><i class="fas fa-check-circle"></i> Fiche d'honoraires générée</h3>
-                    <div class="notification success">
-                        <i class="fas fa-info-circle"></i> La fiche d'honoraires a été générée avec succès. 
-                        Un message sera envoyé à l'enseignant pour le retrait de son salaire.
+                    <h3 class="section-title"><i class="fas fa-check-circle"></i> Fiche d'honoraires générée</h3>
+                    <div class="section-chief-alert section-chief-alert-success">
+                        <i class="fas fa-info-circle"></i>
+                        <div>La fiche d'honoraires a été générée avec succès. Un message sera envoyé à l'enseignant pour le retrait de son salaire.</div>
                     </div>
                     
-                    <div class="table-container">
-                        <table id="honoraire-table">
+                    <div class="table-container section-chief-table">
+                        <table>
                             <thead>
                                 <tr>
                                     <th>Date</th>
@@ -119,7 +220,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != "AB") {
                                     <th>Total ($)</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="honoraire-table-body">
                                 <!-- Les données seront chargées dynamiquement -->
                             </tbody>
                             <tfoot>
@@ -131,7 +232,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != "AB") {
                         </table>
                     </div>
                     
-                    <div class="action-buttons">
+                    <div class="section-chief-actions">
                         <button class="btn btn-success" id="send-notification">
                             <i class="fas fa-envelope"></i> Envoyer Notification à l'Enseignant
                         </button>
@@ -141,8 +242,9 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != "AB") {
                     </div>
                 </div>
                 
-                <div id="no-honoraire" class="notification info">
-                    <i class="fas fa-info-circle"></i> Aucune fiche d'honoraires générée. Sélectionnez une fiche de prestation et générez les honoraires.
+                <div class="section-chief-alert section-chief-alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <div>Aucune fiche d'honoraires générée. Sélectionnez une fiche de prestation et générez les honoraires.</div>
                 </div>
             </div>
         </div>
@@ -166,8 +268,10 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != "AB") {
             if(ficheId) {
                 // Générer la fiche d'honoraires
                 document.getElementById('honoraire-section').style.display = 'block';
-                document.getElementById('no-honoraire').style.display = 'none';
                 loadHonoraireDetails(ficheId);
+                
+                // Sauvegarder les honoraires dans la base de données
+                saveHonoraire(ficheId);
             } else {
                 alert("Veuillez sélectionner une fiche de prestation d'abord.");
             }
@@ -183,7 +287,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != "AB") {
                 method: 'GET',
                 dataType: 'json',
                 success: function(data) {
-                    const tbody = document.querySelector('#prestation-table tbody');
+                    const tbody = document.querySelector('#prestation-table-body');
                     tbody.innerHTML = '';
                     
                     data.forEach(function(row) {
@@ -213,7 +317,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != "AB") {
                 dataType: 'json',
                 data: { fiche_id: ficheId },
                 success: function(data) {
-                    const tbody = document.querySelector('#honoraire-table tbody');
+                    const tbody = document.querySelector('#honoraire-table-body');
                     tbody.innerHTML = '';
                     let totalGeneral = 0;
                     
@@ -236,6 +340,25 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != "AB") {
                 },
                 error: function() {
                     alert("Erreur lors de la génération de la fiche d'honoraires.");
+                }
+            });
+        }
+        
+        function saveHonoraire(ficheId) {
+            $.ajax({
+                url: 'save_honoraire.php',
+                method: 'POST',
+                dataType: 'json',
+                data: { fiche_id: ficheId },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        console.log('Honoraires sauvegardés avec succès');
+                    } else {
+                        console.log('Erreur lors de la sauvegarde des honoraires: ' + response.message);
+                    }
+                },
+                error: function() {
+                    console.log('Erreur lors de la sauvegarde des honoraires');
                 }
             });
         }
