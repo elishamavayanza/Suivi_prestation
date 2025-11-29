@@ -1,4 +1,5 @@
 <?php
+global $pdo;
 session_start();
 if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Chefdesection') {
     header("Location: ../../login.php");
@@ -36,15 +37,14 @@ if (isset($_GET['id'])) {
         if (empty($ficheDetails)) {
             die("Fiche de prestation non trouvée.");
         }
-        
-        // Utiliser les informations de la première ligne pour l'en-tête
+// Utiliser les informations de la première ligne pour l'en-tête
         $fiche = $ficheDetails[0];
         
     } catch (PDOException $e) {
         die("Erreur lors de la récupération des données : " . $e->getMessage());
     }
 } else {
-    die("ID de fiche non spécifié.");
+die("ID de fiche non spécifié.");
 }
 ?>
 
@@ -63,7 +63,7 @@ if (isset($_GET['id'])) {
             }
             body {
                 font-size: 12px;
-            }
+}
             table {
                 font-size: 11px;
             }
@@ -75,7 +75,7 @@ if (isset($_GET['id'])) {
         }
         
         .header {
-            text-align: center;
+            text-align:center;
             margin-bottom: 20px;
             border-bottom: 2px solid #333;
             padding-bottom: 10px;
@@ -87,9 +87,9 @@ if (isset($_GET['id'])) {
         }
         
         .info-grid {
-            display: grid;
+           display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+gap: 10px;
             margin-bottom: 20px;
         }
         
@@ -99,11 +99,11 @@ if (isset($_GET['id'])) {
         
         .info-label {
             font-weight: bold;
-            display: inline-block;
+            display:inline-block;
             width: 150px;
         }
         
-        table {
+        table{
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
@@ -111,7 +111,7 @@ if (isset($_GET['id'])) {
         
         th, td {
             border: 1px solid #333;
-            padding: 8px;
+            padding:8px;
             text-align: left;
         }
         
@@ -123,12 +123,12 @@ if (isset($_GET['id'])) {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
-            margin-top: 40px;
+            margin-top:40px;
         }
         
         .signature-box {
             text-align: center;
-            padding: 20px;
+padding: 20px;
         }
         
         .actions {
@@ -140,7 +140,7 @@ if (isset($_GET['id'])) {
             padding: 10px 20px;
             margin: 0 10px;
             border: none;
-            border-radius: 4px;
+border-radius: 4px;
             cursor: pointer;
         }
         
@@ -158,8 +158,7 @@ if (isset($_GET['id'])) {
 <body>
     <div class="actions no-print">
         <button class="btn btn-primary" onclick="window.print()">
-            <i class="fas fa-print"></i> Imprimer la fiche
-        </button>
+            <i class="fas fa-print"></i> Imprimer la fiche</button>
         <button class="btn btn-secondary" onclick="window.close()">
             <i class="fas fa-times"></i> Fermer
         </button>
@@ -167,20 +166,20 @@ if (isset($_GET['id'])) {
     
     <div class="header">
         <h1>FICHE DE PRESTATION</h1>
-        <p>INSTITUT SUPERIEUR PEDAGOGIQUE DE MUHANGI/BUTEMBO</p>
+       <p>INSTITUT SUPERIEUR PEDAGOGIQUE DE MUHANGI/BUTEMBO</p>
     </div>
     
     <div class="info-grid">
         <div class="info-item">
             <span class="info-label">Enseignant :</span>
-            <?php echo htmlspecialchars($fiche['enseignant_nom'] . ' ' . $fiche['enseignant_postnom'] . ' ' . $fiche['enseignant_prenom']); ?>
+            <?php echo htmlspecialchars($fiche['enseignant_nom'] . ' ' . $fiche['enseignant_postnom']. ' ' . $fiche['enseignant_prenom']); ?>
         </div>
         <div class="info-item">
             <span class="info-label">Cours :</span>
             <?php echo htmlspecialchars($fiche['cours_nom']); ?>
         </div>
         <div class="info-item">
-            <span class="info-label">Section :</span>
+<span class="info-label">Section :</span>
             <?php echo htmlspecialchars($fiche['section_nom']); ?>
         </div>
         <div class="info-item">
@@ -193,18 +192,17 @@ if (isset($_GET['id'])) {
         </div>
         <div class="info-item">
             <span class="info-label">Total Heures :</span>
-            <?php 
-            $totalHours = array_sum(array_column($ficheDetails, 'nbreH'));
+            <?php$totalHours = array_sum(array_column($ficheDetails, 'nbreH'));
             echo htmlspecialchars($totalHours) . ' heures';
             ?>
         </div>
     </div>
     
     <table>
-        <thead>
+<thead>
             <tr>
                 <th>Date</th>
-                <th>Contenu du cours</th>
+                <th>Contenudu cours</th>
                 <th>Heure Entrée</th>
                 <th>Heure Sortie</th>
                 <th>Nbre H</th>
@@ -212,7 +210,7 @@ if (isset($_GET['id'])) {
                 <th>Signature Enseignant</th>
             </tr>
         </thead>
-        <tbody>
+       <tbody>
             <?php foreach ($ficheDetails as $detail): ?>
             <tr>
                 <td><?php echo htmlspecialchars($detail['datejoure']); ?></td>
@@ -220,7 +218,7 @@ if (isset($_GET['id'])) {
                 <td><?php echo htmlspecialchars($detail['heureEntree']); ?></td>
                 <td><?php echo htmlspecialchars($detail['heureSortie']); ?></td>
                 <td><?php echo htmlspecialchars($detail['nbreH']); ?></td>
-                <td><?php echo htmlspecialchars($detail['signatureCP']); ?></td>
+                <td><?phpecho htmlspecialchars($detail['signatureCP']); ?></td>
                 <td><?php echo htmlspecialchars($detail['signatureEnseignant']); ?></td>
             </tr>
             <?php endforeach; ?>
@@ -229,7 +227,7 @@ if (isset($_GET['id'])) {
     
     <div class="signatures">
         <div class="signature-box">
-            <p>Signature du Chef de Prestation</p>
+           <p>Signature du Chef de Prestation</p>
             <br><br>
             <p>........................................</p>
         </div>
@@ -244,9 +242,9 @@ if (isset($_GET['id'])) {
         <button class="btn btn-primary" onclick="window.print()">
             <i class="fas fa-print"></i> Imprimer la fiche
         </button>
-        <button class="btn btn-secondary" onclick="window.close()">
+        <button class="btn btn-secondary"onclick="window.close()">
             <i class="fas fa-times"></i> Fermer
-        </button>
+       </button>
     </div>
 </body>
 </html>

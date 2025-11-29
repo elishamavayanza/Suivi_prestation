@@ -6,6 +6,36 @@ if (!isset($_SESSION['username']) || ($_SESSION['role'] != 'Academique' && $_SES
 }
 
 include '../config/connexion.php';
+
+// Récupérer les statistiques depuis la base de données
+$fiches_a_valider = 0;
+$fiches_validees = 0;
+$fiches_envoyees = 0;
+$enseignants_actifs = 0;
+
+try {
+    // Compter les fiches à valider (statut = 'en_attente')
+    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM entetefiche WHERE statut = 'en_attente'");
+    $stmt->execute();
+    $fiches_a_valider = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
+
+    // Compter les fiches validées (statut = 'valide')
+    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM entetefiche WHERE statut = 'valide'");
+    $stmt->execute();
+    $fiches_validees = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
+
+    // Compter les fiches envoyées (statut = 'envoye')
+    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM entetefiche WHERE statut = 'envoye'");
+    $stmt->execute();
+    $fiches_envoyees = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
+
+    // Compter les enseignants actifs
+    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM enseignant");
+    $stmt->execute();
+    $enseignants_actifs = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
+} catch (PDOException $e) {
+    echo "Erreur lors de la récupération des statistiques: " . $e->getMessage();
+}
 ?>
 
 <!DOCTYPE html>
@@ -75,25 +105,25 @@ include '../config/connexion.php';
                     <div class="action-card">
                         <i class="fas fa-file-invoice"></i>
                         <h3>Fiches à valider</h3>
-                        <p class="badge badge-warning">8 fiches</p>
+                        <p class="badge badge-warning"><?php echo $fiches_a_valider; ?> fiches</p>
                     </div>
                     
                     <div class="action-card">
                         <i class="fas fa-check-circle"></i>
                         <h3>Fiches validées</h3>
-                        <p class="badge badge-success">24 fiches</p>
+                        <p class="badge badge-success"><?php echo $fiches_validees; ?> fiches</p>
                     </div>
                     
                     <div class="action-card">
                         <i class="fas fa-paper-plane"></i>
                         <h3>Fiches envoyées</h3>
-                        <p class="badge badge-info">15 fiches</p>
+                        <p class="badge badge-info"><?php echo $fiches_envoyees; ?> fiches</p>
                     </div>
                     
                     <div class="action-card">
                         <i class="fas fa-users"></i>
                         <h3>Enseignants actifs</h3>
-                        <p class="badge badge-primary">32 enseignants</p>
+                        <p class="badge badge-primary"><?php echo $enseignants_actifs; ?> enseignants</p>
                     </div>
                 </div>
             </div>
