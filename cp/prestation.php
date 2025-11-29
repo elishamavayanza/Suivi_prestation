@@ -45,12 +45,12 @@ $stmt_update->execute([$fiche_id]);
 
 // Récupérer toutes les fiches de prestation
 try {
-    $sql_fiches = "SELECT ef.*, c.nomComplet as cours_nom, u.username as enseignant_nom 
+    $sql_fiches = "SELECT ef.*, c.nomComplet as cours_nom, e.nom as enseignant_nom, e.postnom as enseignant_postnom, e.prenom as enseignant_prenom
                   FROM entetefiche ef 
                   JOIN cours c ON ef.code_cours = c.code_cours 
-                  JOIN users u ON u.username = ef.enseignant
-                  ORDER BY ef.datecreation DESC";
-$stmt_fiches = $pdo->prepare($sql_fiches);
+                  JOIN enseignant e ON ef.matricule_enseignant = e.matriculeEnseignant
+                  ORDER BY ef.id DESC";
+    $stmt_fiches = $pdo->prepare($sql_fiches);
     $stmt_fiches->execute();
     $fiches = $stmt_fiches->fetchAll();
     
@@ -132,7 +132,6 @@ $stmt_fiches = $pdo->prepare($sql_fiches);
                                 <th>Cours</th>
                                 <th>Enseignant</th>
                                 <th>Date</th>
-                                <th>Heures</th>
                                 <th>Statut</th>
                                 <th>Actions</th>
                             </tr>
@@ -143,10 +142,9 @@ $stmt_fiches = $pdo->prepare($sql_fiches);
                                 <tr>
                                     <td><?php echo htmlspecialchars($fiche['id']); ?></td>
                                     <td><?php echo htmlspecialchars($fiche['cours_nom']); ?></td>
-                                    <td><?php echo htmlspecialchars($fiche['enseignant_nom']); ?></td>
+                                    <td><?php echo htmlspecialchars($fiche['enseignant_nom'] . ' ' . $fiche['enseignant_postnom'] . ' ' . $fiche['enseignant_prenom']); ?></td>
                                     <td><?php echo htmlspecialchars(date('d/m/Y', strtotime($fiche['datecreation']))); ?></td>
-                                    <td><?php echo htmlspecialchars($fiche['heure_debut'] . ' - ' . $fiche['heure_fin']); ?></td>
-                                   <td>
+                                    <td>
                                         <?php if ($fiche['statut'] == 'approuvé'): ?>
                                             <span class="status-badge status-approved"><i class="fas fa-check"></i> Approuvé</span>
                                         <?php elseif ($fiche['statut'] == 'envoyé'): ?>
@@ -188,7 +186,7 @@ $stmt_fiches = $pdo->prepare($sql_fiches);
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="7" class="text-center">Aucunefiche de prestation trouvée.</td>
+                                    <td colspan="6" class="text-center">Aucunefiche de prestation trouvée.</td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>
