@@ -1,12 +1,13 @@
 <link rel="stylesheet" href="layout/styles/elegant_footer_improved.css">
 
-    <div class="contaire-footer">
+<div class="container-footer">
     <div class="wrapper row4">
         <div id="footer" class="clear">
             <div class="footer-wrapper">
                 <div class="footer-content">
                     <div class="footer-column">
                         <div class="footer-widget">
+                            <h3>Nous trouver</h3>
                             <figure class="center">
                                 <img class="worldmap-img" src="images/demo/worldmap.png" alt="World Map">
                                 <figcaption>
@@ -20,6 +21,7 @@
 
                     <div class="footer-column">
                         <div class="footer-widget">
+                            <h3>Contact</h3>
                             <address>
                                 ISP-MUHANGI A BUTEMBO<br>
                                 ville de Butembo<br>
@@ -35,7 +37,8 @@
 
                     <div class="footer-column">
                         <div class="footer-widget">
-                            <p class="nospace btmspace-10">Nous suivre</p>
+                            <h3>Rester connecté</h3>
+                            <p class="nospace btmspace-10">Suivez-nous sur les réseaux sociaux</p>
                             <ul class="social-icons">
                                 <li><a class="faicon-twitter" href="#" title="Twitter"><i class="fa fa-twitter"></i></a></li>
                                 <li><a class="faicon-linkedin" href="#" title="LinkedIn"><i class="fa fa-linkedin"></i></a></li>
@@ -78,9 +81,8 @@
 
     <!-- Back to Top Button -->
     <a href="#" class="back-to-top" title="Retour en haut">&uarr;</a>
-
-    </div>
 </div>
+
 <script src="layout/scripts/jquery.min.js"></script>
 <script src="layout/scripts/jquery.fitvids.min.js"></script>
 <script src="layout/scripts/jquery.mobilemenu.js"></script>
@@ -110,7 +112,7 @@
             backToTopButton.classList.remove('visible');
         }
     });
-
+    
     backToTopButton.addEventListener('click', (e) => {
         e.preventDefault();
         window.scrollTo({
@@ -144,6 +146,3 @@
                         console.log('Fermeture. ', this.returnValue);
                 });
         </script>
-
-</body>
-</html>
