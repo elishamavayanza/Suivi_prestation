@@ -1,42 +1,46 @@
 <?php 
 include("config.php");
-    if(!empty($_POST['sigle'])){
-        $code =$_POST['codedepart'];
-        $sigle = $_POST['sigle'];
-        $denomination = $_POST['nomComplet'];
-        $description = $_POST['description'];
-        $dt = $_POST['dtcreation'];
-        try{
-    $sql ="insert into promotion( `sigle_promotion`, `nomComplet`, `code_mention`, `description`, `dtcreation`) values ('$sigle','$denomination','$code','$description','$dt')";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute(array());
-   if($stmt){
-     echo "
-        <script>
-            alert(' Enregistrement reussi !');
-            window.location.href='../admin/index.php';
-        </script>      
-    ";
-   }else {
-            echo "
-        <script> 
-            alert('Enregistrement echoue ! ! ');
-            window.location.href='../admin/promotion.php';
-        </script>
-    ";
-   }   
-} catch(PDOException $ex){
-    echo "
-        <script> 
-            alert('une erreur est survenue ');
-            window.location.href='../admin/promotion.php';
-        </script>
-    ";
-}
-    } else {
-        print("Try again ");
-    }
+
+if(!empty($_POST['sigle']) && !empty($_POST['codedepart']) && !empty($_POST['nomComplet']) && !empty($_POST['description']) && !empty($_POST['dtcreation'])){
+    $code_mention = $_POST['codedepart'];
+    $sigle = $_POST['sigle'];
+    $denomination = $_POST['nomComplet'];
+    $description = $_POST['description'];
+    $dt = $_POST['dtcreation'];
     
-    function MessageAlert($message){
-        echo "<script>alert('$message');</script>";
+    try{
+        $sql = "INSERT INTO promotion(`sigle_promotion`, `nomComplet`, `code_mention`, `description`, `dtcreation`) VALUES (?, ?, ?, ?, ?)";
+        $stmt = $pdo->prepare($sql);
+        $result = $stmt->execute([$sigle, $denomination, $code_mention, $description, $dt]);
+        
+        if($result){
+            echo "
+            <script>
+                alert('Enregistrement réussi !');
+                window.location.href='../admin/promotion.php';
+            </script>";   
+        } else {
+            echo "
+            <script> 
+                alert('Échec d\\'enregistrement !');
+                window.location.href='../admin/promotion.php';
+            </script>";
+        }   
+    } catch(PDOException $ex){
+        echo "
+            <script> 
+                alert('Une erreur est survenue : " . addslashes($ex->getMessage()) . "');
+                window.location.href='../admin/promotion.php';
+            </script>";
     }
+} else {
+    echo "
+    <script>
+        alert('Veuillez remplir tous les champs !');
+        window.location.href='../admin/promotion.php';
+    </script>";
+}
+
+function MessageAlert($message){
+    echo "<script>alert('$message');</script>";
+}
