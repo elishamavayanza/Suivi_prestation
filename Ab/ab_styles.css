@@ -1,35 +1,30 @@
 /* AB Interface Styles - Applying Admin Interface Colors to Academic Interface */
 
 :root {
-    --primary-color: #2c3e50;
-    --secondary-color: #34495e;
-    --accent-color: #3498db;
-    --success-color: #2ecc71;
-    --warning-color: #f39c12;
-    --danger-color: #e74c3c;
-    --info-color: #9b59b6;
-    --light-color: #ecf0f1;
-    --dark-color: #34495e;
-    --border-color: #bdc3c7;
-    --sidebar-width: 280px;
-    --header-height: 80px;
-    --transition-speed: 0.3s;
-    --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    --hover-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  --primary-color: #2c3e50;
+  --secondary-color: #3498db;
+  --accent-color: #1abc9c;
+  --success-color: #2ecc71;
+  --warning-color: #f39c12;
+  --danger-color: #e74c3c;
+  --dark-color: #34495e;
+  --light-color: #ecf0f1;
+  --border-color: #bdc3c7;
+  --sidebar-width: 250px;
+  --header-height: 60px;
 }
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
-    background-color: #f5f7fa;
-    color: #333;
-    overflow-x: hidden;
-    line-height: 1.6;
+  background-color: #f5f7fa;
+  color: #333;
+  overflow-x: hidden;
 }
 
 /* Header Styles */
@@ -87,16 +82,16 @@ body {
 
 /* Sidebar Navigation */
 .ab-sidebar {
-    width: var(--sidebar-width);
-    background: linear-gradient(to bottom, var(--primary-color), #1a2530);
-    color: white;
-    position: fixed;
-    height: calc(100vh - var(--header-height));
-    overflow-y: auto;
-    transition: all var(--transition-speed);
-    z-index: 999;
-    margin-top: var(--header-height);
-    box-shadow: 3px 0 20px rgba(0,0,0,0.15);
+  width: var(--sidebar-width);
+  background: var(--dark-color);
+  color: white;
+  position: fixed;
+  height: calc(100vh - var(--header-height));
+  overflow-y: auto;
+  transition: all 0.3s ease;
+  z-index: 999;
+  margin-top: var(--header-height);
+  top: 0;
 }
 
 .ab-sidebar-header {
@@ -106,7 +101,7 @@ body {
   border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
-.ab-sidebar-headerimg {
+.ab-sidebar-header img {
   width: 80px;
   height: 80px;
   border-radius: 50%;
@@ -259,13 +254,35 @@ body {
 }
 
 .stat-icon {
-  display: none;
+  font-size: 2rem;
+  margin-bottom: 15px;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin: 0 auto 15px;
+  color: white;
+}
+
+.stat-icon.horaires {
+  background: var(--accent-color);
+}
+
+.stat-icon.charges {
+  background: var(--warning-color);
+}
+
+.stat-icon.prestations {
+  background: var(--success-color);
 }
 
 .stat-value {
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 5px;
+  color: var(--dark-color);
 }
 
 .stat-label {
@@ -384,12 +401,12 @@ body {
 .btn-outline {
   background: transparent;
   border: 1px solid var(--border-color);
-  color: var(--dark-color);
+  color: #333;
 }
 
 .btn-outline:hover {
-  background: var(--light-color);
-  border-color: var(--secondary-color);
+  background: #f8f9fa;
+  border-color: #95a5a6;
 }
 
 .btn-sm {
@@ -480,6 +497,51 @@ td {
   padding: 12px 20px;
 }
 
+.table-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.status-badge {
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.status-badge.status-approved {
+  background: #e8f8f5;
+  color: #1abc9c;
+}
+
+.status-badge.status-pending {
+  background: #fef9e7;
+  color: #f39c12;
+}
+
+.status-badge.status-completed {
+  background: #eafaf1;
+  color: #27ae60;
+}
+
+.status-pending {
+  background: #fef9e7;
+  color: #f39c12;
+}
+
+.status-approved {
+  background: #e8f8f5;
+  color: #1abc9c;
+}
+
+.status-completed {
+  background: #eafaf1;
+  color: #27ae60;
+}
+
 /* Alerts */
 .section-chief-alert {
   padding: 15px;
@@ -512,12 +574,51 @@ td {
   border: 1px solid #bee5eb;
 }
 
-/* Actions*/
+/* Action Buttons */
 .section-chief-actions {
   display: flex;
+  gap: 1rem;
   flex-wrap: wrap;
-  gap: 15px;
   margin: 20px 0;
+  justify-content: center;
+}
+
+/* Alerts */
+.section-chief-alert {
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-chief-alert i {
+  font-size: 1.2rem;
+}
+
+.section-chief-alert-success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.section-chief-alert-danger {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.section-chief-alert-info {
+  background: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid #bee5eb;
+}
+
+.section-chief-alert-warning {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
 }
 
 @media (max-width: 992px) {
@@ -578,10 +679,6 @@ td {
     gap: 10px;
   }
   
-  .section-chief-actions {
-    flex-direction: column;
-  }
-  
   /* Pour les très grandes tables, permettre le défilement horizontal */
   .section-chief-table {
     overflow-x: auto;
@@ -589,6 +686,14 @@ td {
   
   .section-chief-table table {
     min-width: 800px;
+  }
+  
+  .section-chief-actions {
+    flex-direction: column;
+  }
+  
+  .section-chief-actions .btn {
+    width: 100%;
   }
 }
 
@@ -608,4 +713,82 @@ td {
   .menu-toggle {
     display: block;
   }
+}
+
+/* Utility Classes */
+.text-center {
+  text-align: center;
+}
+
+.mt-20 {
+  margin-top: 20px;
+}
+
+.mb-20 {
+  margin-bottom: 20px;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25em 0.4em;
+  font-size: 75%;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.25rem;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.badge-primary {
+  color: #fff;
+  background-color: var(--primary-color);
+}
+
+.badge-success {
+  color: #fff;
+  background-color: var(--success-color);
+}
+
+.badge-warning {
+  color: #212529;
+  background-color: var(--warning-color);
+}
+
+/* Ligne sélectionnée dans les tableaux */
+tbody tr.selected {
+  background-color: #d1e7ff !important;
+}
+
+/* Alertes */
+.alert {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+.alert-success {
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}
+
+.alert-danger {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
 }

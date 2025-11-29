@@ -65,7 +65,7 @@ try {
         <!-- Sidebar Navigation -->
         <div class="ab-sidebar">
             <div class="ab-sidebar-header">
-                <div class="user-avatar"><?php echo substr($_SESSION['username'], 0, 1); ?></div>
+                <img src="../image/logo.jpg" alt="Logo">
                 <h2><?php echo $_SESSION['username']; ?></h2>
                 <p>Administrateur Budget</p>
             </div>
