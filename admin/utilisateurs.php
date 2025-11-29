@@ -93,11 +93,11 @@ $message = "Utilisateur ajouté avec succès.";
 
 <main class="main-content">
     <style>
-.btn-small {
+        .btn-small {
             padding: 5px 10px;
             font-size: 0.85rem;
             border-radius: 3px;
-}
+        }
         
         .btn-edit {
             background-color: #3498db;
@@ -111,7 +111,7 @@ $message = "Utilisateur ajouté avec succès.";
         }
         
         .btn-danger {
-background-color: #e74c3c;
+            background-color: #e74c3c;
             color: white;
             border: none;
             text-decoration: none;
@@ -128,7 +128,7 @@ background-color: #e74c3c;
             z-index: 1000;
             left: 0;
             top: 0;
-width: 100%;
+            width: 100%;
             height: 100%;
             background-color: rgba(0,0,0,0.4);
         }
@@ -137,7 +137,7 @@ width: 100%;
             background-color: #fefefe;
             margin: 10% auto;
            padding: 20px;
-border: 1px solid #888;
+            border: 1px solid #888;
             width: 50%;
             border-radius: 5px;
            position: relative;
@@ -166,67 +166,198 @@ border: 1px solid #888;
                 width: 90%;
             }
         }
+        
+        /* Style pour le menu d'ajout d'utilisateur */
+        .user-menu {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--dark-color);
+        }
+        
+        .menu-header h3 {
+            margin: 0;
+        }
+        
+        .toggle-form {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .toggle-form:hover {
+            background: #2980b9;
+        }
+        
+        .form-container {
+            display: none;
+        }
+        
+        .form-container.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px;
+        }
+        
+        .form-col {
+            flex: 1;
+            padding: 0 10px;
+            min-width: 250px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn i {
+            margin-right: 8px;
+        }
+        
+        .btn-primary {
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+        }
     </style>
     <div class="content-header">
-<h2>Gestion des Utilisateurs</h2>
+        <h2>Gestion des Utilisateurs</h2>
         <ul class="breadcrumb">
-<li><a href="index.php">Accueil</a></li>
+            <li><a href="index.php">Accueil</a></li>
             <li>Gérer les Utilisateurs</li>
         </ul>
     </div>
     
-<?php if ($message): ?>
-<div class="alert alert-<?php echo $message_type; ?>">
+    <?php if ($message): ?>
+    <div class="alert alert-<?php echo $message_type; ?>">
         <?php echo $message; ?>
     </div>
     <?php endif; ?>
     
-    <div class="admin-form">
-        <h3 class="form-title">Ajouter un nouvel utilisateur</h3>
-        <form method="POST" action="">
-            <div class="form-row">
-                <div class="form-group">
-<label for="matricule">Matricule</label>
-                    <input type="text" id="matricule" name="matricule" required class="form-control">
-               </div>
-                <div class="form-group">
-                    <label for="username">Nom d'utilisateur</label>
-<input type="text" id="username" name="username" required class="form-control">
+    <div class="user-menu">
+        <div class="menu-header">
+            <h3>Ajouter un nouvel utilisateur</h3>
+            <button class="toggle-form" id="toggleForm">
+                <i class="fas fa-chevron-down"></i> Afficher le formulaire
+            </button>
+        </div>
+        <div class="form-container" id="formContainer">
+            <form method="POST" action="">
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="matricule">Matricule</label>
+                            <input type="text" id="matricule" name="matricule" required class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="username">Nom d'utilisateur</label>
+                            <input type="text" id="username" name="username" required class="form-control">
+                        </div>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="password">Mot de passe</label>
-                    <input type="password" id="password" name="password" required class="form-control">
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="password">Mot de passe</label>
+                            <input type="password" id="password" name="password" required class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="role">Rôle</label>
+                            <select id="role" name="role" required class="form-control">
+                                <option value="">Sélectionner unrôle</option>
+                                <option value="admin">Administrateur</option>
+                                <option value="etudiant">Étudiant</option>
+                                <option value="enseignant">Enseignant</option>
+                                <option value="Chefpromotion">Chef de Promotion</option>
+                                <option value="Chefdesection">Chef de Section</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
+                
                 <div class="form-group">
-                    <label for="role">Rôle</label>
-                    <select id="role" name="role" required class="form-control">
-                        <option value="">Sélectionner unrôle</option>
-                        <option value="admin">Administrateur</option>
-                        <option value="etudiant">Étudiant</option>
-                        <option value="enseignant">Enseignant</option>
-                        <option value="Chefpromotion">Chef de Promotion</option>
-                        <option value="Chefdesection">Chef de Section</option>
-                    </select>
+                    <button type="submit" name="add_user" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Ajouter l'utilisateur
+                    </button>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <button type="submit" name="add_user" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Ajouter l'utilisateur</button>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
     
     <div class="admin-table mt-20">
         <h3 class="form-title">Liste des utilisateurs</h3>
         <table>
-<thead>
+            <thead>
                 <tr>
                     <th>ID</th>
-<th>Matricule</th>
+                    <th>Matricule</th>
                     <th>Nom d'utilisateur</th>
                     <th>Rôle</th>
                     <th>Actions</th>
@@ -234,14 +365,14 @@ border: 1px solid #888;
             </thead>
             <tbody>
                 <?php while ($user = mysqli_fetch_assoc($users_result)): ?>
-               <tr>
+                <tr>
                     <td><?php echo htmlspecialchars($user['id']); ?></td>
                     <td><?php echo htmlspecialchars($user['matricule']); ?></td>
                     <td><?php echo htmlspecialchars($user['username']); ?></td>
-                   <td><?php echo htmlspecialchars($user['role']); ?></td>
-<td>
+                    <td><?php echo htmlspecialchars($user['role']); ?></td>
+                    <td>
                         <button class="btn btn-small btn-edit" onclick="editUser(<?php echo $user['id']; ?>, '<?php echo htmlspecialchars($user['matricule']); ?>', '<?php echo htmlspecialchars($user['username']);?>', '<?php echo htmlspecialchars($user['role']); ?>')">
-<i class="fas fa-edit"></i> Modifier
+                            <i class="fas fa-edit"></i> Modifier
                         </button>
                         <a href="?delete=<?php echo $user['id']; ?>" class="btn btn-small btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')">
                             <i class="fas fa-trash"></i> Supprimer
@@ -264,34 +395,35 @@ border: 1px solid #888;
             
             <div class="form-group">
                 <label for="edit_matricule">Matricule</label>
-                <input type="text" id="edit_matricule" name="matricule" required>
+                <input type="text" id="edit_matricule" name="matricule" required class="form-control">
             </div>
             
             <div class="form-group">
                 <label for="edit_username">Nom d'utilisateur</label>
-                <input type="text"id="edit_username" name="username" required>
+                <input type="text"id="edit_username" name="username" required class="form-control">
             </div>
             
             <div class="form-group">
                 <label for="edit_password">Nouveau mot de passe (laisser vide pour ne pas changer)</label>
-                <input type="password" id="edit_password" name="password">
+                <input type="password" id="edit_password" name="password" class="form-control">
             </div>
             
             <div class="form-group">
                 <label for="edit_role">Rôle</label>
-                <select id="edit_role" name="role" required>
+                <select id="edit_role" name="role" required class="form-control">
                     <option value="">Sélectionner un rôle</option>
                     <option value="admin">Administrateur</option>
                     <option value="etudiant">Étudiant</option>
                     <option value="enseignant">Enseignant</option>
                     <option value="Chefpromotion">Chef de Promotion</option>
-                   <option value="Chefdesection">Chef de Section</option>
+                    <option value="Chefdesection">Chef de Section</option>
                 </select>
             </div>
             
             <div class="form-group">
                 <button type="submit" name="edit_user" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Enregistrer lesmodifications</button>
+                    <i class="fas fa-save"></i> Enregistrer les modifications
+                </button>
                 <button type="button" class="btn btn-secondary" id="cancelEdit">
                     <i class="fas fa-times"></i> Annuler
                 </button>
@@ -301,7 +433,7 @@ border: 1px solid #888;
 </div>
 
 <script>
-    // Fonction pour ouvrirle modal d'édition
+    // Fonction pour ouvrir le modal d'édition
     function editUser(id, matricule, username, role) {
         document.getElementById('edit_id').value = id;
         document.getElementById('edit_matricule').value = matricule;
@@ -309,7 +441,7 @@ border: 1px solid #888;
         document.getElementById('edit_role').value = role;
         
         document.getElementById('editModal').style.display = 'block';
-   }
+    }
     
     // Fermer le modal
     document.addEventListener('DOMContentLoaded', function() {
@@ -330,6 +462,20 @@ border: 1px solid #888;
                 modal.style.display = 'none';
             }
         }
+        
+        // Toggle form visibility
+        var toggleButton = document.getElementById('toggleForm');
+        var formContainer = document.getElementById('formContainer');
+        var icon = toggleButton.querySelector('i');
+        
+        toggleButton.addEventListener('click', function() {
+            formContainer.classList.toggle('active');
+            if (formContainer.classList.contains('active')) {
+                toggleButton.innerHTML = '<i class="fas fa-chevron-up"></i> Masquer le formulaire';
+            } else {
+                toggleButton.innerHTML = '<i class="fas fa-chevron-down"></i> Afficher le formulaire';
+            }
+        });
     });
 </script>
 
