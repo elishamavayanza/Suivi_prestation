@@ -313,6 +313,18 @@ try {
                     <div class="value"><?php echo htmlspecialchars($fiche['cours_heures']); ?></div>
                     <div>heures prévues</div>
                 </div>
+                
+                <div class="stat-item">
+                    <h4>% Réalisation</h4>
+                    <div class="value">
+                        <?php 
+                        $total_heures = array_sum(array_column($details, 'nbreH'));
+                        $pourcentage = ($fiche['cours_heures'] > 0) ? round(($total_heures / $fiche['cours_heures']) * 100, 1) : 0;
+                        echo $pourcentage;
+                        ?>%
+                    </div>
+                    <div>du programme</div>
+                </div>
             </div>
             
             <!-- Détails des prestations -->
@@ -335,7 +347,11 @@ try {
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($details as $detail): ?>
+                            <?php 
+                            $total_heures_cours = 0;
+                            foreach ($details as $detail): 
+                                $total_heures_cours += $detail['nbreH'];
+                            ?>
                             <tr>
                                 <td><?php echo htmlspecialchars(date('d/m/Y', strtotime($detail['datejoure']))); ?></td>
                                 <td><?php echo htmlspecialchars($detail['contenu']); ?></td>
@@ -346,6 +362,11 @@ try {
                                 <td><?php echo htmlspecialchars($detail['signatureEnseignant']); ?></td>
                             </tr>
                             <?php endforeach; ?>
+                            <tr style="background-color: #e9f7fe; font-weight: bold;">
+                                <td colspan="4" style="text-align: right;">Total heures :</td>
+                                <td><?php echo $total_heures_cours; ?></td>
+                                <td colspan="2"></td>
+                            </tr>
                         </tbody>
                     </table>
                 <?php else: ?>
