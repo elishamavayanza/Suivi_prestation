@@ -5,45 +5,45 @@ include("../script/connexion.php");
 		$pro=mysqli_query($con,"SELECT * FROM promotion");
 		$ens =mysqli_query($con,"SELECT * FROM enseignant");
 $admin= isset($_SESSION['Admin']);
+
+// Fonction pour créer une nouvelle année universitaire
+function creerNouvelleAnnee($con) {
+    // Vérifier si une année existe déjà pour l'année en cours
+    $current_year = date('Y');
+    $next_year = $current_year + 1;
+    $annee_description = $current_year . "-" . $next_year;
+    
+    // Vérifier si cette année existe déjà
+    $check_query = mysqli_query($con, "SELECT * FROM annee WHERE description = '$annee_description'");
+    
+    if(mysqli_num_rows($check_query) == 0) {
+        // Créer la nouvelle année (du 15 septembre de l'année en cours au 15 juillet de l'année suivante)
+        $date_debut = $current_year . "-09-15";
+        $date_fin = $next_year . "-07-15";
+        
+        $insert_query = "INSERT INTO annee(dt_debut, dt_fin, description) VALUES('$date_debut', '$date_fin', '$annee_description')";
+        mysqli_query($con, $insert_query);
+    }
+}
+
 if(isset($_POST['ajouter'])){
-	
-				#include("connexion_inscription.php");
-				if(mysqli_query($con,"INSERT INTO horaire(idcours,jourheure,codemention,codepromotion,enseignant,site,periode,observation,datejour) VALUES('".$_POST['cours']."','".$_POST['jour']."','".$_POST['dep']."','".$_POST['pro']."','".$_POST['enseignant']."','".$_POST['site']."','".$_POST['periode']."','".$_POST['observation']."','".$_POST['dte']."')")){
-					echo "<script>alert('Horaire postee  avec succes');</script>;";
-				}else
-				{
-					echo "<center>".mysqli_error($con)."</center>";
-				}
+    // Créer automatiquement une nouvelle année lors de l'ajout d'un horaire
+    creerNouvelleAnnee($con);
+    
+    if(mysqli_query($con,"INSERT INTO horaire(idcours,jourheure,codemention,codepromotion,enseignant,site,periode,observation,datejour) VALUES('".$_POST['cours']."','".$_POST['jour']."','".$_POST['dep']."','".$_POST['pro']."','".$_POST['enseignant']."','".$_POST['site']."','".$_POST['periode']."','".$_POST['observation']."','".$_POST['dte']."')")){
+        echo "<script>alert('Horaire postee  avec succes');</script>;";
+        echo "<script>window.location.href='../admin/horaire.php';</script>";
+    }else
+    {
+        echo "<center>".mysqli_error($con)."</center>";
+    }
 }
-if(isset($_POST['modifier'])){
-	if(isset($_FILES['photo']) && !empty($_FILES['photo'])){
-		$dossier="PiecesJointes/";
-		$fichier=basename($_FILES['photo']['name']);
-		if(move_uploaded_file($_FILES['photo']['tmp_name'],$dossier.$fichier))
-				{
-				$photo=$_FILES['photo']['name'];
-				}
-				else
-				{
-			    $photo=$_POST['photo2'];
-				}
-								
-	}else{
-		$photo=$_POST['photo2'];
-		
-	}
-				include("../script/connexion.php");
-				if(mysqli_query($con,"UPDATE  tbpublication set Titre='".$_POST['tit']."', Categorie='".$_POST['cat2']."',Contenu='".$_POST['cont']."',FichierJoint='".$photo."' WHERE Id=" .$_POST['id'])){
-					echo "<script>alert('Publication modifiee avec succes');</script>;";
-				}else
-				{
-					echo "<center>".mysqli_error($con)."</center>";
-				}
-}
+
 if(isset($_GET['supp'])){
 	include("../script/connexion.php");
-	if(mysqli_query($con,"DELETE FROM tbpublication WHERE Id=".$_GET['supp'])){
+	if(mysqli_query($con,"DELETE FROM horaire WHERE idhoraire=".$_GET['supp'])){
 		echo "<script>alert('Supprimé avec succees');</script>;";
+        echo "<script>window.location.href='../admin/horaire.php';</script>";
 	}else{
 		echo "<center>".mysqli_error($con)."</center>";
 	}
@@ -81,17 +81,10 @@ if(isset($_GET['supp'])){
 
 <h1> second form </h1 -->
     <!-- =============================================== -->
-		<?php if(isset($_GET['modif']))
-		{
-			//include("connexion_inscription.php");
-			$query=mysqli_query($con,"SELECT * FROM horaire WHERE Id=".$_GET['modif']);
-			$res=mysqli_fetch_array($query);
-		}	
-		?>
 
      <nav class="sdb_holder ">
 		<div class="formulaire">
-		 <form action="../formulaire/formhoraire.php" method="POST" enctype="multipart/form-data">
+		 <form action="" method="POST" enctype="multipart/form-data">
             
               <div class="form-group">
                   <label for="name">Cours</label>
@@ -154,12 +147,12 @@ if(isset($_GET['supp'])){
               
               <div class="form-group">
                   <label for="jour">Desc. Jour et Heure</label>
-                  <textarea name="jour" id="jour" class="form-control" cols="25" rows="3"><?php if(isset($_GET['modif'])) echo $res['Contenu'];?></textarea>
+                  <textarea name="jour" id="jour" class="form-control" cols="25" rows="3"></textarea>
               </div>
               
               <div class="form-group">
                   <label for="dte">Date</label>
-                  <input type="date" name="dte" id="dte" class="form-control" value="<?php if(isset($_GET['modif'])) echo $res['Titre'];?>" size="25">
+                  <input type="date" name="dte" id="dte" class="form-control" size="25">
               </div>
               
               <div class="form-group">
@@ -177,32 +170,18 @@ if(isset($_GET['supp'])){
               
               <div class="form-group">
                   <label for="site">Site</label>
-                  <input type="text" name="site" id="site" class="form-control" value="<?php if(isset($_GET['modif'])) echo $res['Titre'];?>" size="25">
+                  <input type="text" name="site" id="site" class="form-control" size="25">
               </div>
 			  
               <div class="form-group">
                   <label for="observation">Observation</label>
-                  <textarea name="observation" id="observation" class="form-control" cols="100" rows="5"><?php if(isset($_GET['modif'])) echo $res['Contenu'];?></textarea>
+                  <textarea name="observation" id="observation" class="form-control" cols="100" rows="5"></textarea>
               </div>
 			
-			 <?php if(isset($_GET['modif'])) 
-			 {
-			 ?>
-           
-              <div class="form-group">
-                  <input type="submit" name="modifier" id="modifier" class="btn btn-primary" value="Modifier">
-              </div>
-            
-			<?php
-			 }else{
-				  ?>
               <div class="form-group">
                   <button type="submit" name="ajouter" id="ajouter" class="btn btn-success">Ajouter</button>
               </div>
             
-			<?php
-			 }
-			?>
            </form>
 		</div>
     </nav>
