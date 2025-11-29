@@ -9,7 +9,7 @@ $promotions = mysqli_query($con, "SELECT * FROM promotion");
 ?>
 
 <div class="formulaire">
-    <form id="inscriptionForm" action="../script/inscrire.php" method="POST">
+    <form id="inscriptionForm" action="../script/addinscription.php" method="POST">
         <div class="form-row">
             <div class="form-col">
                 <label for="Section">Section :</label>
@@ -59,6 +59,10 @@ $promotions = mysqli_query($con, "SELECT * FROM promotion");
             <div class="form-col">
                 <label for="dtinscription">Date d'inscription :</label>
                 <input type="date" id="dtinscription" name="dtinscription" class="form-control" required>
+                <script>
+                    // Définir la date d'aujourd'hui par défaut
+                    document.getElementById('dtinscription').valueAsDate = new Date();
+                </script>
             </div>
             
             <div class="form-col">
