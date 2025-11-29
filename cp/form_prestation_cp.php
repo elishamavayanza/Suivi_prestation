@@ -186,6 +186,25 @@ try {
                         </div>
                         
                         <div class="form-col">
+                            <label for="date_debut"><i class="fas fa-calendar-start"></i> Date de début prévue:</label>
+                            <input type="date" name="date_debut" id="date_debut" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <label for="date_fin"><i class="fas fa-calendar-check"></i> Date de fin prévue:</label>
+                            <input type="date" name="date_fin" id="date_fin" class="form-control">
+                        </div>
+                        
+                        <div class="form-col">
+                            <label for="objectifs"><i class="fas fa-bullseye"></i> Objectifs du cours:</label>
+                            <textarea name="objectifs" id="objectifs" class="form-control" placeholder="Objectifs du cours"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
                             <label for="description"><i class="fas fa-align-left"></i> Description:</label>
                             <textarea name="description" id="description" class="form-control" placeholder="Description de la prestation"></textarea>
                         </div>

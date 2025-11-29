@@ -20,13 +20,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $promotion = $_POST['promotion'];
         $volume_horaire = !empty($_POST['volume_horaire']) ? $_POST['volume_horaire'] : null;
         $heures_reelles = !empty($_POST['heures_reelles']) ? $_POST['heures_reelles'] : null;
+        $date_debut = !empty($_POST['date_debut']) ? $_POST['date_debut'] : null;
+        $date_fin = !empty($_POST['date_fin']) ? $_POST['date_fin'] : null;
+        $objectifs = !empty($_POST['objectifs']) ? $_POST['objectifs'] : null;
         $description = !empty($_POST['description']) ? $_POST['description'] : null;
         
         // Insérer la nouvelle fiche de prestation
-        $sql_insert = "INSERT INTO entetefiche (code_cours, matricule_enseignant, code_section, code_mention, code_promotion, volume_horaire_prevu, heures_reelles_prestees, description, datecreation) 
-                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+        $sql_insert = "INSERT INTO entetefiche (code_cours, matricule_enseignant, code_section, code_mention, code_promotion, volume_horaire_prevu, heures_reelles_prestees, date_debut_prevue, date_fin_prevue, objectifs, description, datecreation) 
+                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
         $stmt_insert = $pdo->prepare($sql_insert);
-        $stmt_insert->execute([$cours, $enseignant, $section, $mention, $promotion, $volume_horaire, $heures_reelles, $description]);
+        $stmt_insert->execute([$cours, $enseignant, $section, $mention, $promotion, $volume_horaire, $heures_reelles, $date_debut, $date_fin, $objectifs, $description]);
         
         // Récupérer l'ID de la fiche créée
         $fiche_id = $pdo->lastInsertId();

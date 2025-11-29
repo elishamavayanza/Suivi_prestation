@@ -279,7 +279,28 @@ try {
                         <div class="detail-value"><?php echo htmlspecialchars($fiche['heures_reelles_prestees']); ?> heures</div>
                     </div>
                     <?php endif; ?>
+                    
+                    <?php if (!empty($fiche['date_debut_prevue'])): ?>
+                    <div class="detail-item">
+                        <div class="detail-label">Date de début prévue</div>
+                        <div class="detail-value"><?php echo htmlspecialchars(date('d/m/Y', strtotime($fiche['date_debut_prevue']))); ?></div>
+                    </div>
+                    <?php endif; ?>
+                    
+                    <?php if (!empty($fiche['date_fin_prevue'])): ?>
+                    <div class="detail-item">
+                        <div class="detail-label">Date de fin prévue</div>
+                        <div class="detail-value"><?php echo htmlspecialchars(date('d/m/Y', strtotime($fiche['date_fin_prevue']))); ?></div>
+                    </div>
+                    <?php endif; ?>
                 </div>
+                
+                <?php if (!empty($fiche['objectifs'])): ?>
+                <div class="detail-item">
+                    <div class="detail-label">Objectifs du cours</div>
+                    <div class="detail-value"><?php echo htmlspecialchars($fiche['objectifs']); ?></div>
+                </div>
+                <?php endif; ?>
                 
                 <?php if (!empty($fiche['description'])): ?>
                 <div class="detail-item">
