@@ -1,7 +1,7 @@
 <?php 
     include("config.php");
 
-     if(!empty($_POST['code_cours']) && !empty($_POST['nomComplet']) && !empty($_POST['nbreHeure']) && !empty($_POST['ponderation']) && !empty($_POST['code_mention']) && !empty($_POST['code_section']) && !empty($_POST['promotion']) && !empty($_POST['description'])){
+     if(!empty($_POST['code_cours']) && !empty($_POST['nomComplet']) && !empty($_POST['nbreHeure']) && !empty($_POST['ponderation']) && !empty($_POST['code_mention']) && !empty($_POST['code_section']) && !empty($_POST['promotion']) && !empty($_POST['description']) && !empty($_POST['semestre'])){
         $code = $_POST['code_cours'];
         $denomination =$_POST['nomComplet'];
         $promotion = $_POST['promotion'];
@@ -10,6 +10,7 @@
         $heure = $_POST['nbreHeure'];
         $ponderation = $_POST['ponderation'];
         $description = $_POST['description'];
+        $semestre = $_POST['semestre'];
         
         // Créer automatiquement une année académique
         $current_year = date('Y');
@@ -20,9 +21,9 @@
         
         try{
             // Insérer le cours
-            $sql ="INSERT INTO cours(`code_cours`, `nomComplet`, `nbreHeure`, `ponderation`, `code_mention`, `code_section`, `promotion`, `description`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            $sql ="INSERT INTO cours(`code_cours`, `nomComplet`, `nbreHeure`, `ponderation`, `code_mention`, `code_section`, `promotion`, `description`, `semestre`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $pdo->prepare($sql);
-            $result = $stmt->execute([$code, $denomination, $heure, $ponderation, $mention, $ec, $promotion, $description]);
+            $result = $stmt->execute([$code, $denomination, $heure, $ponderation, $mention, $ec, $promotion, $description, $semestre]);
             
             if($result){
                 // Créer une année académique automatiquement

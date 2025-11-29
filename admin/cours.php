@@ -120,6 +120,17 @@
                     </div>
                     
                     <div class="form-col">
+                        <label for="semestre">Semestre :</label>
+                        <select name="semestre" id="semestre" class="form-control" required>
+                            <option value="">Sélectionner un semestre</option>
+                            <option value="Premier semestre" <?php echo ($editing_cours && $editing_cours['semestre'] == 'Premier semestre') ? 'selected' : ''; ?>>Premier semestre</option>
+                            <option value="Deuxième semestre" <?php echo ($editing_cours && $editing_cours['semestre'] == 'Deuxième semestre') ? 'selected' : ''; ?>>Deuxième semestre</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-col">
                         <label for="description">Description :</label>
                         <input type="text" id="description" name="description" class="form-control" required
                                value="<?php echo $editing_cours ? htmlspecialchars($editing_cours['description']) : ''; ?>">
@@ -148,6 +159,7 @@
                     <th>Nombre d'heures</th>
                     <th>Mention</th>
                     <th>Promotion</th>
+                    <th>Semestre</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -162,6 +174,7 @@
                     <td><?php echo htmlspecialchars($cour['nbreHeure']); ?></td>
                     <td><?php echo htmlspecialchars($cour['mention_nom']); ?></td>
                     <td><?php echo htmlspecialchars($cour['promotion']); ?></td>
+                    <td><?php echo htmlspecialchars($cour['semestre']); ?></td>
                     <td class="table-actions">
                         <a href="cours.php?edit=<?php echo $cour['id']; ?>" class="btn btn-primary">
                             <i class="fas fa-edit"></i> Modifier

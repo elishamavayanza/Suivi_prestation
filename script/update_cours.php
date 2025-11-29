@@ -1,7 +1,7 @@
 <?php 
     include("config.php");
 
-    if(!empty($_POST['id']) && !empty($_POST['code_cours']) && !empty($_POST['nomComplet']) && !empty($_POST['nbreHeure']) && !empty($_POST['ponderation']) && !empty($_POST['code_mention']) && !empty($_POST['code_section']) && !empty($_POST['promotion']) && !empty($_POST['description'])){
+    if(!empty($_POST['id']) && !empty($_POST['code_cours']) && !empty($_POST['nomComplet']) && !empty($_POST['nbreHeure']) && !empty($_POST['ponderation']) && !empty($_POST['code_mention']) && !empty($_POST['code_section']) && !empty($_POST['promotion']) && !empty($_POST['description']) && !empty($_POST['semestre'])){
         $id = $_POST['id'];
         $code = $_POST['code_cours'];
         $denomination =$_POST['nomComplet'];
@@ -11,11 +11,12 @@
         $heure = $_POST['nbreHeure'];
         $ponderation = $_POST['ponderation'];
         $description = $_POST['description'];
+        $semestre = $_POST['semestre'];
         
         try{
-            $sql = "UPDATE cours SET code_cours = ?, nomComplet = ?, nbreHeure = ?, ponderation = ?, code_mention = ?, code_section = ?, promotion = ?, description = ? WHERE id = ?";
+            $sql = "UPDATE cours SET code_cours = ?, nomComplet = ?, nbreHeure = ?, ponderation = ?, code_mention = ?, code_section = ?, promotion = ?, description = ?, semestre = ? WHERE id = ?";
             $stmt = $pdo->prepare($sql);
-            $result = $stmt->execute([$code, $denomination, $heure, $ponderation, $mention, $ec, $promotion, $description, $id]);      
+            $result = $stmt->execute([$code, $denomination, $heure, $ponderation, $mention, $ec, $promotion, $description, $semestre, $id]);      
 
             if($result){
                 echo "
