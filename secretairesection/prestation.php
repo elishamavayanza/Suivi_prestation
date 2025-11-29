@@ -1,4 +1,8 @@
 <?php
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 session_start();
 if (!isset($_SESSION['username']) || $_SESSION['role'] != 'secretaire') {
     header("Location: ../login.php");
@@ -37,7 +41,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <div class="secretary-sidebar-header">
                 <img src="../image/logo.jpg" alt="Logo">
                 <h2>Secrétaire de Section</h2>
-                <p><?php echo $_SESSION['username']; ?></p>
+                <p><?php echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Utilisateur'; ?></p>
             </div>
             <nav class="secretary-nav-menu">
                 <ul>

@@ -1,4 +1,8 @@
 <?php
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 session_start();
 if (!isset($_SESSION['username']) || $_SESSION['role'] != 'secretaire') {
     header("Location: ../login.php");
@@ -7,32 +11,43 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'secretaire') {
 
 include '../config/connexion.php';
 
-// Récupérer les informations de l'utilisateur
-$userId = $_SESSION['username'];
+// Initialize counts
+$teachersCount = 0;
+$coursesCount = 0;
+$prestationsCount = 0;
+$finishedCoursesCount = 0;
 
-// Compter le nombre d'enseignants
-$teachersCountQuery = "SELECT COUNT(*) as total FROM utilisateur WHERE role = 'Enseignant'";
-$teachersStmt = $pdo->prepare($teachersCountQuery);
-$teachersStmt->execute();
-$teachersCount = $teachersStmt->fetch()['total'];
+// Check if $pdo is properly initialized
+if ($pdo) {
+    try {
+        // Compter le nombre d'enseignants
+        $teachersCountQuery = "SELECT COUNT(*) as total FROM utilisateur WHERE role = 'Enseignant'";
+        $teachersStmt = $pdo->prepare($teachersCountQuery);
+        $teachersStmt->execute();
+        $teachersCount = $teachersStmt->fetch()['total'];
 
-// Compter le nombre de cours programmés
-$coursesCountQuery = "SELECT COUNT(*) as total FROM cours";
-$coursesStmt = $pdo->prepare($coursesCountQuery);
-$coursesStmt->execute();
-$coursesCount = $coursesStmt->fetch()['total'];
+        // Compter le nombre de cours programmés
+        $coursesCountQuery = "SELECT COUNT(*) as total FROM cours";
+        $coursesStmt = $pdo->prepare($coursesCountQuery);
+        $coursesStmt->execute();
+        $coursesCount = $coursesStmt->fetch()['total'];
 
-// Compter le nombre de fiches de prestation
-$prestationsCountQuery = "SELECT COUNT(*) as total FROM entetefiche";
-$prestationsStmt = $pdo->prepare($prestationsCountQuery);
-$prestationsStmt->execute();
-$prestationsCount = $prestationsStmt->fetch()['total'];
+        // Compter le nombre de fiches de prestation
+        $prestationsCountQuery = "SELECT COUNT(*) as total FROM entetefiche";
+        $prestationsStmt = $pdo->prepare($prestationsCountQuery);
+        $prestationsStmt->execute();
+        $prestationsCount = $prestationsStmt->fetch()['total'];
 
-// Compter le nombre de cours finis
-$finishedCoursesCountQuery = "SELECT COUNT(*) as total FROM cours WHERE statut = 'fini'";
-$finishedCoursesStmt = $pdo->prepare($finishedCoursesCountQuery);
-$finishedCoursesStmt->execute();
-$finishedCoursesCount = $finishedCoursesStmt->fetch()['total'];
+        // Compter le nombre de cours finis
+        $finishedCoursesCountQuery = "SELECT COUNT(*) as total FROM cours WHERE statut = 'fini'";
+        $finishedCoursesStmt = $pdo->prepare($finishedCoursesCountQuery);
+        $finishedCoursesStmt->execute();
+        $finishedCoursesCount = $finishedCoursesStmt->fetch()['total'];
+    } catch (Exception $e) {
+        // Log error but continue execution
+        error_log("Database error in secretairesection/index.php: " . $e->getMessage());
+    }
+}
 ?>
 
 <?php 
@@ -65,7 +80,7 @@ $finishedCoursesCount = $finishedCoursesStmt->fetch()['total'];
             <div class="secretary-sidebar-header">
                 <img src="../image/logo.jpg" alt="Logo">
                 <h2>Secrétaire de Section</h2>
-                <p><?php echo $_SESSION['username']; ?></p>
+                <p><?php echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Utilisateur'; ?></p>
             </div>
             <nav class="secretary-nav-menu">
                 <ul>
