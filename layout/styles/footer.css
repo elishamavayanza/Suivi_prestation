@@ -1,0 +1,206 @@
+/* Footer Styles - Using Admin Interface Color Scheme */
+
+#footer {
+  background-color: #2c3e50; /* var(--primary-color) from admin_styles.css */
+  color: #ecf0f1; /* var(--light-color) from admin_styles.css */
+  padding: 30px 0 0;
+  position: relative;
+}
+
+.footer-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 0 20px;
+  margin-bottom: 20px;
+}
+
+.footer-column {
+  flex: 1;
+  min-width: 250px;
+  padding: 0 15px;
+  margin-bottom: 20px;
+}
+
+.footer-widget h3 {
+  color: #3498db; /* var(--secondary-color) from admin_styles.css */
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.footer-widget h3::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50px;
+  height: 2px;
+  background-color: #e74c3c; /* var(--accent-color) from admin_styles.css */
+}
+
+.footer-widget address {
+  font-style: normal;
+  line-height: 1.6;
+}
+
+.footer-widget p {
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.worldmap-img {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.figcaption-link {
+  color: #3498db; /* var(--secondary-color) */
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.figcaption-link:hover {
+  color: #2980b9; /* darker shade of secondary color */
+  text-decoration: underline;
+}
+
+.social-icons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.social-icons a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: #34495e; /* var(--dark-color) */
+  color: #ecf0f1; /* var(--light-color) */
+  border-radius: 50%;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.social-icons a:hover {
+  background-color: #3498db; /* var(--secondary-color) */
+  transform: translateY(-3px);
+}
+
+.newsletter-form p {
+  margin-bottom: 10px;
+}
+
+.input-group {
+  display: flex;
+}
+
+.input-group input {
+  flex: 1;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px 0 0 4px;
+  background-color: #34495e; /* var(--dark-color) */
+  color: #ecf0f1; /* var(--light-color) */
+}
+
+.input-group input::placeholder {
+  color: #bdc3c7; /* var(--border-color) */
+}
+
+.input-group button {
+  background-color: #3498db; /* var(--secondary-color) */
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.input-group button:hover {
+  background-color: #2980b9; /* darker shade of secondary color */
+}
+
+#copyright {
+  background-color: #34495e; /* var(--dark-color) */
+  padding: 20px 0;
+  border-top: 1px solid #2c3e50; /* var(--primary-color) */
+}
+
+.copyright-content {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 0 20px;
+}
+
+.copyright-text p,
+.copyright-links p {
+  margin: 0;
+  color: #bdc3c7; /* var(--border-color) */
+}
+
+.copyright-text a,
+.copyright-links a {
+  color: #3498db; /* var(--secondary-color) */
+  text-decoration: none;
+}
+
+.copyright-text a:hover,
+.copyright-links a:hover {
+  color: #2980b9; /* darker shade of secondary color */
+  text-decoration: underline;
+}
+
+.back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  background-color: #3498db; /* var(--secondary-color) */
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 99;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.back-to-top:hover {
+  background-color: #2980b9; /* darker shade of secondary color */
+  transform: translateY(-3px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .footer-content {
+    flex-direction: column;
+  }
+  
+  .footer-column {
+    min-width: 100%;
+  }
+  
+  .copyright-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+}

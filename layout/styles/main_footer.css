@@ -1,0 +1,254 @@
+/* Main Footer Styles - Using Admin Interface Color Scheme */
+
+.contaire-footer {
+  background-color: #2c3e50; /* var(--primary-color) from admin_styles.css */
+  color: #ecf0f1; /* var(--light-color) from admin_styles.css */
+  margin-top: 30px;
+}
+
+.wrapper.row4 {
+  padding: 30px 0 0;
+  position: relative;
+}
+
+#footer {
+  background-color: #2c3e50; /* var(--primary-color) from admin_styles.css */
+  color: #ecf0f1; /* var(--light-color) from admin_styles.css */
+  padding: 30px 0 0;
+  position: relative;
+}
+
+#footer .first {
+  margin: 0 0 30px 0;
+}
+
+#footer figure {
+  text-align: center;
+}
+
+#footer figure img {
+  border: 1px solid #3498db; /* var(--secondary-color) from admin_styles.css */
+  padding: 3px;
+  border-radius: 5px;
+  max-width: 100%;
+  height: auto;
+}
+
+#footer figcaption a {
+  color: #3498db; /* var(--secondary-color) from admin_styles.css */
+  text-decoration: none;
+  font-weight: 500;
+}
+
+#footer figcaption a:hover {
+  color: #2980b9; /* darker shade of secondary color */
+  text-decoration: underline;
+}
+
+#footer address {
+  font-style: normal;
+  line-height: 1.6;
+}
+
+#footer address i {
+  color: #3498db; /* var(--secondary-color) from admin_styles.css */
+  margin-right: 5px;
+}
+
+#footer address a {
+  color: #ecf0f1; /* var(--light-color) from admin_styles.css */
+  text-decoration: none;
+}
+
+#footer address a:hover {
+  color: #3498db; /* var(--secondary-color) from admin_styles.css */
+  text-decoration: underline;
+}
+
+.one_third {
+  float: left;
+  width: 33.33%;
+  padding: 0 15px;
+}
+
+.one_third.first {
+  margin-left: 0;
+  clear: left;
+}
+
+.clear {
+  clear: both;
+  display: block;
+  overflow: hidden;
+  visibility: hidden;
+  width: 0;
+  height: 0;
+}
+
+.btmspace-15 {
+  margin-bottom: 15px;
+}
+
+.center {
+  text-align: center;
+}
+
+.nospace {
+  margin: 0;
+  padding: 0;
+}
+
+.btmspace-10 {
+  margin-bottom: 10px;
+}
+
+.faico {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.faico li {
+  display: inline-block;
+  margin: 0;
+}
+
+.faico a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: #34495e; /* var(--dark-color) from admin_styles.css */
+  color: #ecf0f1; /* var(--light-color) from admin_styles.css */
+  border-radius: 50%;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.faico a:hover {
+  background-color: #3498db; /* var(--secondary-color) from admin_styles.css */
+  transform: translateY(-3px);
+}
+
+.clear form {
+  margin-top: 15px;
+}
+
+.clear fieldset {
+  border: none;
+  padding: 0;
+}
+
+.clear legend {
+  color: #ecf0f1; /* var(--light-color) from admin_styles.css */
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.clear input {
+  width: 100%;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px 0 0 4px;
+  background-color: #34495e; /* var(--dark-color) from admin_styles.css */
+  color: #ecf0f1; /* var(--light-color) from admin_styles.css */
+  margin-bottom: 10px;
+}
+
+.clear input::placeholder {
+  color: #bdc3c7; /* var(--border-color) from admin_styles.css */
+}
+
+.clear button {
+  background-color: #3498db; /* var(--secondary-color) from admin_styles.css */
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.clear button:hover {
+  background-color: #2980b9; /* darker shade of secondary color */
+}
+
+/* Copyright Section */
+.wrapper.row5 {
+  background-color: #34495e; /* var(--dark-color) from admin_styles.css */
+  padding: 20px 0;
+  border-top: 1px solid #2c3e50; /* var(--primary-color) from admin_styles.css */
+}
+
+#copyright {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 0 20px;
+}
+
+#copyright p {
+  margin: 0;
+  color: #bdc3c7; /* var(--border-color) from admin_styles.css */
+}
+
+#copyright a {
+  color: #3498db; /* var(--secondary-color) from admin_styles.css */
+  text-decoration: none;
+}
+
+#copyright a:hover {
+  color: #2980b9; /* darker shade of secondary color */
+  text-decoration: underline;
+}
+
+.fl_left {
+  float: left;
+}
+
+.fl_right {
+  float: right;
+  text-align: right;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .one_third {
+    width: 100%;
+    float: none;
+    margin-bottom: 20px;
+  }
+  
+  #copyright {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+  
+  .fl_left, .fl_right {
+    float: none;
+  }
+  
+  .fl_right {
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .wrapper.row4, #footer {
+    padding: 20px 0 0;
+  }
+  
+  .one_third {
+    padding: 0 10px;
+  }
+  
+  #copyright {
+    padding: 0 10px;
+  }
+}
