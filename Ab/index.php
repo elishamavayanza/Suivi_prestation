@@ -17,129 +17,138 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != "AB") {
     <title>Interface AB - Fiches de Prestation et Honoraires</title>
     <link rel="stylesheet" href="ab_styles.css">
     <link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Interface AB - Gestion des Prestations et Honoraires</h1>
-            <div>
-                <?php echo $_SESSION['username']; ?> | 
-                <a href="../script/logout.php" style="color: white;">Déconnexion</a>
-            </div>
+    <div class="ab-header">
+        <h1><i class="fas fa-user-tie"></i> Interface AB - Gestion des Prestations et Honoraires</h1>
+        <div class="header-actions">
+            <a href="../script/logout.php"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
         </div>
-        
-        <div class="user-info">
-            <div>Bienvenue, <?php echo $_SESSION['username']; ?> (Administrateur Budget)</div>
-            <div>Rôle: <?php echo $_SESSION['role']; ?></div>
-        </div>
-        
-        <div class="section-title">
-            <h2>Consultation des Fiches de Prestations</h2>
-        </div>
-        
-        <div class="card">
-            <div class="form-group">
-                <label for="fiche">Sélectionner une fiche de prestation :</label>
-                <select name="entetefiche" id="fiche" class="form-control">
-                    <option value="">-- Sélectionnez une fiche --</option>
-                    <?php
-                    $sql = "SELECT entetefiche.id as entete, cours.id as idcours, cours.nomComplet as noms 
-                            FROM entetefiche, cours 
-                            WHERE cours.id=entetefiche.code_cours";
-                    $stmt = $pdo->prepare($sql);
-                    $stmt->execute(array());
-                    while($res = $stmt->fetch()){
-                        echo "<option value='".$res['entete']."'>".$res['noms']."</option>";
-                    }
-                    ?>
-                </select>
+    </div>
+    
+    <div class="ab-container">
+        <div class="main-content">
+            <div class="user-info">
+                <div><i class="fas fa-user"></i> Bienvenue, <?php echo $_SESSION['username']; ?></div>
+                <div><i class="fas fa-user-tag"></i> Rôle: <?php echo $_SESSION['role']; ?> (Administrateur Budget)</div>
             </div>
             
-            <div id="prestation-details" style="display: none;">
-                <h3>Détails de la fiche de prestation</h3>
-                <div class="table-container">
-                    <table id="prestation-table" class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Contenu</th>
-                                <th>H. Entrée</th>
-                                <th>H. Sortie</th>
-                                <th>Nbre H</th>
-                                <th>Signature CP</th>
-                                <th>Signature Enseignant</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Les données seront chargées dynamiquement -->
-                        </tbody>
-                    </table>
-                </div>
-                
-                <div class="action-buttons">
-                    <button class="btn btn-success" id="generate-honoraire">
-                        <i class="fas fa-file-invoice-dollar"></i> Générer la Fiche d'Honoraires
-                    </button>
-                    <button class="btn" onclick="window.location.href='../print/ficheprestation.php'">
-                        <i class="fas fa-print"></i> Imprimer la Prestation
-                    </button>
-                </div>
+            <div class="content-header">
+                <h2><i class="fas fa-file-invoice"></i> Consultation des Fiches de Prestations</h2>
+                <ul class="breadcrumb">
+                    <li><a href="#">Accueil</a></li>
+                    <li>Prestation/Honoraire</li>
+                </ul>
             </div>
-        </div>
-        
-        <div class="section-title">
-            <h2>Fiches d'Honoraires</h2>
-        </div>
-        
-        <div class="card">
-            <div id="honoraire-section" style="display: none;">
-                <h3>Fiche d'honoraires générée</h3>
-                <div class="notification">
-                    La fiche d'honoraires a été générée avec succès. 
-                    Un message sera envoyé à l'enseignant pour le retrait de son salaire.
+            
+            <div class="card prestations">
+                <div class="form-group">
+                    <label for="fiche"><i class="fas fa-list"></i> Sélectionner une fiche de prestation :</label>
+                    <select name="entetefiche" id="fiche" class="form-control">
+                        <option value="">-- Sélectionnez une fiche --</option>
+                        <?php
+                        $sql = "SELECT entetefiche.id as entete, cours.id as idcours, cours.nomComplet as noms 
+                                FROM entetefiche, cours 
+                                WHERE cours.id=entetefiche.code_cours";
+                        $stmt = $pdo->prepare($sql);
+                        $stmt->execute(array());
+                        while($res = $stmt->fetch()){
+                            echo "<option value='".$res['entete']."'>".$res['noms']."</option>";
+                        }
+                        ?>
+                    </select>
                 </div>
                 
-                <div class="table-container">
-                    <table id="honoraire-table" class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Contenu</th>
-                                <th>Nbre H</th>
-                                <th>Taux Horaire ($)</th>
-                                <th>Total ($)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Les données seront chargées dynamiquement -->
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="4" style="text-align: right;"><strong>Total Général:</strong></td>
-                                <td id="total-general"><strong>0 $</strong></td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-                
-                <div class="action-buttons">
-                    <button class="btn btn-success" id="send-notification">
-                        <i class="fas fa-envelope"></i> Envoyer Notification à l'Enseignant
-                    </button>
-                    <button class="btn" onclick="window.location.href='../print/fichehonoraire.php'">
-                        <i class="fas fa-print"></i> Imprimer la Fiche d'Honoraires
-                    </button>
+                <div id="prestation-details" style="display: none;">
+                    <h3><i class="fas fa-info-circle"></i> Détails de la fiche de prestation</h3>
+                    <div class="table-container">
+                        <table id="prestation-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Contenu</th>
+                                    <th>H. Entrée</th>
+                                    <th>H. Sortie</th>
+                                    <th>Nbre H</th>
+                                    <th>Signature CP</th>
+                                    <th>Signature Enseignant</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Les données seront chargées dynamiquement -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-success" id="generate-honoraire">
+                            <i class="fas fa-file-invoice-dollar"></i> Générer la Fiche d'Honoraires
+                        </button>
+                        <button class="btn btn-primary" onclick="window.location.href='../print/ficheprestation.php'">
+                            <i class="fas fa-print"></i> Imprimer la Prestation
+                        </button>
+                    </div>
                 </div>
             </div>
             
-            <div id="no-honoraire" class="notification">
-                Aucune fiche d'honoraires générée. Sélectionnez une fiche de prestation et générez les honoraires.
+            <div class="content-header">
+                <h2><i class="fas fa-money-check-alt"></i> Fiches d'Honoraires</h2>
+                <ul class="breadcrumb">
+                    <li><a href="#">Accueil</a></li>
+                    <li>Honoraires</li>
+                </ul>
+            </div>
+            
+            <div class="card honoraires">
+                <div id="honoraire-section" style="display: none;">
+                    <h3><i class="fas fa-check-circle"></i> Fiche d'honoraires générée</h3>
+                    <div class="notification success">
+                        <i class="fas fa-info-circle"></i> La fiche d'honoraires a été générée avec succès. 
+                        Un message sera envoyé à l'enseignant pour le retrait de son salaire.
+                    </div>
+                    
+                    <div class="table-container">
+                        <table id="honoraire-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Contenu</th>
+                                    <th>Nbre H</th>
+                                    <th>Taux Horaire ($)</th>
+                                    <th>Total ($)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Les données seront chargées dynamiquement -->
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="4" style="text-align: right;"><strong>Total Général:</strong></td>
+                                    <td id="total-general"><strong>0 $</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-success" id="send-notification">
+                            <i class="fas fa-envelope"></i> Envoyer Notification à l'Enseignant
+                        </button>
+                        <button class="btn btn-primary" onclick="window.location.href='../print/fichehonoraire.php'">
+                            <i class="fas fa-print"></i> Imprimer la Fiche d'Honoraires
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="no-honoraire" class="notification info">
+                    <i class="fas fa-info-circle"></i> Aucune fiche d'honoraires générée. Sélectionnez une fiche de prestation et générez les honoraires.
+                </div>
             </div>
         </div>
     </div>
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <script>
         document.getElementById('fiche').addEventListener('change', function() {
             const ficheId = this.value;
