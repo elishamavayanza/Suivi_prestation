@@ -245,7 +245,11 @@ try {
     <script>
         function viewDetails(id) {
             //Dans une implémentation réelle, cela chargerait les détails de la fiche
-            alert("Affichage des détails de la fiche de prestation #" + id + ". Dans une version complète, cela montrerait les détails complets de la fiche.");
+            alert("Affichage des détails de la fiche de prestation #" + id + ". Dans une version complète, cela montrerait les détails complets de la fiche.\n\n" +
+                  "Informations supplémentaires:\n" +
+                  "- Volume horaire prévu: <?php echo isset($fiche['volume_horaire_prevu']) ? $fiche['volume_horaire_prevu'] : 'Non spécifié'; ?>\n" +
+                  "- Heures réellement prestées: <?php echo isset($fiche['heures_reelles_prestees']) ? $fiche['heures_reelles_prestees'] : 'Non spécifié'; ?>\n" +
+                  "- Description: <?php echo isset($fiche['description']) ? substr($fiche['description'], 0, 50) . '...' : 'Non spécifiée'; ?>");
         }
         
         // Fonctionpour confirmer l'envoi à la section

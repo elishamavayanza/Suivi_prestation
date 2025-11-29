@@ -171,6 +171,23 @@ try {
                                 <?php endforeach; ?>
                             </select>
                         </div>
+                        
+                        <div class="form-col">
+                            <label for="volume_horaire"><i class="fas fa-clock"></i> Volume horaire prévu:</label>
+                            <input type="number" name="volume_horaire" id="volume_horaire" class="form-control" placeholder="Nombre d'heures prévues">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <label for="heures_reelles"><i class="fas fa-user-clock"></i> Heures réellement prestées:</label>
+                            <input type="number" name="heures_reelles" id="heures_reelles" class="form-control" placeholder="Nombre d'heures effectuées">
+                        </div>
+                        
+                        <div class="form-col">
+                            <label for="description"><i class="fas fa-align-left"></i> Description:</label>
+                            <textarea name="description" id="description" class="form-control" placeholder="Description de la prestation"></textarea>
+                        </div>
                     </div>
                     
                     <div class="form-group">

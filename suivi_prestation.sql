@@ -698,3 +698,7 @@ END //
 DELIMITER ;
 
     ALTER TABLE cours ADD COLUMN semestre VARCHAR(50) DEFAULT NULL AFTER description;
+   ALTER TABLE entetefiche
+   ADD COLUMN IF NOT EXISTS volume_horaire_prevu INT DEFAULT NULL,
+   ADD COLUMN IF NOT EXISTS heures_reelles_prestees INT DEFAULT NULL,
+   ADD COLUMN IF NOT EXISTS description TEXT DEFAULT NULL;
