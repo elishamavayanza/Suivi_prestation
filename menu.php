@@ -99,9 +99,10 @@ if(isset($_SESSION['role']) && $_SESSION['role']!="None"){
 			<?php
 		}else if($_SESSION['role']=="SGA"){
 			?>
-<li class="active"><a href="index.php">Accueil</a></li>
-            <li><a href="horiaire.php">Horaire</a></li>
-<li><a href="chargehoraire.php">Charge horaire</a></li>
+<li class="active"><a href="academique/index.php">Accueil</a></li>
+            <li><a href="academique/horaire.php">Horaire</a></li>
+<li><a href="academique/chargehoraire.php">Charge horaire</a></li>
+            <li><a href="academique/academique_prestation.php">Fiches de prestation</a></li>
             <!--li><a href="cours.php">Programmer Cours</a></li-->
             <!--li ><a href="admin/index.php">Admin</a></li-->
            
