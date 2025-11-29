@@ -141,10 +141,10 @@ try {
                         <option value="">-- Sélectionnez une fiche --</option>
                         <?php
                         $sql = "SELECT entetefiche.id as entete, cours.id as idcours, cours.nomComplet as noms 
-                                FROM entetefiche, cours 
-                                WHERE cours.id=entetefiche.code_cours";
+                                FROM entetefiche 
+                                JOIN cours ON cours.code_cours = entetefiche.code_cours";
                         $stmt = $pdo->prepare($sql);
-                        $stmt->execute(array());
+                        $stmt->execute();
                         while($res = $stmt->fetch()){
                             echo "<option value='".$res['entete']."'>".$res['noms']."</option>";
                         }
