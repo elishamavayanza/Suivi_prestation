@@ -696,3 +696,5 @@ BEGIN
     WHERE role = user_role AND permission = permission_name;
 END //
 DELIMITER ;
+
+    ALTER TABLE cours ADD COLUMN semestre VARCHAR(50) DEFAULT NULL AFTER description;
