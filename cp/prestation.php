@@ -154,9 +154,9 @@ try {
                                         <?php endif; ?>
                                     </td>
                                     <td class="table-actions">
-                                        <button class="btn btn-sm btn-outline" onclick="viewDetails(<?php echo $fiche['id']; ?>)">
+                                        <a href="detail_prestation.php?id=<?php echo $fiche['id']; ?>" class="btn btn-sm btn-outline">
                                             <i class="fas fa-eye"></i> Détails
-                                        </button>
+                                        </a>
                                         
                                         <?php if ($fiche['statut'] == 'en_attente'): ?>
                                         <form method="POST" style="display: inline;">
@@ -241,41 +241,5 @@ try {
     <footer class="cp-footer">
         <p>&copy; 2025 Système de Suivi de Prestation - Tous droits réservés</p>
     </footer>
-
-    <script>
-        function viewDetails(id) {
-            //Dans une implémentation réelle, cela chargerait les détails de la fiche
-            alert("Affichage des détails de la fiche de prestation #" + id + ". Dans une version complète, cela montrerait les détails complets de la fiche.\n\n" +
-                  "Informations supplémentaires:\n" +
-                  "- Volume horaire prévu: <?php echo isset($fiche['volume_horaire_prevu']) ? $fiche['volume_horaire_prevu'] : 'Non spécifié'; ?>\n" +
-                  "- Heures réellement prestées: <?php echo isset($fiche['heures_reelles_prestees']) ? $fiche['heures_reelles_prestees'] : 'Non spécifié'; ?>\n" +
-                  "- Description: <?php echo isset($fiche['description']) ? substr($fiche['description'], 0, 50) . '...' : 'Non spécifiée'; ?>");
-        }
-        
-        // Fonctionpour confirmer l'envoi à la section
-        function confirmSend(id) {
-            if (confirm("Êtes-vous sûr de vouloir envoyer cette fiche de prestation à la sectionconcernée ?")) {
-                // Créer un formulaire dynamique pour soumettre l'action
-                varform = document.createElement('form');
-                form.method = 'POST';
-                form.style.display = 'none';
-                
-                var inputId = document.createElement('input');
-                inputId.type = 'hidden';
-                inputId.name = 'fiche_id';
-                inputId.value = id;
-                form.appendChild(inputId);
-                
-var inputAction = document.createElement('input');
-                inputAction.type = 'hidden';
-                inputAction.name = 'send_to_section';
-                inputAction.value = '1';
-                form.appendChild(inputAction);
-                
-               document.body.appendChild(form);
-                form.submit();
-            }
-        }
-    </script>
 </body>
 </html>
