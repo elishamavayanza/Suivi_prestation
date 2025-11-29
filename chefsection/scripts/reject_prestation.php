@@ -11,17 +11,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ficheId'])) {
     $ficheId = $_POST['ficheId'];
     
     try {
-        // Mettre à jour la fiche de prestation comme rejetée
+        // Commencer une transaction
+        $pdo->beginTransaction();
+        
+        // Mettre à jour toutes les entrées de la fiche de prestation comme rejetées
         $sql = "UPDATE contenufiche SET signatureCP = 'REJETEE' WHERE identetefiche = ?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$ficheId]);
         
+        // Valider la transaction
+        $pdo->commit();
+        
         $_SESSION['success_message'] = "Fiche de prestation rejetée avec succès.";
-        header("Location: ../prestation.php?success=1");
+        header("Location: ../prestation.php?validation_filter=pending&success=1");
         exit();
     } catch (PDOException $e) {
+        // Annuler la transaction en cas d'erreur
+        $pdo->rollback();
         $_SESSION['error_message'] = "Erreur lors du rejet : " . $e->getMessage();
-        header("Location: ../prestation.php?error=1");
+        header("Location: ../prestation.php?validation_filter=pending&error=1");
         exit();
     }
 } else {

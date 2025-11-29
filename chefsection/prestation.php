@@ -56,23 +56,73 @@ try {
     $stmt->execute($params);
     $fichesQuotidiennes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Récupérer les fiches à valider
-    $stmt = $pdo->prepare("
+    // Requête pour les fiches à valider
+    $validationSql = "
         SELECT ef.id, 
                e.nom AS enseignant_nom, e.postnom AS enseignant_postnom, e.prenom AS enseignant_prenom,
                c.nomComplet AS cours_nom,
                COUNT(cf.id) AS total_jours,
-               SUM(cf.nbreH) AS total_heures
+               SUM(cf.nbreH) AS total_heures,
+               MAX(cf.datejoure) AS derniere_date
         FROM entetefiche ef
         JOIN enseignant e ON ef.matricule_enseignant = e.matriculeEnseignant
         JOIN cours c ON ef.code_cours = c.code_cours
         LEFT JOIN contenufiche cf ON ef.id = cf.identetefiche
-        WHERE ef.id NOT IN (SELECT DISTINCT identetefiche FROM contenufiche WHERE signatureCP IS NULL OR signatureCP = '')
+        WHERE cf.signatureCP IS NULL OR cf.signatureCP = ''
         GROUP BY ef.id, e.nom, e.postnom, e.prenom, c.nomComplet
-        ORDER BY e.nom
-    ");
-    $stmt->execute();
-    $fichesAValider = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        ORDER BY MAX(cf.datejoure) DESC
+    ";
+    
+    // Si un filtre est appliqué pour les validations
+    if (isset($_GET['validation_filter'])) {
+        if ($_GET['validation_filter'] == 'pending') {
+            // Ne rien changer, c'est déjà le bon filtre
+        } elseif ($_GET['validation_filter'] == 'period' && isset($_GET['start_date']) && isset($_GET['end_date'])) {
+            $validationSql = "
+                SELECT ef.id, 
+                       e.nom AS enseignant_nom, e.postnom AS enseignant_postnom, e.prenom AS enseignant_prenom,
+                       c.nomComplet AS cours_nom,
+                       COUNT(cf.id) AS total_jours,
+                       SUM(cf.nbreH) AS total_heures,
+                       MAX(cf.datejoure) AS derniere_date
+                FROM entetefiche ef
+                JOIN enseignant e ON ef.matricule_enseignant = e.matriculeEnseignant
+                JOIN cours c ON ef.code_cours = c.code_cours
+                LEFT JOIN contenufiche cf ON ef.id = cf.identetefiche
+                WHERE (cf.signatureCP IS NULL OR cf.signatureCP = '') 
+                  AND cf.datejoure BETWEEN ? AND ?
+                GROUP BY ef.id, e.nom, e.postnom, e.prenom, c.nomComplet
+                ORDER BY MAX(cf.datejoure) DESC
+            ";
+            $stmt = $pdo->prepare($validationSql);
+            $stmt->execute([$_GET['start_date'], $_GET['end_date']]);
+            $fichesAValider = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } else {
+            // Par défaut, toutes les fiches
+            $validationSql = "
+                SELECT ef.id, 
+                       e.nom AS enseignant_nom, e.postnom AS enseignant_postnom, e.prenom AS enseignant_prenom,
+                       c.nomComplet AS cours_nom,
+                       COUNT(cf.id) AS total_jours,
+                       SUM(cf.nbreH) AS total_heures,
+                       MAX(cf.datejoure) AS derniere_date
+                FROM entetefiche ef
+                JOIN enseignant e ON ef.matricule_enseignant = e.matriculeEnseignant
+                JOIN cours c ON ef.code_cours = c.code_cours
+                LEFT JOIN contenufiche cf ON ef.id = cf.identetefiche
+                GROUP BY ef.id, e.nom, e.postnom, e.prenom, c.nomComplet
+                ORDER BY MAX(cf.datejoure) DESC
+            ";
+            $stmt = $pdo->prepare($validationSql);
+            $stmt->execute();
+            $fichesAValider = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+    } else {
+        // Par défaut, seulement les fiches en attente
+        $stmt = $pdo->prepare($validationSql);
+        $stmt->execute();
+        $fichesAValider = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 } catch (PDOException $e) {
     $error_message = "Erreur lors de la récupération des données : " . $e->getMessage();
 }
@@ -262,14 +312,42 @@ try {
                 
                 <div class="section-chief-actions">
                     <button class="btn btn-primary" onclick="showPending()"><i class="fas fa-list"></i> Voir fiches à valider</button>
+                    <button class="btn btn-success" onclick="showFilterForm('period')"><i class="fas fa-filter"></i> Filtrer par période</button>
                 </div>
                 
+                <!-- Formulaire de filtre par période -->
+                <div id="periodFilterForm" class="filter-form">
+                    <h4>Filtrer par période</h4>
+                    <form method="GET" action="prestation.php">
+                        <input type="hidden" name="validation_filter" value="period">
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="start_date">Date de début :</label>
+                                    <input type="date" id="start_date" name="start_date" required>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="end_date">Date de fin :</label>
+                                    <input type="date" id="end_date" name="end_date" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-primary">Appliquer le filtre</button>
+                            <button type="button" class="btn btn-secondary" onclick="hideFilterForms()">Annuler</button>
+                        </div>
+                    </form>
+                </div>
+
                 <div class="section-chief-table">
                     <table>
                         <thead>
                             <tr>
                                 <th>Enseignant</th>
                                 <th>Cours</th>
+                                <th>Dernière date</th>
                                 <th>Jours Effectués</th>
                                 <th>Total Heures</th>
                                 <th>Statut</th>
@@ -279,13 +357,14 @@ try {
                         <tbody>
                             <?php if (empty($fichesAValider)): ?>
                                 <tr>
-                                    <td colspan="6" class="text-center">Aucune fiche à valider</td>
+                                    <td colspan="7" class="text-center">Aucune fiche à valider</td>
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($fichesAValider as $fiche): ?>
                                     <tr>
                                         <td><?php echo htmlspecialchars($fiche['enseignant_nom'] . ' ' . $fiche['enseignant_postnom'] . ' ' . $fiche['enseignant_prenom']); ?></td>
                                         <td><?php echo htmlspecialchars($fiche['cours_nom']); ?></td>
+                                        <td><?php echo htmlspecialchars($fiche['derniere_date']); ?></td>
                                         <td><?php echo htmlspecialchars($fiche['total_jours']); ?> jours</td>
                                         <td><?php echo htmlspecialchars($fiche['total_heures']); ?> heures</td>
                                         <td><span class="status-badge status-pending"><i class="fas fa-clock"></i> En attente validation</span></td>
@@ -319,6 +398,8 @@ try {
                 document.getElementById('dateFilterForm').classList.add('active');
             } else if (type === 'enseignant') {
                 document.getElementById('enseignantFilterForm').classList.add('active');
+            } else if (type === 'period') {
+                document.getElementById('periodFilterForm').classList.add('active');
             }
         }
         
@@ -326,6 +407,7 @@ try {
         function hideFilterForms() {
             document.getElementById('dateFilterForm').classList.remove('active');
             document.getElementById('enseignantFilterForm').classList.remove('active');
+            document.getElementById('periodFilterForm').classList.remove('active');
         }
         
         // Filtrer par date du jour
@@ -335,7 +417,7 @@ try {
         
         // Afficher les fiches en attente
         function showPending() {
-            alert("Affichage des fiches en attente de validation");
+            window.location.href = 'prestation.php?validation_filter=pending';
         }
         
         // Voir les détails d'une fiche
