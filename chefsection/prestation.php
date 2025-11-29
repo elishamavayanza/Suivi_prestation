@@ -7,6 +7,20 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Chefdesection') {
 
 include '../config/connexion.php';
 
+// Messages de succès ou d'erreur
+$success_message = '';
+$error_message = '';
+
+if (isset($_SESSION['success_message'])) {
+    $success_message = $_SESSION['success_message'];
+    unset($_SESSION['success_message']);
+}
+
+if (isset($_SESSION['error_message'])) {
+    $error_message = $_SESSION['error_message'];
+    unset($_SESSION['error_message']);
+}
+
 // Récupérer les données depuis la base de données
 $fichesQuotidiennes = [];
 $fichesAValider = [];
@@ -56,73 +70,28 @@ try {
     $stmt->execute($params);
     $fichesQuotidiennes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Requête pour les fiches à valider
+    // Requête pour les fiches à valider (seulement celles envoyées par le CP)
     $validationSql = "
         SELECT ef.id, 
                e.nom AS enseignant_nom, e.postnom AS enseignant_postnom, e.prenom AS enseignant_prenom,
                c.nomComplet AS cours_nom,
                COUNT(cf.id) AS total_jours,
                SUM(cf.nbreH) AS total_heures,
-               MAX(cf.datejoure) AS derniere_date
+               MAX(cf.datejoure) AS derniere_date,
+               ef.statut AS statut_envoi
         FROM entetefiche ef
         JOIN enseignant e ON ef.matricule_enseignant = e.matriculeEnseignant
         JOIN cours c ON ef.code_cours = c.code_cours
         LEFT JOIN contenufiche cf ON ef.id = cf.identetefiche
-        WHERE cf.signatureCP IS NULL OR cf.signatureCP = ''
-        GROUP BY ef.id, e.nom, e.postnom, e.prenom, c.nomComplet
+        WHERE ef.statut = 'envoyé'  -- Seulement les fiches envoyées par le CP
+        GROUP BY ef.id, e.nom, e.postnom, e.prenom, c.nomComplet, ef.statut
         ORDER BY MAX(cf.datejoure) DESC
     ";
     
-    // Si un filtre est appliqué pour les validations
-    if (isset($_GET['validation_filter'])) {
-        if ($_GET['validation_filter'] == 'pending') {
-            // Ne rien changer, c'est déjà le bon filtre
-        } elseif ($_GET['validation_filter'] == 'period' && isset($_GET['start_date']) && isset($_GET['end_date'])) {
-            $validationSql = "
-                SELECT ef.id, 
-                       e.nom AS enseignant_nom, e.postnom AS enseignant_postnom, e.prenom AS enseignant_prenom,
-                       c.nomComplet AS cours_nom,
-                       COUNT(cf.id) AS total_jours,
-                       SUM(cf.nbreH) AS total_heures,
-                       MAX(cf.datejoure) AS derniere_date
-                FROM entetefiche ef
-                JOIN enseignant e ON ef.matricule_enseignant = e.matriculeEnseignant
-                JOIN cours c ON ef.code_cours = c.code_cours
-                LEFT JOIN contenufiche cf ON ef.id = cf.identetefiche
-                WHERE (cf.signatureCP IS NULL OR cf.signatureCP = '') 
-                  AND cf.datejoure BETWEEN ? AND ?
-                GROUP BY ef.id, e.nom, e.postnom, e.prenom, c.nomComplet
-                ORDER BY MAX(cf.datejoure) DESC
-            ";
-            $stmt = $pdo->prepare($validationSql);
-            $stmt->execute([$_GET['start_date'], $_GET['end_date']]);
-            $fichesAValider = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } else {
-            // Par défaut, toutes les fiches
-            $validationSql = "
-                SELECT ef.id, 
-                       e.nom AS enseignant_nom, e.postnom AS enseignant_postnom, e.prenom AS enseignant_prenom,
-                       c.nomComplet AS cours_nom,
-                       COUNT(cf.id) AS total_jours,
-                       SUM(cf.nbreH) AS total_heures,
-                       MAX(cf.datejoure) AS derniere_date
-                FROM entetefiche ef
-                JOIN enseignant e ON ef.matricule_enseignant = e.matriculeEnseignant
-                JOIN cours c ON ef.code_cours = c.code_cours
-                LEFT JOIN contenufiche cf ON ef.id = cf.identetefiche
-                GROUP BY ef.id, e.nom, e.postnom, e.prenom, c.nomComplet
-                ORDER BY MAX(cf.datejoure) DESC
-            ";
-            $stmt = $pdo->prepare($validationSql);
-            $stmt->execute();
-            $fichesAValider = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        }
-    } else {
-        // Par défaut, seulement les fiches en attente
-        $stmt = $pdo->prepare($validationSql);
-        $stmt->execute();
-        $fichesAValider = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    $stmt = $pdo->prepare($validationSql);
+    $stmt->execute();
+    $fichesAValider = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
 } catch (PDOException $e) {
     $error_message = "Erreur lors de la récupération des données : " . $e->getMessage();
 }
@@ -164,6 +133,24 @@ try {
         .filter-form .btn-group {
             margin-top: 10px;
         }
+        
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
     </style>
 </head>
 <body>
@@ -204,6 +191,18 @@ try {
                     <li>Fiches de Prestation</li>
                 </ul>
             </div>
+
+            <?php if (!empty($success_message)): ?>
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i> <?php echo htmlspecialchars($success_message); ?>
+                </div>
+            <?php endif; ?>
+            
+            <?php if (!empty($error_message)): ?>
+                <div class="alert alert-error">
+                    <i class="fas fa-exclamation-circle"></i> <?php echo htmlspecialchars($error_message); ?>
+                </div>
+            <?php endif; ?>
 
             <div class="section-chief-section">
                 <h3 class="section-title"><i class="fas fa-calendar-day"></i> Consultation Quotidienne</h3>
@@ -308,39 +307,8 @@ try {
 
             <div class="section-chief-section">
                 <h3 class="section-title"><i class="fas fa-check-circle"></i> Validation des Fiches Finalisées</h3>
-                <p>Validation des fiches de prestation après finalisation des cours.</p>
+                <p>Validation des fiches de prestation après finalisation des cours (seulement les fiches envoyées par le CP).</p>
                 
-                <div class="section-chief-actions">
-                    <button class="btn btn-primary" onclick="showPending()"><i class="fas fa-list"></i> Voir fiches à valider</button>
-                    <button class="btn btn-success" onclick="showFilterForm('period')"><i class="fas fa-filter"></i> Filtrer par période</button>
-                </div>
-                
-                <!-- Formulaire de filtre par période -->
-                <div id="periodFilterForm" class="filter-form">
-                    <h4>Filtrer par période</h4>
-                    <form method="GET" action="prestation.php">
-                        <input type="hidden" name="validation_filter" value="period">
-                        <div class="form-row">
-                            <div class="form-col">
-                                <div class="form-group">
-                                    <label for="start_date">Date de début :</label>
-                                    <input type="date" id="start_date" name="start_date" required>
-                                </div>
-                            </div>
-                            <div class="form-col">
-                                <div class="form-group">
-                                    <label for="end_date">Date de fin :</label>
-                                    <input type="date" id="end_date" name="end_date" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="btn-group">
-                            <button type="submit" class="btn btn-primary">Appliquer le filtre</button>
-                            <button type="button" class="btn btn-secondary" onclick="hideFilterForms()">Annuler</button>
-                        </div>
-                    </form>
-                </div>
-
                 <div class="section-chief-table">
                     <table>
                         <thead>
@@ -350,14 +318,14 @@ try {
                                 <th>Dernière date</th>
                                 <th>Jours Effectués</th>
                                 <th>Total Heures</th>
-                                <th>Statut</th>
+                                <th>Statut Envoi</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php if (empty($fichesAValider)): ?>
                                 <tr>
-                                    <td colspan="7" class="text-center">Aucune fiche à valider</td>
+                                    <td colspan="7" class="text-center">Aucune fiche à valider (seulement les fiches envoyées par le CP sont affichées ici)</td>
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($fichesAValider as $fiche): ?>
@@ -367,7 +335,7 @@ try {
                                         <td><?php echo htmlspecialchars($fiche['derniere_date']); ?></td>
                                         <td><?php echo htmlspecialchars($fiche['total_jours']); ?> jours</td>
                                         <td><?php echo htmlspecialchars($fiche['total_heures']); ?> heures</td>
-                                        <td><span class="status-badge status-pending"><i class="fas fa-clock"></i> En attente validation</span></td>
+                                        <td><span class="status-badge status-sent"><i class="fas fa-paper-plane"></i> Envoyé par CP</span></td>
                                         <td class="table-actions">
                                             <button class="btn btn-sm btn-success" onclick="validateFiche(<?php echo $fiche['id']; ?>)">
                                                 <i class="fas fa-check"></i> Valider
