@@ -69,10 +69,16 @@ body {
 }
 
 /* Main Layout */
+/* Supprimer ou modifier les restrictions de largeur */
 .admin-container {
-  display: flex;
-  margin-top: var(--header-height);
-  min-height: calc(100vh - var(--header-height));
+    width: 100%;
+    max-width: none;
+    padding: 0;
+}
+
+/* Copier les styles de l'interface secrétaire */
+.admin-layout {
+    /* Appliquer ici les mêmes propriétés que .secretary-layout */
 }
 
 /* Sidebar Navigation */
@@ -418,23 +424,23 @@ body {
   .sidebar {
     width: 70px;
   }
-  
+
   .sidebar .sidebar-header h2,
   .sidebar .sidebar-header p,
   .sidebar .nav-menu a span {
     display: none;
   }
-  
+
   .sidebar .nav-menu a {
     justify-content: center;
     padding: 15px;
   }
-  
+
   .sidebar .nav-menu a i {
     margin-right: 0;
     font-size: 1.2rem;
   }
-  
+
   .main-content {
     margin-left: 70px;
   }
@@ -444,39 +450,39 @@ body {
   .admin-header {
     padding: 0 10px;
   }
-  
+
   .admin-header h1 {
     font-size: 1.2rem;
   }
-  
+
   .header-actions button span {
     display: none;
   }
-  
+
   .dashboard-cards {
     grid-template-columns: 1fr;
   }
-  
+
   .form-row {
     flex-direction: column;
   }
-  
+
   .form-col {
     padding: 0;
     margin-bottom: 15px;
   }
-  
+
   .content-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
   }
-  
+
   /* Pour les très grandes tables, permettre le défilement horizontal */
   .admin-table {
     overflow-x: auto;
   }
-  
+
   .admin-table table {
     min-width: 800px;
   }
@@ -486,15 +492,15 @@ body {
   .sidebar {
     transform: translateX(-100%);
   }
-  
+
   .sidebar.active {
     transform: translateX(0);
   }
-  
+
   .main-content {
     margin-left: 0;
   }
-  
+
   .menu-toggle {
     display: block;
   }
