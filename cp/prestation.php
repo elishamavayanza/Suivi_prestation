@@ -92,7 +92,7 @@ try {
                     <li><a href="index.php"><i class="fas fa-home"></i> <span>Tableau de bord</span></a></li>
                     <li><a href="prestation.php" class="active"><i class="fas fa-file-invoice"></i> <span>Gestion Prestations</span></a></li>
                     <li><a href="horaire.php"><i class="fas fa-clock"></i> <span>Consulter Horaires</span></a></li>
-                    <li><a href="#"><i class="fas fa-chart-bar"></i> <span>Rapports</span></a></li>
+                    <li><a href="rapports.php"><i class="fas fa-chart-bar"></i> <span>Rapports</span></a></li>
                     <li><a href="../print/ficheprestation.php" target="_blank"><i class="fas fa-print"></i> <span>Imprimer Rapports</span></a></li>
                 </ul>
             </nav>

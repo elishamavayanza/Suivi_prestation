@@ -20,11 +20,11 @@ $enseignant_filter = isset($_GET['enseignant']) ? $_GET['enseignant'] : '';
 
 // Récupérer tous les horaires avec filtres
 try {
-    $sql_horaires = "SELECT h.*, c.nomComplet as cours_nom,p.nom as promotion_nom, m.nom as mention_nom
+    $sql_horaires = "SELECT h.*, c.nomComplet as cours_nom, p.nomComplet as promotion_nom, m.nomComplet as mention_nom
                     FROM horaire h
                     JOIN cours c ON h.idcours = c.code_cours
-                    JOIN promotion p ON h.codepromotion = p.code
-                    JOIN mention m ON h.codemention = m.code";
+                    JOIN promotion p ON h.codepromotion = p.sigle_promotion
+                    JOIN mention m ON h.codemention = m.code_mention";
                     
     $params = [];
     
@@ -69,7 +69,7 @@ try {
 
 // Récupérer les promotions pour le filtre
 try {
-    $sql_promotions = "SELECT * FROM promotion ORDER BY nom";
+    $sql_promotions = "SELECT * FROM promotion ORDER BY nomComplet";
     $stmt_promotions = $pdo->prepare($sql_promotions);
     $stmt_promotions->execute();
     $promotions = $stmt_promotions->fetchAll();
@@ -121,7 +121,7 @@ try {
                     <li><a href="index.php"><i class="fas fa-home"></i> <span>Tableau de bord</span></a></li>
                     <li><a href="prestation.php"><i class="fas fa-file-invoice"></i> <span>Gestion Prestations</span></a></li>
                     <li><a href="horaire.php" class="active"><i class="fas fa-clock"></i> <span>Consulter Horaires</span></a></li>
-                    <li><a href="#"><i class="fas fa-chart-bar"></i> <span>Rapports</span></a></li>
+                    <li><a href="rapports.php"><i class="fas fa-chart-bar"></i> <span>Rapports</span></a></li>
                     <li><a href="../print/ficheprestation.php" target="_blank"><i class="fas fa-print"></i> <span>Imprimer Rapports</span></a></li>
                 </ul>
             </nav>
@@ -169,8 +169,8 @@ try {
                             <select id="promotion" name="promotion" class="form-control">
                                 <option value="">Toutes les promotions</option>
                                 <?php foreach ($promotions as $promo): ?>
-                                    <option value="<?php echo htmlspecialchars($promo['code']); ?>" <?php echo ($promotion_filter == $promo['code']) ? 'selected' : ''; ?>>
-                                        <?php echo htmlspecialchars($promo['nom']); ?>
+                                    <option value="<?php echo htmlspecialchars($promo['sigle_promotion']); ?>" <?php echo ($promotion_filter == $promo['sigle_promotion']) ? 'selected' : ''; ?>>
+                                        <?php echo htmlspecialchars($promo['nomComplet']); ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
