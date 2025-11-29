@@ -28,7 +28,7 @@ try {
     $total_prestations = $stmt_prestations->fetch()['total'];
     
     // Nombre d'enseignants
-    $sql_enseignants = "SELECT COUNT(*) as total FROM users WHERE role='Enseignant'";
+    $sql_enseignants = "SELECT COUNT(*) as total FROM enseignant";
     $stmt_enseignants = $pdo->prepare($sql_enseignants);
     $stmt_enseignants->execute();
     $total_enseignants = $stmt_enseignants->fetch()['total'];
@@ -136,7 +136,7 @@ try {
                         <i class="fas fa-check-circle"></i>
                     </div>
                     <div class="stat-value"><?php echo $approved_prestations; ?></div>
-                    <div class="stat-label">Prestations Approuvées</div>
+                    <div class="stat-label">Total Prestations</div>
                 </div>
             </div>
             
@@ -145,11 +145,11 @@ try {
                 <h3 class="section-title"><i class="fas fa-history"></i> Dernières Fiches de Prestation Soumises</h3>
                 <?php
                 try {
-                    $sql_latest = "SELECT ef.*, c.nomComplet as cours_nom, u.username as enseignant_nom 
+                    $sql_latest = "SELECT ef.*, c.nomComplet as cours_nom, e.nom as enseignant_nom, e.postnom as enseignant_postnom, e.prenom as enseignant_prenom
                                   FROM entetefiche ef 
                                   JOIN cours c ON ef.code_cours = c.code_cours 
-                                  JOIN users u ON u.username = ef.enseignant
-                                  ORDER BY ef.datecreation DESC 
+                                  JOIN enseignant e ON ef.matricule_enseignant = e.matriculeEnseignant
+                                  ORDER BY ef.id DESC 
                                   LIMIT 5";
                     $stmt_latest = $pdo->prepare($sql_latest);
                     $stmt_latest->execute();
@@ -166,7 +166,6 @@ try {
                                 <th>Cours</th>
                                 <th>Enseignant</th>
                                 <th>Date</th>
-                                <th>Heures</th>
                                 <th>Statut</th>
                                 <th>Actions</th>
                             </tr>
@@ -176,34 +175,27 @@ try {
                                 <?php foreach ($latest_prestations as $prestation): ?>
                                 <tr>
                                     <td><?php echo htmlspecialchars($prestation['cours_nom']); ?></td>
-                                    <td><?php echo htmlspecialchars($prestation['enseignant_nom']); ?></td>
+                                    <td><?php echo htmlspecialchars($prestation['enseignant_nom'] . ' ' . $prestation['enseignant_postnom'] . ' ' . $prestation['enseignant_prenom']); ?></td>
                                     <td><?php echo htmlspecialchars(date('d/m/Y', strtotime($prestation['datecreation']))); ?></td>
-                                    <td><?php echo htmlspecialchars($prestation['heure_debut'] . ' - ' .$prestation['heure_fin']); ?></td>
                                     <td>
                                         <?php if ($prestation['statut'] == 'approuvé'): ?>
                                             <span class="status-badge status-approved"><i class="fas fa-check"></i> Approuvé</span>
+                                        <?php elseif ($prestation['statut'] == 'envoyé'): ?>
+                                            <span class="status-badge status-sent"><i class="fas fa-paper-plane"></i> Envoyé</span>
                                         <?php else: ?>
                                             <span class="status-badge status-pending"><i class="fas fa-clock"></i> En attente</span>
                                         <?php endif; ?>
                                     </td>
                                     <td class="table-actions">
-                                        <button class="btn btn-sm btn-outline" onclick="viewPrestation(<?php echo $prestation['id']; ?>)">
+                                        <a href="prestation.php" class="btn btn-sm btn-outline">
                                             <i class="fas fa-eye"></i> Voir
-                                        </button>
-                                        <?php if ($prestation['statut'] != 'approuvé'): ?>
-                                        <form method="POST" style="display: inline;">
-                                            <input type="hidden" name="fiche_id" value="<?php echo $prestation['id']; ?>">
-                                            <button type="submit" name="approve_prestation" class="btn btn-sm btn-success">
-                                                <i class="fas fa-check"></i> Approuver
-                                            </button>
-                                        </form>
-                                        <?php endif; ?>
+                                        </a>
                                    </td>
                                 </tr>
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="6" class="text-center">Aucune fiche de prestation soumise récemment.</td>
+                                    <td colspan="5" class="text-center">Aucune fiche de prestation soumise récemment.</td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>

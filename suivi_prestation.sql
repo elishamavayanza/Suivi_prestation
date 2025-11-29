@@ -277,10 +277,16 @@ CREATE TABLE IF NOT EXISTS `entetefiche` (
   `code_promotion` varchar(50) DEFAULT NULL,
   `code_cours` varchar(50) DEFAULT NULL,
   `matricule_enseignant` varchar(50) DEFAULT NULL,
+  `statut` varchar(20) DEFAULT 'en_attente',
+  `datecreation` datetime DEFAULT CURRENT_TIMESTAMP,
+  `date_approbation` datetime DEFAULT NULL,
+  `date_envoi` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_matricule_enseignant` (`matricule_enseignant`),
   KEY `idx_code_cours` (`code_cours`),
-  KEY `idx_codes` (`code_section`, `code_mention`, `code_promotion`)
+  KEY `idx_codes` (`code_section`, `code_mention`, `code_promotion`),
+  KEY `idx_statut` (`statut`),
+  KEY `idx_datecreation` (`datecreation`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
