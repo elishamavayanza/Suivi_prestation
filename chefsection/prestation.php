@@ -10,10 +10,17 @@ include '../config/connexion.php';
 // Récupérer les données depuis la base de données
 $fichesQuotidiennes = [];
 $fichesAValider = [];
+$enseignants = [];
+$filterType = isset($_GET['filter']) ? $_GET['filter'] : '';
 
 try {
-    // Récupérer les fiches de prestation quotidiennes avec les détails
-    $stmt = $pdo->prepare("
+    // Récupérer les enseignants pour le filtre
+    $stmt = $pdo->prepare("SELECT matriculeEnseignant, nom, postnom, prenom FROM enseignant ORDER BY nom");
+    $stmt->execute();
+    $enseignants = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Requête de base pour les fiches quotidiennes
+    $sqlBase = "
         SELECT cf.id, cf.datejoure, cf.contenu, cf.heureEntree, cf.heureSortie, cf.nbreH,
                ef.code_cours, ef.matricule_enseignant,
                e.nom AS enseignant_nom, e.postnom AS enseignant_postnom, e.prenom AS enseignant_prenom,
@@ -22,10 +29,31 @@ try {
         JOIN entetefiche ef ON cf.identetefiche = ef.id
         JOIN enseignant e ON ef.matricule_enseignant = e.matriculeEnseignant
         JOIN cours c ON ef.code_cours = c.code_cours
-        ORDER BY cf.datejoure DESC, cf.heureEntree ASC
-        LIMIT 20
-    ");
-    $stmt->execute();
+    ";
+    
+    // Appliquer les filtres selon les paramètres GET
+    $conditions = [];
+    $params = [];
+    
+    if ($filterType == 'today') {
+        $conditions[] = "cf.datejoure = CURDATE()";
+    } elseif ($filterType == 'date' && isset($_GET['date_filter'])) {
+        $conditions[] = "cf.datejoure = ?";
+        $params[] = $_GET['date_filter'];
+    } elseif ($filterType == 'enseignant' && isset($_GET['enseignant_filter'])) {
+        $conditions[] = "ef.matricule_enseignant = ?";
+        $params[] = $_GET['enseignant_filter'];
+    }
+    
+    $sql = $sqlBase;
+    if (!empty($conditions)) {
+        $sql .= " WHERE " . implode(" AND ", $conditions);
+    }
+    
+    $sql .= " ORDER BY cf.datejoure DESC, cf.heureEntree ASC LIMIT 20";
+    
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
     $fichesQuotidiennes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Récupérer les fiches à valider
@@ -58,6 +86,35 @@ try {
     <title>Fiches de Prestation - Chef de Section</title>
     <link rel="stylesheet" href="chef_section_cp_style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .filter-form {
+            display: none;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .filter-form.active {
+            display: block;
+        }
+        .filter-form .form-group {
+            margin-bottom: 10px;
+        }
+        .filter-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .filter-form input, .filter-form select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .filter-form .btn-group {
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
     <!-- Header -->
@@ -108,6 +165,45 @@ try {
                     <button class="btn btn-warning" onclick="showFilterForm('enseignant')"><i class="fas fa-search"></i> Rechercher par enseignant</button>
                 </div>
 
+                <!-- Formulaire de filtre par date -->
+                <div id="dateFilterForm" class="filter-form">
+                    <h4>Filtrer par date</h4>
+                    <form method="GET" action="prestation.php">
+                        <input type="hidden" name="filter" value="date">
+                        <div class="form-group">
+                            <label for="date_filter">Sélectionnez une date :</label>
+                            <input type="date" id="date_filter" name="date_filter" required>
+                        </div>
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-primary">Appliquer le filtre</button>
+                            <button type="button" class="btn btn-secondary" onclick="hideFilterForms()">Annuler</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Formulaire de filtre par enseignant -->
+                <div id="enseignantFilterForm" class="filter-form">
+                    <h4>Rechercher par enseignant</h4>
+                    <form method="GET" action="prestation.php">
+                        <input type="hidden" name="filter" value="enseignant">
+                        <div class="form-group">
+                            <label for="enseignant_filter">Sélectionnez un enseignant :</label>
+                            <select id="enseignant_filter" name="enseignant_filter" required>
+                                <option value="">Sélectionnez un enseignant</option>
+                                <?php foreach ($enseignants as $enseignant): ?>
+                                    <option value="<?php echo htmlspecialchars($enseignant['matriculeEnseignant']); ?>">
+                                        <?php echo htmlspecialchars($enseignant['nom'] . ' ' . $enseignant['postnom'] . ' ' . $enseignant['prenom']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-primary">Appliquer le filtre</button>
+                            <button type="button" class="btn btn-secondary" onclick="hideFilterForms()">Annuler</button>
+                        </div>
+                    </form>
+                </div>
+
                 <div class="section-chief-table">
                     <table>
                         <thead>
@@ -139,8 +235,10 @@ try {
                                         <td><?php echo htmlspecialchars($fiche['nbreH']); ?></td>
                                         <td><?php echo htmlspecialchars(substr($fiche['contenu'], 0, 50)) . (strlen($fiche['contenu']) > 50 ? '...' : ''); ?></td>
                                         <td>
-                                            <?php if (!empty($fiche['signatureCP'])): ?>
+                                            <?php if (!empty($fiche['signatureCP']) && $fiche['signatureCP'] == 'OK'): ?>
                                                 <span class="status-badge status-approved"><i class="fas fa-check"></i> Validé</span>
+                                            <?php elseif (!empty($fiche['signatureCP']) && $fiche['signatureCP'] == 'REJETEE'): ?>
+                                                <span class="status-badge status-rejected"><i class="fas fa-times"></i> Rejeté</span>
                                             <?php else: ?>
                                                 <span class="status-badge status-pending"><i class="fas fa-clock"></i> En attente</span>
                                             <?php endif; ?>
@@ -164,7 +262,6 @@ try {
                 
                 <div class="section-chief-actions">
                     <button class="btn btn-primary" onclick="showPending()"><i class="fas fa-list"></i> Voir fiches à valider</button>
-                    <button class="btn btn-success" onclick="showFilterForm('periode')"><i class="fas fa-filter"></i> Filtrer par période</button>
                 </div>
                 
                 <div class="section-chief-table">
@@ -215,26 +312,38 @@ try {
     </footer>
 
     <script>
-        function filterToday() {
-            alert("Affichage des fiches du jour");
-            // Cette fonction serait implémentée pour filtrer les résultats par date du jour
-        }
-
+        // Afficher le formulaire de filtre approprié
         function showFilterForm(type) {
-            alert("Filtrer par " + type);
-            // Cette fonction serait implémentée pour afficher un formulaire de filtrage
+            hideFilterForms();
+            if (type === 'date') {
+                document.getElementById('dateFilterForm').classList.add('active');
+            } else if (type === 'enseignant') {
+                document.getElementById('enseignantFilterForm').classList.add('active');
+            }
         }
-
-        function viewDetails(ficheId) {
-            alert("Voir les détails de la fiche #" + ficheId);
-            // Cette fonction serait implémentée pour afficher les détails d'une fiche
+        
+        // Masquer tous les formulaires de filtre
+        function hideFilterForms() {
+            document.getElementById('dateFilterForm').classList.remove('active');
+            document.getElementById('enseignantFilterForm').classList.remove('active');
         }
-
+        
+        // Filtrer par date du jour
+        function filterToday() {
+            window.location.href = 'prestation.php?filter=today';
+        }
+        
+        // Afficher les fiches en attente
         function showPending() {
             alert("Affichage des fiches en attente de validation");
-            // Cette fonction serait implémentée pour afficher uniquement les fiches en attente
         }
-
+        
+        // Voir les détails d'une fiche
+        function viewDetails(ficheId) {
+            alert("Voir les détails de la fiche #" + ficheId);
+        }
+        
+        // Valider une fiche
         function validateFiche(ficheId) {
             if (confirm("Êtes-vous sûr de vouloir valider cette fiche de prestation ?")) {
                 // Créer un formulaire dynamiquement pour la validation
@@ -252,7 +361,8 @@ try {
                 form.submit();
             }
         }
-
+        
+        // Rejeter une fiche
         function rejectFiche(ficheId) {
             if (confirm("Êtes-vous sûr de vouloir rejeter cette fiche de prestation ?")) {
                 // Créer un formulaire dynamiquement pour le rejet
@@ -270,6 +380,11 @@ try {
                 form.submit();
             }
         }
+        
+        // Masquer les formulaires au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            hideFilterForms();
+        });
     </script>
 </body>
 </html>
