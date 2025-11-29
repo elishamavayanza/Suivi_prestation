@@ -61,7 +61,7 @@ $prestationsCount = $prestationsStmt->fetch()['total'];
                 <ul>
                     <li><a href="index.php" class="active"><i class="fas fa-home"></i> <span>Tableau de bord</span></a></li>
                     <li><a href="horaire.php"><i class="fas fa-clock"></i> <span>Gestion des Horaires</span></a></li>
-                    <li><a href="chargehoraire.php"><iclass="fas fa-hourglass-half"></i> <span>Charges Horaire</span></a></li>
+                    <li><a href="chargehoraire.php"><i class="fas fa-hourglass-half"></i> <span>Charges Horaire</span></a></li>
                     <li><a href="prestation.php"><iclass="fas fa-file-invoice"></i> <span>Fiches de Prestation</span></a></li>
                 </ul>
             </nav>
@@ -109,7 +109,7 @@ $prestationsCount = $prestationsStmt->fetch()['total'];
                 <h3 class="section-title">Accès Rapide</h3>
                 <div class="section-chief-actions">
                     <a href="horaire.php" class="btn btn-primary"><i class="fas fa-clock"></i> Gérer les Horaires</a>
-                    <a href="chargehoraire.php" class="btn btn-success"><iclass="fas fa-hourglass-half"></i> Charges Horaire</a>
+                    <a href="chargehoraire.php" class="btn btn-success"><i class="fas fa-hourglass-half"></i> Charges Horaire</a>
                     <a href="prestation.php" class="btn btn-warning"><i class="fas fa-file-invoice"></i> Fiches de Prestation</a>
                 </div>
             </div>

@@ -6,6 +6,46 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Chefdesection') {
 }
 
 include '../config/connexion.php';
+
+// Récupérer les données depuis la base de données
+$enseignants = [];
+$cours = [];
+$promotions = [];
+$charges = [];
+
+try {
+    // Récupérer les enseignants
+    $stmt = $pdo->prepare("SELECT matriculeEnseignant, nom, postnom, prenom FROM enseignant ORDER BY nom");
+    $stmt->execute();
+    $enseignants = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Récupérer les cours
+    $stmt = $pdo->prepare("SELECT id, code_cours, nomComplet FROM cours ORDER BY nomComplet");
+    $stmt->execute();
+    $cours = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Récupérer les promotions
+    $stmt = $pdo->prepare("SELECT id, sigle_promotion, nomComplet FROM promotion ORDER BY nomComplet");
+    $stmt->execute();
+    $promotions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Récupérer les charges horaires existantes avec les détails
+    $stmt = $pdo->prepare("
+        SELECT ch.id, ch.observation, 
+               e.nom AS enseignant_nom, e.postnom AS enseignant_postnom, e.prenom AS enseignant_prenom,
+               c.nomComplet AS cours_nom,
+               p.nomComplet AS promotion_nom
+        FROM chargehoraire ch
+        JOIN enseignant e ON ch.matricule = e.matriculeEnseignant
+        JOIN cours c ON ch.codecours = c.code_cours
+        JOIN promotion p ON ch.codepromotion = p.sigle_promotion
+        ORDER BY e.nom
+    ");
+    $stmt->execute();
+    $charges = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    $error_message = "Erreur lors de la récupération des données : " . $e->getMessage();
+}
 ?>
 
 <!DOCTYPE html>
@@ -61,23 +101,26 @@ include '../config/connexion.php';
                 <p>En tant que chef de section, vous pouvez élaborer et gérer les charges horaire des enseignants.</p>
                 
                 <div class="section-chief-actions">
-                    <button class="btn btn-primary"><i class="fas fa-plus-circle"></i> Nouvelle Charge Horaire</button>
-                    <button class="btn btn-success"><i class="fas fa-user-plus"></i> Affecter un Enseignant</button>
-                    <button class="btn btn-warning"><i class="fas fa-sync-alt"></i> Réviser les Charges</button>
+                    <button class="btn btn-primary" onclick="showForm()"><i class="fas fa-plus-circle"></i> Nouvelle Charge Horaire</button>
+                    <button class="btn btn-success" onclick="showForm()"><i class="fas fa-user-plus"></i> Affecter un Enseignant</button>
+                    <button class="btn btn-warning" onclick="showForm()"><i class="fas fa-sync-alt"></i> Réviser les Charges</button>
                 </div>
 
-                <div class="section-chief-form">
+                <div class="section-chief-form" id="chargeForm" style="display:none;">
                     <h3 class="form-title">Formulaire de Charge Horaire</h3>
-                    <form>
+                    <form id="chargeHoraireForm" method="POST" action="scripts/add_charge_horaire.php">
+                        <input type="hidden" id="chargeId" name="chargeId" value="">
                         <div class="form-row">
                             <div class="form-col">
                                 <div class="form-group">
                                     <label for="enseignant" class="form-label">Enseignant</label>
-                                    <select id="enseignant" class="form-control">
+                                    <select id="enseignant" name="enseignant" class="form-control" required>
                                         <option value="">Sélectionnez un enseignant</option>
-                                        <option value="1">Dupont Jean</option>
-                                        <option value="2">Martin Marie</option>
-                                        <option value="3">Bernard Pierre</option>
+                                        <?php foreach ($enseignants as $enseignant): ?>
+                                            <option value="<?php echo htmlspecialchars($enseignant['matriculeEnseignant']); ?>">
+                                                <?php echo htmlspecialchars($enseignant['nom'] . ' ' . $enseignant['postnom'] . ' ' . $enseignant['prenom']); ?>
+                                            </option>
+                                        <?php endforeach; ?>
                                     </select>
                                 </div>
                             </div>
@@ -85,12 +128,13 @@ include '../config/connexion.php';
                             <div class="form-col">
                                 <div class="form-group">
                                     <label for="cours" class="form-label">Cours</label>
-                                    <select id="cours" class="form-control">
+                                    <select id="cours" name="cours" class="form-control" required>
                                         <option value="">Sélectionnez un cours</option>
-                                        <option value="math">Mathématiques</option>
-                                        <option value="phys">Physique</option>
-                                        <option value="chim">Chimie</option>
-                                        <option value="bio">Biologie</option>
+                                        <?php foreach ($cours as $cour): ?>
+                                            <option value="<?php echo htmlspecialchars($cour['code_cours']); ?>">
+                                                <?php echo htmlspecialchars($cour['nomComplet']); ?>
+                                            </option>
+                                        <?php endforeach; ?>
                                     </select>
                                 </div>
                             </div>
@@ -99,25 +143,28 @@ include '../config/connexion.php';
                         <div class="form-row">
                             <div class="form-col">
                                 <div class="form-group">
-                                    <label for="volume" class="form-label">Volume Horaire (heures)</label>
-                                    <input type="number" id="volume" class="form-control" min="0" placeholder="Entrez le volume horaire">
+                                    <label for="promotion" class="form-label">Promotion</label>
+                                    <select id="promotion" name="promotion" class="form-control" required>
+                                        <option value="">Sélectionnez une promotion</option>
+                                        <?php foreach ($promotions as $promo): ?>
+                                            <option value="<?php echo htmlspecialchars($promo['sigle_promotion']); ?>">
+                                                <?php echo htmlspecialchars($promo['nomComplet']); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
                                 </div>
                             </div>
                             
                             <div class="form-col">
                                 <div class="form-group">
-                                    <label for="periode" class="form-label">Période</label>
-                                    <select id="periode" class="form-control">
-                                        <option value="">Sélectionnez une période</option>
-                                        <option value="semestre1">Semestre 1</option>
-                                        <option value="semestre2">Semestre 2</option>
-                                        <option value="annuel">Annuel</option>
-                                    </select>
+                                    <label for="observation" class="form-label">Observation</label>
+                                    <input type="text" id="observation" name="observation" class="form-control" placeholder="Entrez une observation">
                                 </div>
                             </div>
                         </div>
                         
                         <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Enregistrer la Charge</button>
+                        <button type="button" class="btn btn-secondary" onclick="hideForm()">Annuler</button>
                     </form>
                 </div>
             </div>
@@ -126,52 +173,44 @@ include '../config/connexion.php';
                 <h3 class="section-title"><i class="fas fa-list"></i> Charges Horaire Actuelles</h3>
                 <p>Liste des charges horaire attribuées aux enseignants.</p>
                 
+                <?php if (isset($error_message)): ?>
+                    <div class="alert alert-danger"><?php echo $error_message; ?></div>
+                <?php endif; ?>
+
                 <div class="section-chief-table">
                     <table>
                         <thead>
                             <tr>
                                 <th>Enseignant</th>
                                 <th>Cours</th>
-                                <th>Volume Horaire</th>
-                                <th>Période</th>
-                                <th>Statut</th>
+                                <th>Promotion</th>
+                                <th>Observation</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Dupont Jean</td>
-                                <td>Mathématiques</td>
-                                <td>60 heures</td>
-                                <td>Semestre 1</td>
-                                <td><span class="status-badge status-approved"><i class="fas fa-check"></i> Validé</span></td>
-                                <td class="table-actions">
-                                    <button class="btn btn-sm btn-success"><i class="fas fa-edit"></i> Modifier</button>
-                                    <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Supprimer</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Martin Marie</td>
-                                <td>Physique</td>
-                                <td>45 heures</td>
-                                <td>Semestre 1</td>
-                                <td><span class="status-badge status-pending"><i class="fas fa-clock"></i> En attente</span></td>
-                                <td class="table-actions">
-                                    <button class="btn btn-sm btn-success"><i class="fas fa-edit"></i> Modifier</button>
-                                    <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Supprimer</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Bernard Pierre</td>
-                                <td>Chimie</td>
-                                <td>50 heures</td>
-                                <td>Annuel</td>
-                                <td><span class="status-badge status-approved"><i class="fas fa-check"></i> Validé</span></td>
-                                <td class="table-actions">
-                                    <button class="btn btn-sm btn-success"><i class="fas fa-edit"></i> Modifier</button>
-                                    <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Supprimer</button>
-                                </td>
-                            </tr>
+                            <?php if (empty($charges)): ?>
+                                <tr>
+                                    <td colspan="5" class="text-center">Aucune charge horaire enregistrée</td>
+                                </tr>
+                            <?php else: ?>
+                                <?php foreach ($charges as $charge): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($charge['enseignant_nom'] . ' ' . $charge['enseignant_postnom'] . ' ' . $charge['enseignant_prenom']); ?></td>
+                                        <td><?php echo htmlspecialchars($charge['cours_nom']); ?></td>
+                                        <td><?php echo htmlspecialchars($charge['promotion_nom']); ?></td>
+                                        <td><?php echo htmlspecialchars($charge['observation']); ?></td>
+                                        <td class="table-actions">
+                                            <button class="btn btn-sm btn-success" onclick="editCharge(<?php echo $charge['id']; ?>, '<?php echo $charge['matricule']; ?>', '<?php echo $charge['codecours']; ?>', '<?php echo $charge['codepromotion']; ?>', '<?php echo htmlspecialchars($charge['observation'], ENT_QUOTES); ?>')">
+                                                <i class="fas fa-edit"></i> Modifier
+                                            </button>
+                                            <button class="btn btn-sm btn-danger" onclick="deleteCharge(<?php echo $charge['id']; ?>)">
+                                                <i class="fas fa-trash"></i> Supprimer
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -182,5 +221,51 @@ include '../config/connexion.php';
     <footer class="section-chief-footer">
         <p>&copy; 2025 Système de Suivi de Prestation. Tous droits réservés.</p>
     </footer>
+
+    <script>
+        function showForm() {
+            document.getElementById('chargeForm').style.display = 'block';
+            document.getElementById('chargeHoraireForm').reset();
+            document.getElementById('chargeId').value = '';
+        }
+
+        function hideForm() {
+            document.getElementById('chargeForm').style.display = 'none';
+        }
+
+        function editCharge(id, matricule, codecours, codepromotion, observation) {
+            showForm();
+            document.getElementById('chargeId').value = id;
+            document.getElementById('enseignant').value = matricule;
+            document.getElementById('cours').value = codecours;
+            document.getElementById('promotion').value = codepromotion;
+            document.getElementById('observation').value = observation;
+        }
+
+        function deleteCharge(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette charge horaire ?')) {
+                // Créer un formulaire dynamiquement pour la suppression
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = 'scripts/delete_charge_horaire.php';
+                
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'id';
+                input.value = id;
+                
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        // Afficher le formulaire si une erreur ou un message de succès est présent
+        window.onload = function() {
+            <?php if (isset($_GET['success']) || isset($_GET['error'])): ?>
+                showForm();
+            <?php endif; ?>
+        };
+    </script>
 </body>
 </html>
