@@ -8,23 +8,22 @@
     // Messages d'erreurs et de succès
     $message = '';
     $message_type = '';
-    
-    // Traitement du formulaire d'ajout d'utilisateur
+// Traitement du formulaire d'ajout d'utilisateur
     if (isset($_POST['add_user'])) {
         $matricule = mysqli_real_escape_string($con, $_POST['matricule']);
         $username = mysqli_real_escape_string($con, $_POST['username']);
-        $password = mysqli_real_escape_string($con, $_POST['password']);
+        $password =mysqli_real_escape_string($con, $_POST['password']);
         $role = mysqli_real_escape_string($con, $_POST['role']);
         
         // Vérifier si l'utilisateur existe déjà
         $check_query = "SELECT * FROM utilisateur WHERE matricule='$matricule' OR username='$username'";
-        $check_result = mysqli_query($con, $check_query);
+       $check_result = mysqli_query($con, $check_query);
         
         if (mysqli_num_rows($check_result) > 0) {
             $message = "Un utilisateur avec ce matricule ou ce nom d'utilisateur existe déjà.";
             $message_type = "error";
         } else {
-            // Insérer le nouvel utilisateur
+            // Insérerle nouvel utilisateur
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
             $insert_query = "INSERT INTO utilisateur (matricule, username, password, role) VALUES ('$matricule', '$username', '$hashed_password', '$role')";
             
@@ -38,7 +37,7 @@
         }
     }
     
-    // Traitement de la suppression d'utilisateur
+   // Traitement de la suppression d'utilisateur
     if (isset($_GET['delete'])) {
         $id = intval($_GET['delete']);
         $delete_query = "DELETE FROM utilisateur WHERE id=$id";
@@ -63,7 +62,7 @@
         $update_query = "UPDATE utilisateur SET matricule='$matricule', username='$username', role='$role' WHERE id=$id";
         
         if (mysqli_query($con, $update_query)) {
-            // Si un nouveau mot de passe est fourni, le mettre à jour
+            // Si unnouveau mot de passe est fourni, le mettre à jour
             if (!empty($_POST['password'])) {
                 $new_password = mysqli_real_escape_string($con, $_POST['password']);
                 $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
@@ -86,7 +85,7 @@
 
 <main class="main-content">
     <style>
-        .btn-small {
+.btn-small {
             padding: 5px 10px;
             font-size: 0.85rem;
             border-radius: 3px;
@@ -96,7 +95,7 @@
             background-color: #3498db;
             color: white;
             border: none;
-            margin-right: 5px;
+           margin-right: 5px;
         }
         
         .btn-edit:hover {
@@ -108,7 +107,7 @@
             color: white;
             border: none;
             text-decoration: none;
-            display: inline-block;
+           display: inline-block;
         }
         
         .btn-danger:hover {
@@ -121,7 +120,7 @@
             z-index: 1000;
             left: 0;
             top: 0;
-            width: 100%;
+width: 100%;
             height: 100%;
             background-color: rgba(0,0,0,0.4);
         }
@@ -130,7 +129,7 @@
             background-color: #fefefe;
             margin: 10% auto;
             padding: 20px;
-            border: 1px solid #888;
+border: 1px solid #888;
             width: 50%;
             border-radius: 5px;
             position: relative;
@@ -180,22 +179,22 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="matricule">Matricule</label>
-                    <input type="text" id="matricule" name="matricule" required>
+                    <input type="text" id="matricule" name="matricule" required class="form-control">
                 </div>
                 <div class="form-group">
                     <label for="username">Nom d'utilisateur</label>
-                    <input type="text" id="username" name="username" required>
+                    <input type="text" id="username" name="username" required class="form-control">
                 </div>
             </div>
             
             <div class="form-row">
                 <div class="form-group">
                     <label for="password">Mot de passe</label>
-                    <input type="password" id="password" name="password" required>
+                    <input type="password" id="password" name="password" required class="form-control">
                 </div>
                 <div class="form-group">
                     <label for="role">Rôle</label>
-                    <select id="role" name="role" required>
+                    <select id="role" name="role" required class="form-control">
                         <option value="">Sélectionner un rôle</option>
                         <option value="admin">Administrateur</option>
                         <option value="etudiant">Étudiant</option>
@@ -217,7 +216,7 @@
     <div class="admin-table mt-20">
         <h3 class="form-title">Liste des utilisateurs</h3>
         <table>
-            <thead>
+<thead>
                 <tr>
                     <th>ID</th>
                     <th>Matricule</th>
@@ -232,9 +231,9 @@
                     <td><?php echo htmlspecialchars($user['id']); ?></td>
                     <td><?php echo htmlspecialchars($user['matricule']); ?></td>
                     <td><?php echo htmlspecialchars($user['username']); ?></td>
-                    <td><?php echo htmlspecialchars($user['role']); ?></td>
+                   <td><?php echo htmlspecialchars($user['role']); ?></td>
                     <td>
-                        <button class="btn btn-small btn-edit" onclick="editUser(<?php echo $user['id']; ?>, '<?php echo htmlspecialchars($user['matricule']); ?>', '<?php echo htmlspecialchars($user['username']); ?>', '<?php echo htmlspecialchars($user['role']); ?>')">
+                        <button class="btn btn-small btn-edit" onclick="editUser(<?php echo $user['id']; ?>, '<?php echo htmlspecialchars($user['matricule']); ?>', '<?php echo htmlspecialchars($user['username']);?>', '<?php echo htmlspecialchars($user['role']); ?>')">
                             <i class="fas fa-edit"></i> Modifier
                         </button>
                         <a href="?delete=<?php echo $user['id']; ?>" class="btn btn-small btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')">
@@ -267,7 +266,7 @@
             </div>
             
             <div class="form-group">
-                <label for="edit_password">Nouveau mot de passe (laisser vide pour ne pas changer)</label>
+                <label for="edit_password">Nouveau mot de passe (laisser vide pour ne paschanger)</label>
                 <input type="password" id="edit_password" name="password">
             </div>
             
@@ -279,13 +278,13 @@
                     <option value="etudiant">Étudiant</option>
                     <option value="enseignant">Enseignant</option>
                     <option value="Chefpromotion">Chef de Promotion</option>
-                    <option value="Chefdesection">Chef de Section</option>
+                   <option value="Chefdesection">Chef de Section</option>
                 </select>
             </div>
             
             <div class="form-group">
                 <button type="submit" name="edit_user" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Enregistrer les modifications
+                    <i class="fas fa-save"></i> Enregistrer lesmodifications
                 </button>
                 <button type="button" class="btn btn-secondary" id="cancelEdit">
                     <i class="fas fa-times"></i> Annuler
@@ -322,7 +321,7 @@
         
         window.onclick = function(event) {
             if (event.target == modal) {
-                modal.style.display = 'none';
+                modal.style.display ='none';
             }
         }
     });
