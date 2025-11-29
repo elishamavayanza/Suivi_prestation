@@ -19,17 +19,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ficheId'])) {
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$ficheId]);
         
+        // Mettre à jour le statut de l'en-tête de la fiche
+        $sql2 = "UPDATE entetefiche SET statut = 'validé' WHERE id = ?";
+        $stmt2 = $pdo->prepare($sql2);
+        $stmt2->execute([$ficheId]);
+        
         // Valider la transaction
         $pdo->commit();
         
         $_SESSION['success_message'] = "Fiche de prestation validée avec succès.";
-        header("Location: ../prestation.php?validation_filter=pending&success=1");
+        header("Location: ../prestation.php");
         exit();
     } catch (PDOException $e) {
         // Annuler la transaction en cas d'erreur
         $pdo->rollback();
         $_SESSION['error_message'] = "Erreur lors de la validation : " . $e->getMessage();
-        header("Location: ../prestation.php?validation_filter=pending&error=1");
+        header("Location: ../prestation.php");
         exit();
     }
 } else {
