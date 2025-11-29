@@ -37,7 +37,7 @@
 	<div>
 	 <img src="image/logo.jpg" style="width:50px;height:50px;margin:12px;margin-left:-50px;margin-bottom:-35px;border-radius:30px/30px;"width="50px" height="50px"/>
       <h1><a href="index.php">Isp-Muhangi</a></h1>
-     <p>ISP-MUHANGI A BUTEMBO</p>	 
+    <p>ISP-MUHANGI A BUTEMBO</p>	 
 	 </div>
     </div>
     <div class="fl_right">
@@ -105,15 +105,13 @@ if(isset($_SESSION['role']) && $_SESSION['role']!="None"){
             <li><a href="academique/academique_prestation.php">Fiches de prestation</a></li>
             <!--li><a href="cours.php">Programmer Cours</a></li-->
             <!--li ><a href="admin/index.php">Admin</a></li-->
-           
-			<?php
+<?php
 		}else if($_SESSION['role']=="AB"){
 			?>
-            <li class="active"><a href="index.php">Accueil</a></li>
-            <li><a href="horaire.php">Horaire</a></li>
-			      <li><a href="honoraire.php">Honoraire</a></li>
+            <li class="active"><a href="Ab/index.php">Accueil AB</a></li>
+            <li><a href="Ab/index.php">Prestation/Honoraire</a></li>
              
-			<?php
+<?php
       	}else if($_SESSION['role']=="secretaire"){
 			?>
             <li class="active"><a href="secretairesection/index.php">Accueil</a></li>
@@ -134,7 +132,7 @@ if(isset($_SESSION['role']) && $_SESSION['role']!="None"){
 		
 		?>
          
-        <!--li class="active"><a href="index.php">Accueil</a></li>
+        <!--li class="active"><ahref="index.php">Accueil</a></li>
         <li><a href="horaire.php">Horaire</a></li>
         <li><ahref="sign.php">s'inscription</a></li-->
 <!--li><a href="apropos.php">Apropos</a></li-->
