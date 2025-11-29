@@ -93,104 +93,116 @@ if(isset($_GET['supp'])){
 		<div class="formulaire">
 		 <form action="../formulaire/formhoraire.php" method="POST" enctype="multipart/form-data">
             
-              <label for="name">Cours </label>
-             <select name="cours" id="name" >
-			 <?php 
-				while($row=mysqli_fetch_array($cours)){
-					?>
-				<option value="<?php echo $row["code_cours"]?>"><?php echo $row["nomComplet"]?></option>
-				<?php
-				}
-				?>
-				
-			</select>
+              <div class="form-group">
+                  <label for="name">Cours</label>
+                  <select name="cours" id="name" class="form-control">
+                     <?php 
+                        while($row=mysqli_fetch_array($cours)){
+                            ?>
+                        <option value="<?php echo $row["code_cours"]?>"><?php echo $row["nomComplet"]?></option>
+                        <?php
+                        }
+                        ?>
+                  </select>
+              </div>
            
-		
-              <label for="name">mention </label>
-             <select name="dep" id="name" >
-			 <?php 
-				while($row=mysqli_fetch_array($dep)){
-					?>
-				<option value="<?php echo $row["code_mention"]?>"><?php echo $row["nomComplet"]?></option>
-				<?php
-				}
-				?>
-				
-			</select>
-           
+              <div class="form-group">
+                  <label for="dep">Mention</label>
+                  <select name="dep" id="dep" class="form-control">
+                     <?php 
+                        while($row=mysqli_fetch_array($dep)){
+                            ?>
+                        <option value="<?php echo $row["code_mention"]?>"><?php echo $row["nomComplet"]?></option>
+                        <?php
+                        }
+                        ?>
+                  </select>
+              </div>
 			
-              <label for="name">Promotion</label>
-             <select name="pro" id="name" >
-			 <?php 
-				while($row=mysqli_fetch_array($pro)){
-					?>
-				<option value="<?php echo $row["sigle_promotion"]?>"><?php echo $row["nomComplet"]?></option>
-				<?php
-				}
-				?>
-				
-			</select>			
-              <label for="name" class="text">Annee academique </label>
-              <select name="annee" id="name" class="text" >
-				<?php for($i=2010;$i<=date('Y')+10;$i++){
-					$in=$i+1;
-					?>
-					<option  value="<?php echo $i."-".$in;?>"><?php echo $i."-".$in;?></option>
-					<?php
-				}?>
-			  </select>
-            
-			<label for="name">Periode </label>
-             <select name="periode">
-				<option value="AM">Avant Midi</option>
-				<option value="PM">Apres Midi</option>
-			 </select>
+              <div class="form-group">
+                  <label for="pro">Promotion</label>
+                  <select name="pro" id="pro" class="form-control">
+                     <?php 
+                        while($row=mysqli_fetch_array($pro)){
+                            ?>
+                        <option value="<?php echo $row["sigle_promotion"]?>"><?php echo $row["nomComplet"]?></option>
+                        <?php
+                        }
+                        ?>
+                  </select>
+              </div>
               
-			  
-			  <label for="name">Desc. Jour et Heure </label>
-            	<textarea name="jour" id="comment" cols="25" rows="3"><?php if(isset($_GET['modif'])) echo $res['Contenu'];?></textarea>
-           
-              
-			  <label for="name">Date </label>
-              <input type="date" name="dte" id="name" value="<?php if(isset($_GET['modif'])) echo $res['Titre'];?>" size="25">
-			  <label for="name">Enseignant </label>
-
-              <!--input type="text" name="enseignant" id="name" value="<?php if(isset($_GET['modif'])) echo $res['Titre'];?>" size="25-->
-			  <select name="enseignant" id="name" >
-			 <?php 
-				while($row=mysqli_fetch_array($ens)){
-					?>
-				<option value="<?php echo $row["matriculeEnseignant"]?>"><?php echo $row["nom"]." ".$row["postnom"]." ".$row["prenom"];?></option>
-				<?php
-				}
-				?>
-				
-			</select>	
-			  <label for="name">Site </label>
-              <input type="text" name="site" id="name" value="<?php if(isset($_GET['modif'])) echo $res['Titre'];?>" size="25">
-			  
+              <div class="form-group">
+                  <label for="annee" class="text">Année académique</label>
+                  <select name="annee" id="annee" class="form-control text">
+                    <?php for($i=2010;$i<=date('Y')+10;$i++){
+                        $in=$i+1;
+                        ?>
+                        <option value="<?php echo $i."-".$in;?>"><?php echo $i."-".$in;?></option>
+                        <?php
+                    }?>
+                  </select>
+              </div>
             
-              <label for="comment">Observation</label>
-            <textarea name="observation" id="comment" cols="100" rows="5"><?php if(isset($_GET['modif'])) echo $res['Contenu'];?></textarea>
-			
+              <div class="form-group">
+                  <label for="periode">Période</label>
+                  <select name="periode" id="periode" class="form-control">
+                    <option value="AM">Avant Midi</option>
+                    <option value="PM">Après Midi</option>
+                 </select>
+              </div>
+              
+              <div class="form-group">
+                  <label for="jour">Desc. Jour et Heure</label>
+                  <textarea name="jour" id="jour" class="form-control" cols="25" rows="3"><?php if(isset($_GET['modif'])) echo $res['Contenu'];?></textarea>
+              </div>
+              
+              <div class="form-group">
+                  <label for="dte">Date</label>
+                  <input type="date" name="dte" id="dte" class="form-control" value="<?php if(isset($_GET['modif'])) echo $res['Titre'];?>" size="25">
+              </div>
+              
+              <div class="form-group">
+                  <label for="enseignant">Enseignant</label>
+                  <select name="enseignant" id="enseignant" class="form-control">
+                     <?php 
+                        while($row=mysqli_fetch_array($ens)){
+                            ?>
+                        <option value="<?php echo $row["matriculeEnseignant"]?>"><?php echo $row["nom"]." ".$row["postnom"]." ".$row["prenom"];?></option>
+                        <?php
+                        }
+                        ?>
+                  </select>
+              </div>
+              
+              <div class="form-group">
+                  <label for="site">Site</label>
+                  <input type="text" name="site" id="site" class="form-control" value="<?php if(isset($_GET['modif'])) echo $res['Titre'];?>" size="25">
+              </div>
+			  
+              <div class="form-group">
+                  <label for="observation">Observation</label>
+                  <textarea name="observation" id="observation" class="form-control" cols="100" rows="5"><?php if(isset($_GET['modif'])) echo $res['Contenu'];?></textarea>
+              </div>
 			
 			 <?php if(isset($_GET['modif'])) 
 			 {
 			 ?>
            
-             <label for="name"></label>
-            	<input type="submit" name="modifier" id="name" value="Modifier" size="32">
+              <div class="form-group">
+                  <input type="submit" name="modifier" id="modifier" class="btn btn-primary" value="Modifier">
+              </div>
             
 			<?php
 			 }else{
 				  ?>
-            <div class="one_third first">
-             <label for="name"></label>
-              <button type="submit" name="ajouter" id="name" value="Ajouter" > Ajouter </button>
+              <div class="form-group">
+                  <button type="submit" name="ajouter" id="ajouter" class="btn btn-success">Ajouter</button>
+              </div>
             
 			<?php
 			 }
 			?>
            </form>
-			</div>
-        </nav>
+		</div>
+    </nav>
