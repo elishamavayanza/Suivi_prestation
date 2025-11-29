@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $description = !empty($_POST['description']) ? $_POST['description'] : null;
         
         // Insérer la nouvelle fiche de prestation
-        $sql_insert = "INSERT INTO entetefiche (code_cours, enseignant, code_section, code_mention, code_promotion, volume_horaire_prevu, heures_reelles_prestees, description, datecreation) 
+        $sql_insert = "INSERT INTO entetefiche (code_cours, matricule_enseignant, code_section, code_mention, code_promotion, volume_horaire_prevu, heures_reelles_prestees, description, datecreation) 
                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
         $stmt_insert = $pdo->prepare($sql_insert);
         $stmt_insert->execute([$cours, $enseignant, $section, $mention, $promotion, $volume_horaire, $heures_reelles, $description]);

@@ -8,6 +8,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'Chefpromotion') {
 }
 
 include("../script/config.php");
+include("../script/connexion.php");
 
 // Récupérer les données nécessaires pour le formulaire
 try {
@@ -18,25 +19,25 @@ try {
     $cours = $stmt_cours->fetchAll();
 
     // Récupérer les enseignants
-    $sql_enseignants = "SELECT * FROM users WHERE role='Enseignant' ORDER BY username";
+    $sql_enseignants = "SELECT * FROM enseignant ORDER BY nom";
     $stmt_enseignants = $pdo->prepare($sql_enseignants);
     $stmt_enseignants->execute();
     $enseignants = $stmt_enseignants->fetchAll();
 
     // Récupérer les sections
-    $sql_sections = "SELECT * FROM section ORDER BY nom";
+    $sql_sections = "SELECT * FROM section ORDER BY nomComplet";
     $stmt_sections = $pdo->prepare($sql_sections);
     $stmt_sections->execute();
     $sections = $stmt_sections->fetchAll();
 
     // Récupérer les mentions
-    $sql_mentions = "SELECT * FROM mention ORDER BY nom";
+    $sql_mentions = "SELECT * FROM mention ORDER BY nomComplet";
     $stmt_mentions = $pdo->prepare($sql_mentions);
     $stmt_mentions->execute();
     $mentions = $stmt_mentions->fetchAll();
 
     // Récupérer les promotions
-    $sql_promotions = "SELECT * FROM promotion ORDER BY nom";
+    $sql_promotions = "SELECT * FROM promotion ORDER BY nomComplet";
     $stmt_promotions = $pdo->prepare($sql_promotions);
     $stmt_promotions->execute();
     $promotions = $stmt_promotions->fetchAll();
@@ -125,8 +126,8 @@ try {
                             <select name="enseignant" id="enseignant" class="form-control" required>
                                 <option value="">Sélectionnez un enseignant</option>
                                 <?php foreach ($enseignants as $ens): ?>
-                                    <option value="<?php echo htmlspecialchars($ens['username']); ?>">
-                                        <?php echo htmlspecialchars($ens['username']); ?>
+                                    <option value="<?php echo htmlspecialchars($ens['matriculeEnseignant']); ?>">
+                                        <?php echo htmlspecialchars($ens['nom'] . ' ' . $ens['postnom'] . ' ' . $ens['prenom']); ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
@@ -139,8 +140,8 @@ try {
                             <select name="section" id="section" class="form-control" required>
                                 <option value="">Sélectionnez une section</option>
                                 <?php foreach ($sections as $sec): ?>
-                                    <option value="<?php echo htmlspecialchars($sec['code']); ?>">
-                                        <?php echo htmlspecialchars($sec['nom']); ?>
+                                    <option value="<?php echo htmlspecialchars($sec['code_section']); ?>">
+                                        <?php echo htmlspecialchars($sec['nomComplet']); ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
@@ -151,8 +152,8 @@ try {
                             <select name="mention" id="mention" class="form-control" required>
                                 <option value="">Sélectionnez une mention</option>
                                 <?php foreach ($mentions as $men): ?>
-                                    <option value="<?php echo htmlspecialchars($men['code']); ?>">
-                                        <?php echo htmlspecialchars($men['nom']); ?>
+                                    <option value="<?php echo htmlspecialchars($men['code_mention']); ?>">
+                                        <?php echo htmlspecialchars($men['nomComplet']); ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
@@ -165,8 +166,8 @@ try {
                             <select name="promotion" id="promotion" class="form-control" required>
                                 <option value="">Sélectionnez une promotion</option>
                                 <?php foreach ($promotions as $promo): ?>
-                                    <option value="<?php echo htmlspecialchars($promo['code']); ?>">
-                                        <?php echo htmlspecialchars($promo['nom']); ?>
+                                    <option value="<?php echo htmlspecialchars($promo['sigle_promotion']); ?>">
+                                        <?php echo htmlspecialchars($promo['nomComplet']); ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
