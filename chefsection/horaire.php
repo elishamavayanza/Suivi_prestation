@@ -24,6 +24,42 @@ try {
 } catch (PDOException $e) {
     echo "Erreur lors de la récupération des salles : " . $e->getMessage();
 }
+
+// Récupérer les cours pour le dropdown
+$cours_list = [];
+try {
+    $stmt = $pdo->query("SELECT code_cours, nomComplet FROM cours ORDER BY code_cours");
+    $cours_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "Erreur lors de la récupération des cours : " . $e->getMessage();
+}
+
+// Récupérer les mentions pour le dropdown
+$mentions_list = [];
+try {
+    $stmt = $pdo->query("SELECT code_mention, nomComplet FROM mention ORDER BY code_mention");
+    $mentions_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "Erreur lors de la récupération des mentions : " . $e->getMessage();
+}
+
+// Récupérer les promotions pour le dropdown
+$promotions_list = [];
+try {
+    $stmt = $pdo->query("SELECT sigle_promotion, nomComplet FROM promotion ORDER BY sigle_promotion");
+    $promotions_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "Erreur lors de la récupération des promotions : " . $e->getMessage();
+}
+
+// Récupérer les enseignants pour le dropdown
+$enseignants_list = [];
+try {
+    $stmt = $pdo->query("SELECT matriculeEnseignant, CONCAT(nom, ' ', postnom, ' ', prenom) as nom_complet FROM enseignant ORDER BY nom");
+    $enseignants_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "Erreur lors de la récupération des enseignants : " . $e->getMessage();
+}
 ?>
 
 <!DOCTYPE html>
@@ -48,12 +84,13 @@ try {
         
         .modal-content {
             background-color: #fefefe;
-            margin: 15% auto;
+            margin: 10% auto;
             padding: 20px;
             border: 1px solid #888;
             width: 80%;
-            max-width: 500px;
-            border-radius: 5px;
+            max-width: 600px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
         
         .close {
@@ -79,21 +116,29 @@ try {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
+            color: #333;
         }
         
         .form-group input, 
         .form-group select, 
         .form-group textarea {
             width: 100%;
-            padding: 8px;
+            padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
             box-sizing: border-box;
+            font-size: 14px;
+        }
+        
+        .form-group select {
+            height: 40px;
         }
         
         .form-actions {
             text-align: right;
             margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
         }
         
         .btn-modal {
@@ -102,6 +147,7 @@ try {
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            font-size: 14px;
         }
         
         .btn-primary-modal {
@@ -109,9 +155,43 @@ try {
             color: white;
         }
         
+        .btn-primary-modal:hover {
+            background-color: #0056b3;
+        }
+        
         .btn-secondary {
             background-color: #6c757d;
             color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+        
+        .modal-header {
+            margin-top: 0;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            color: #333;
+        }
+        
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px;
+        }
+        
+        .form-col {
+            flex: 1;
+            padding: 0 10px;
+            min-width: 250px;
+        }
+        
+        @media (max-width: 768px) {
+            .form-col {
+                min-width: 100%;
+                margin-bottom: 15px;
+            }
         }
     </style>
 </head>
@@ -260,44 +340,100 @@ try {
     <div id="addHoraireModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('addHoraireModal')">&times;</span>
-            <h2>Ajouter un nouvel horaire</h2>
+            <h2 class="modal-header">Ajouter un nouvel horaire</h2>
             <form action="scripts/add_horaire.php" method="POST">
-                <div class="form-group">
-                    <label for="idcours">Code Cours:</label>
-                    <input type="text" id="idcours" name="idcours" required>
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="idcours">Code Cours:</label>
+                            <select id="idcours" name="idcours" required>
+                                <option value="">Sélectionner un cours</option>
+                                <?php foreach ($cours_list as $cours): ?>
+                                    <option value="<?php echo htmlspecialchars($cours['code_cours']); ?>">
+                                        <?php echo htmlspecialchars($cours['code_cours'] . ' - ' . $cours['nomComplet']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="jourheure">Jour/Heure:</label>
+                            <input type="text" id="jourheure" name="jourheure" placeholder="Ex: Lundi - Mardi 08:00-10:00" required>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="jourheure">Jour/Heure:</label>
-                    <input type="text" id="jourheure" name="jourheure" placeholder="Ex: Lundi - Mardi 08:00-10:00" required>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="codemention">Code Mention:</label>
+                            <select id="codemention" name="codemention" required>
+                                <option value="">Sélectionner une mention</option>
+                                <?php foreach ($mentions_list as $mention): ?>
+                                    <option value="<?php echo htmlspecialchars($mention['code_mention']); ?>">
+                                        <?php echo htmlspecialchars($mention['code_mention'] . ' - ' . $mention['nomComplet']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="codepromotion">Code Promotion:</label>
+                            <select id="codepromotion" name="codepromotion" required>
+                                <option value="">Sélectionner une promotion</option>
+                                <?php foreach ($promotions_list as $promotion): ?>
+                                    <option value="<?php echo htmlspecialchars($promotion['sigle_promotion']); ?>">
+                                        <?php echo htmlspecialchars($promotion['sigle_promotion'] . ' - ' . $promotion['nomComplet']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="codemention">Code Mention:</label>
-                    <input type="text" id="codemention" name="codemention" required>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="enseignant">Enseignant:</label>
+                            <select id="enseignant" name="enseignant" required>
+                                <option value="">Sélectionner un enseignant</option>
+                                <?php foreach ($enseignants_list as $enseignant): ?>
+                                    <option value="<?php echo htmlspecialchars($enseignant['matriculeEnseignant']); ?>">
+                                        <?php echo htmlspecialchars($enseignant['matriculeEnseignant'] . ' - ' . $enseignant['nom_complet']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="site">Site/Salle:</label>
+                            <input type="text" id="site" name="site">
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="codepromotion">Code Promotion:</label>
-                    <input type="text" id="codepromotion" name="codepromotion" required>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="periode">Période:</label>
+                            <select id="periode" name="periode" required>
+                                <option value="">Sélectionner une période</option>
+                                <option value="AM">AM (Matin)</option>
+                                <option value="PM">PM (Après-midi)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="observation">Observation:</label>
+                            <textarea id="observation" name="observation" rows="3"></textarea>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="enseignant">Enseignant:</label>
-                    <input type="text" id="enseignant" name="enseignant" required>
-                </div>
-                <div class="form-group">
-                    <label for="site">Site/Salle:</label>
-                    <input type="text" id="site" name="site">
-                </div>
-                <div class="form-group">
-                    <label for="periode">Période:</label>
-                    <select id="periode" name="periode" required>
-                        <option value="">Sélectionner une période</option>
-                        <option value="AM">AM (Matin)</option>
-                        <option value="PM">PM (Après-midi)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="observation">Observation:</label>
-                    <textarea id="observation" name="observation" rows="3"></textarea>
-                </div>
+                
                 <div class="form-actions">
                     <button type="button" class="btn-modal btn-secondary" onclick="closeModal('addHoraireModal')">Annuler</button>
                     <button type="submit" class="btn-modal btn-primary-modal">Ajouter</button>
@@ -310,45 +446,102 @@ try {
     <div id="editHoraireModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('editHoraireModal')">&times;</span>
-            <h2>Modifier un horaire</h2>
+            <h2 class="modal-header">Modifier un horaire</h2>
             <form action="scripts/update_horaire.php" method="POST">
                 <input type="hidden" id="edit_id" name="id">
-                <div class="form-group">
-                    <label for="edit_idcours">Code Cours:</label>
-                    <input type="text" id="edit_idcours" name="idcours" required>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="edit_idcours">Code Cours:</label>
+                            <select id="edit_idcours" name="idcours" required>
+                                <option value="">Sélectionner un cours</option>
+                                <?php foreach ($cours_list as $cours): ?>
+                                    <option value="<?php echo htmlspecialchars($cours['code_cours']); ?>">
+                                        <?php echo htmlspecialchars($cours['code_cours'] . ' - ' . $cours['nomComplet']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="edit_jourheure">Jour/Heure:</label>
+                            <input type="text" id="edit_jourheure" name="jourheure" placeholder="Ex: Lundi - Mardi 08:00-10:00" required>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="edit_jourheure">Jour/Heure:</label>
-                    <input type="text" id="edit_jourheure" name="jourheure" placeholder="Ex: Lundi - Mardi 08:00-10:00" required>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="edit_codemention">Code Mention:</label>
+                            <select id="edit_codemention" name="codemention" required>
+                                <option value="">Sélectionner une mention</option>
+                                <?php foreach ($mentions_list as $mention): ?>
+                                    <option value="<?php echo htmlspecialchars($mention['code_mention']); ?>">
+                                        <?php echo htmlspecialchars($mention['code_mention'] . ' - ' . $mention['nomComplet']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="edit_codepromotion">Code Promotion:</label>
+                            <select id="edit_codepromotion" name="codepromotion" required>
+                                <option value="">Sélectionner une promotion</option>
+                                <?php foreach ($promotions_list as $promotion): ?>
+                                    <option value="<?php echo htmlspecialchars($promotion['sigle_promotion']); ?>">
+                                        <?php echo htmlspecialchars($promotion['sigle_promotion'] . ' - ' . $promotion['nomComplet']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="edit_codemention">Code Mention:</label>
-                    <input type="text" id="edit_codemention" name="codemention" required>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="edit_enseignant">Enseignant:</label>
+                            <select id="edit_enseignant" name="enseignant" required>
+                                <option value="">Sélectionner un enseignant</option>
+                                <?php foreach ($enseignants_list as $enseignant): ?>
+                                    <option value="<?php echo htmlspecialchars($enseignant['matriculeEnseignant']); ?>">
+                                        <?php echo htmlspecialchars($enseignant['matriculeEnseignant'] . ' - ' . $enseignant['nom_complet']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="edit_site">Site/Salle:</label>
+                            <input type="text" id="edit_site" name="site">
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="edit_codepromotion">Code Promotion:</label>
-                    <input type="text" id="edit_codepromotion" name="codepromotion" required>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="edit_periode">Période:</label>
+                            <select id="edit_periode" name="periode" required>
+                                <option value="">Sélectionner une période</option>
+                                <option value="AM">AM (Matin)</option>
+                                <option value="PM">PM (Après-midi)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="edit_observation">Observation:</label>
+                            <textarea id="edit_observation" name="observation" rows="3"></textarea>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="edit_enseignant">Enseignant:</label>
-                    <input type="text" id="edit_enseignant" name="enseignant" required>
-                </div>
-                <div class="form-group">
-                    <label for="edit_site">Site/Salle:</label>
-                    <input type="text" id="edit_site" name="site">
-                </div>
-                <div class="form-group">
-                    <label for="edit_periode">Période:</label>
-                    <select id="edit_periode" name="periode" required>
-                        <option value="">Sélectionner une période</option>
-                        <option value="AM">AM (Matin)</option>
-                        <option value="PM">PM (Après-midi)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="edit_observation">Observation:</label>
-                    <textarea id="edit_observation" name="observation" rows="3"></textarea>
-                </div>
+                
                 <div class="form-actions">
                     <button type="button" class="btn-modal btn-secondary" onclick="closeModal('editHoraireModal')">Annuler</button>
                     <button type="submit" class="btn-modal btn-primary-modal">Modifier</button>
@@ -361,7 +554,7 @@ try {
     <div id="addSalleModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('addSalleModal')">&times;</span>
-            <h2>Ajouter une salle</h2>
+            <h2 class="modal-header">Ajouter une salle</h2>
             <form id="addSalleForm">
                 <div class="form-group">
                     <label for="nom_salle">Nom de la salle:</label>
@@ -379,7 +572,7 @@ try {
     <div id="editSalleModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('editSalleModal')">&times;</span>
-            <h2>Modifier une salle</h2>
+            <h2 class="modal-header">Modifier une salle</h2>
             <form id="editSalleForm">
                 <input type="hidden" id="ancien_nom" name="ancien_nom">
                 <div class="form-group">
