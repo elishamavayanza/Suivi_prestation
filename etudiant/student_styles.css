@@ -1,0 +1,128 @@
+/* Styles pour l'interface étudiante */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* En-tête */
+header {
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+
+header h1 {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+/* Navigation */
+.navbar {
+    border-radius: 5px;
+}
+
+.navbar-nav .nav-link {
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    color: #fff !important;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+/* Cartes */
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 0.5rem;
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.welcome-card .card-header {
+    font-weight: bold;
+}
+
+.welcome-card ul {
+    padding-left: 1.5rem;
+}
+
+.welcome-card li {
+    margin-bottom: 0.5rem;
+}
+
+/* Section des annonces */
+.announcements-section {
+    margin-top: 2rem;
+}
+
+.announcements-section h3 {
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+    color: #495057;
+}
+
+.announcement-card .card-header {
+    font-weight: bold;
+}
+
+/* Boutons */
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+}
+
+/* Liens */
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 1.4rem;
+    }
+    
+    .navbar-nav {
+        text-align: center;
+    }
+    
+    .navbar-nav .nav-item {
+        margin: 0.2rem 0;
+    }
+}
+
+/* Tableaux */
+.table th {
+    background-color: #e9ecef;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.075);
+}
+
+/* Alertes */
+.alert {
+    border-radius: 0.5rem;
+}
+
+/* Pied de page */
+footer {
+    margin-top: auto;
+}

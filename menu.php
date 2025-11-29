@@ -21,7 +21,7 @@
     <nav>
       <ul>
         
-       <?phpif(isset($_SESSION['username']) && $_SESSION['username']!="None"){
+       <?php if(isset($_SESSION['username']) && $_SESSION['username']!="None"){
                 echo "<li><a href='script/logout.php'>Deconnexion</a></li>";
             } else {
                 echo " <li><a href='login.php'>Connexion</a></li>";
@@ -126,7 +126,15 @@ if(isset($_SESSION['role']) && $_SESSION['role']!="None"){
              <li><a href="enseignant/description_ens.php">Description</a></li>
              <li><a href="enseignant/charge_horaire_ens.php">Charge horaire</a></li>
 			<?php
-		} 
+		} else if($_SESSION['role']=="Etudiant"){
+                  ?>
+            <li class="active"><a href="etudiant/index.php">Accueil</a></li>
+            <li><a href="etudiant/horaire.php">Mon Horaire</a></li>
+            <li><a href="etudiant/prestation.php">Avancement des Cours</a></li>
+            <li><a href="etudiant/description.php">Plan du Cours</a></li>
+            <li><a href="etudiant/annonces.php">Annonces</a></li>
+                  <?php
+                }
    }
         else {
 		
