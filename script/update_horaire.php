@@ -13,7 +13,8 @@
         $observation = !empty($_POST['observation']) ? $_POST['observation'] : '';
         $datejour = !empty($_POST['datejour']) ? $_POST['datejour'] : date('Y-m-d');
         
-        $sql = "UPDATE horaire SET idcours='$idcours', jourheure='$jourheure', codemention='$codemention', codepromotion='$codepromotion', enseignant='$enseignant', site='$site', periode='$periode', observation='$observation', datejour='$datejour' WHERE idhoraire=$id";
+        // Mettre à jour le champ 'id' à 0 également
+        $sql = "UPDATE horaire SET idcours='$idcours', id=0, jourheure='$jourheure', codemention='$codemention', codepromotion='$codepromotion', enseignant='$enseignant', site='$site', periode='$periode', observation='$observation', datejour='$datejour' WHERE idhoraire=$id";
         $result = mysqli_query($con, $sql);
 
         if($result){

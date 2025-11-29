@@ -47,7 +47,7 @@
     <div class="admin-form">
         <h3 class="form-title"><?php echo $editing_horaire ? 'Modifier un horaire' : 'Programmer un cours'; ?></h3>
         <div class="formulaire">
-            <form id="horaireForm" action="../script/<?php echo $editing_horaire ? 'update_horaire.php' : 'formhoraire.php'; ?>" method="POST">
+            <form id="horaireForm" action="<?php echo $editing_horaire ? '../script/update_horaire.php' : '../script/add_horaire.php'; ?>" method="POST">
                 <?php if ($editing_horaire): ?>
                     <input type="hidden" name="id" value="<?php echo htmlspecialchars($editing_horaire['idhoraire']); ?>">
                 <?php endif; ?>

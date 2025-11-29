@@ -30,7 +30,18 @@ if(isset($_POST['ajouter'])){
     // Créer automatiquement une nouvelle année lors de l'ajout d'un horaire
     creerNouvelleAnnee($con);
     
-    if(mysqli_query($con,"INSERT INTO horaire(idcours,jourheure,codemention,codepromotion,enseignant,site,periode,observation,datejour) VALUES('".$_POST['cours']."','".$_POST['jour']."','".$_POST['dep']."','".$_POST['pro']."','".$_POST['enseignant']."','".$_POST['site']."','".$_POST['periode']."','".$_POST['observation']."','".$_POST['dte']."')")){
+    // Utiliser les bons noms de champs depuis le nouveau formulaire
+    $idcours = $_POST['idcours'];
+    $jourheure = $_POST['jourheure'];
+    $codemention = $_POST['codemention'];
+    $codepromotion = $_POST['codepromotion'];
+    $enseignant = $_POST['enseignant'];
+    $site = $_POST['site'];
+    $periode = $_POST['periode'];
+    $observation = !empty($_POST['observation']) ? $_POST['observation'] : '';
+    $datejour = !empty($_POST['datejour']) ? $_POST['datejour'] : date('Y-m-d');
+    
+    if(mysqli_query($con,"INSERT INTO horaire(idcours,jourheure,codemention,codepromotion,enseignant,site,periode,observation,datejour) VALUES('$idcours','$jourheure','$codemention','$codepromotion','$enseignant','$site','$periode','$observation','$datejour')")){
         echo "<script>alert('Horaire postee  avec succes');</script>;";
         echo "<script>window.location.href='../admin/horaire.php';</script>";
     }else
