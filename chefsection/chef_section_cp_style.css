@@ -75,9 +75,9 @@ body {
 
 /* Main Layout */
 .section-chief-container {
-  display: flex;
-  margin-top: var(--header-height);
-  min-height: calc(100vh - var(--header-height));
+    width: 100%;
+    max-width: none;
+    padding: 0;
 }
 
 /* Sidebar Navigation */
@@ -90,7 +90,7 @@ body {
   overflow-y: auto;
   transition: all 0.3s ease;
   z-index: 999;
-  margin-top: var(--header-height);
+  margin-top: var(--header-height);top: 0; /* Ajout pour s'assurer qu'il commence en haut */
 }
 
 .section-chief-sidebar-header {
@@ -147,7 +147,7 @@ body {
   text-align: center;
 }
 
-.section-chief-nav-menu a:hover, 
+.section-chief-nav-menu a:hover,
 .section-chief-nav-menu a.active {
   background: var(--secondary-color);
   border-left: 4px solid var(--accent-color);
@@ -613,23 +613,23 @@ body {
   .section-chief-sidebar {
     width: 70px;
   }
-  
+
   .section-chief-sidebar .section-chief-sidebar-header h2,
   .section-chief-sidebar .section-chief-sidebar-header p,
   .section-chief-sidebar .section-chief-nav-menu a span {
     display: none;
   }
-  
+
   .section-chief-sidebar .section-chief-nav-menu a {
     justify-content: center;
     padding: 15px;
   }
-  
+
   .section-chief-sidebar .section-chief-nav-menu a i {
     margin-right: 0;
     font-size: 1.2rem;
   }
-  
+
   .section-chief-main {
     margin-left: 70px;
   }
@@ -639,47 +639,47 @@ body {
   .section-chief-header {
     padding: 0 10px;
   }
-  
+
   .section-chief-header h1 {
     font-size: 1.2rem;
   }
-  
+
   .header-actions a span {
     display: none;
   }
-  
+
   .stats-summary {
     grid-template-columns: 1fr;
   }
-  
+
   .form-row {
     flex-direction: column;
   }
-  
+
   .form-col {
     padding: 0;
     margin-bottom: 15px;
   }
-  
+
   .content-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
   }
-  
+
   /* Pour les très grandes tables, permettre le défilement horizontal */
   .section-chief-table {
     overflow-x: auto;
   }
-  
+
   .section-chief-table table {
     min-width: 800px;
   }
-  
+
   .section-chief-actions {
     flex-direction: column;
   }
-  
+
   .section-chief-actions .btn {
     width: 100%;
   }
@@ -689,15 +689,15 @@ body {
   .section-chief-sidebar {
     transform: translateX(-100%);
   }
-  
+
   .section-chief-sidebar.active {
     transform: translateX(0);
   }
-  
+
   .section-chief-main {
     margin-left: 0;
   }
-  
+
   .menu-toggle {
     display: block;
   }

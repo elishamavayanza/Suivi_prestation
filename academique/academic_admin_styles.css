@@ -114,6 +114,7 @@ body {
   z-index: 999;
   margin-top: var(--header-height);
   box-shadow: 3px 0 15px rgba(0,0,0,0.1);
+    top: 0; /* Ajout pour s'assurer qu'il commence en haut */
 }
 
 .academic-sidebar-header {
@@ -173,7 +174,7 @@ body {
   text-align: center;
 }
 
-.academic-nav-menu a:hover, 
+.academic-nav-menu a:hover,
 .academic-nav-menu a.active {
   background: var(--secondary-color);
   border-left: 4px solid var(--accent-color);
@@ -704,7 +705,7 @@ body {
   .academic-main {
     margin-left: 70px;
   }
-  
+
   .action-card {
     min-width: 150px;
   }
@@ -745,31 +746,31 @@ body {
   .academic-table table {
     min-width: 800px;
   }
-  
+
   .validation-actions {
     flex-direction: column;
   }
-  
+
   .validation-actions .btn {
     width: 100%;
   }
-  
+
   .process-steps {
     flex-direction: column;
     gap: 20px;
   }
-  
+
   .process-steps::before {
     display: none;
   }
-  
+
   .step {
     display: flex;
     align-items: center;
     text-align: left;
     gap: 15px;
   }
-  
+
   .step-icon {
     margin: 0;
   }
@@ -791,15 +792,15 @@ body {
   .menu-toggle {
     display: block;
   }
-  
+
   .academic-section, .academic-form {
     padding: 15px;
   }
-  
+
   .academic-header h1 {
     font-size: 1.1rem;
   }
-  
+
   .section-title, .form-title {
     font-size: 1.3rem;
   }
