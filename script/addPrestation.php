@@ -7,9 +7,9 @@ include("config.php");
             $cours =$_POST['cours'];            
             $matricule =$_POST['matricule'];
             try{
-                $sql = "INSERT INTO entetefiche(`code_section`, `code_mention`, `code_promotion`, `code_cours`, `matricule_enseignant`) VALUE ('$section','$mention','$promotion','$cours','$matricule')";
+                $sql = "INSERT INTO entetefiche(`code_section`, `code_mention`, `code_promotion`, `code_cours`, `matricule_enseignant`) VALUE (?, ?, ?, ?, ?)";
                 $stmt = $pdo->prepare($sql);
-                $stmt->execute(array());
+                $stmt->execute([$section, $mention, $promotion, $cours, $matricule]);
                 if($stmt){
                 echo "
                     <script>
@@ -43,21 +43,21 @@ include("config.php");
         $sigCp =$_POST['sigcp'];
         $sigEns =$_POST['sigens'];
         try{
-        $sql = "INSERT INTO contenufiche(`identetefiche`, `datejoure`, `contenu`, `heureEntree`, `heureSortie`, `nbreH`, `signatureCP`, `signatureEnseignant`) VALUES ('$entete','$dtjour','$contenu','$hentree','$hsortie','$nbreH','$sigCp','$sigEns')";
+        $sql = "INSERT INTO contenufiche(`identetefiche`, `datejoure`, `contenu`, `heureEntree`, `heureSortie`, `nbreH`, `signatureCP`, `signatureEnseignant`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
          $stmt = $pdo->prepare($sql);
-                $stmt->execute(array());
+                $stmt->execute([$entete, $dtjour, $contenu, $hentree, $hsortie, $nbreH, $sigCp, $sigEns]);
                 if($stmt){
                 echo "
                     <script>
                         alert(' Enregistrement reussi !');
-                        window.location.href='../horaire.php';
+                        window.location.href='../prestation.php';
                     </script>      
                 "; 
                 } else {
                 echo "
                     <script>
                         alert(' Echec d Enregistrement !');
-                        window.location.href='../horaire.php';
+                        window.location.href='../prestation.php';
                     </script>      
                 "; 
                 }
