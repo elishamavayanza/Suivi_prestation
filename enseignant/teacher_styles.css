@@ -77,23 +77,31 @@ body {
 
 /* Main Layout */
 .teacher-container {
-  display: flex;
-  margin-top: var(--header-height);
-  min-height: calc(100vh - var(--header-height));
+    width: 100%;
+    max-width: none;
+    padding: 0;
 }
+.admin-layout {
+    /* Appliquer ici les mêmes propriétés que .secretary-layout */
+}
+
 
 /* Sidebar Navigation */
 .teacher-sidebar {
-  width: var(--sidebar-width);
-  background: var(--dark-color);
-  color: white;
-  position: fixed;
-  height: calc(100vh - var(--header-height));
-  overflow-y: auto;
-  transition: all 0.3s ease;
-  z-index: 999;
-  margin-top: var(--header-height);
+    width: var(--sidebar-width);
+    background: var(--dark-color);
+    color: white;
+    position: fixed;
+    height: 100vh; /* Modification ici */
+    overflow-y: auto;
+    transition: all 0.3s ease; /* Et ici */
+    z-index: 999;
+    margin-top: var(--header-height);
+    box-shadow: 3px 0 15px rgba(0,0,0,0.1);
+    top: 0; /* Ajout pour s'assurer qu'il commence en haut */
 }
+
+
 
 .teacher-sidebar-header {
   padding: 20px;
@@ -149,7 +157,7 @@ body {
   text-align: center;
 }
 
-.teacher-nav-menu a:hover, 
+.teacher-nav-menu a:hover,
 .teacher-nav-menu a.active {
   background: var(--secondary-color);
   border-left: 4px solid var(--accent-color);
@@ -478,23 +486,23 @@ body {
   .teacher-sidebar {
     width: 70px;
   }
-  
+
   .teacher-sidebar .teacher-sidebar-header h2,
   .teacher-sidebar .teacher-sidebar-header p,
   .teacher-sidebar .teacher-nav-menu a span {
     display: none;
   }
-  
+
   .teacher-sidebar .teacher-nav-menu a {
     justify-content: center;
     padding: 15px;
   }
-  
+
   .teacher-sidebar .teacher-nav-menu a i {
     margin-right: 0;
     font-size: 1.2rem;
   }
-  
+
   .teacher-main {
     margin-left: 70px;
   }
@@ -504,47 +512,47 @@ body {
   .teacher-header {
     padding: 0 10px;
   }
-  
+
   .teacher-header h1 {
     font-size: 1.2rem;
   }
-  
+
   .header-actions button span {
     display: none;
   }
-  
+
   .dashboard-cards {
     grid-template-columns: 1fr;
   }
-  
+
   .form-row {
     flex-direction: column;
   }
-  
+
   .form-col {
     padding: 0;
     margin-bottom: 15px;
   }
-  
+
   .content-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
   }
-  
+
   /* Pour les très grandes tables, permettre le défilement horizontal */
   .teacher-table {
     overflow-x: auto;
   }
-  
+
   .teacher-table table {
     min-width: 800px;
   }
-  
+
   .teacher-actions {
     flex-direction: column;
   }
-  
+
   .teacher-actions .btn {
     width: 100%;
   }
@@ -554,15 +562,15 @@ body {
   .teacher-sidebar {
     transform: translateX(-100%);
   }
-  
+
   .teacher-sidebar.active {
     transform: translateX(0);
   }
-  
+
   .teacher-main {
     margin-left: 0;
   }
-  
+
   .menu-toggle {
     display: block;
   }
