@@ -187,6 +187,41 @@ try {
             min-width: 250px;
         }
         
+        .table-actions {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+        
+        .btn-action {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+        
+        .btn-edit {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .btn-edit:hover {
+            background-color: #218838;
+        }
+        
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
+        
         @media (max-width: 768px) {
             .form-col {
                 min-width: 100%;
@@ -252,8 +287,6 @@ try {
                 
                 <div class="section-chief-actions">
                     <button class="btn btn-primary" onclick="openAddHoraireModal()"><i class="fas fa-plus-circle"></i> Créer un nouvel horaire</button>
-                    <button class="btn btn-success" onclick="openEditHoraireModal()"><i class="fas fa-edit"></i> Modifier un horaire</button>
-                    <button class="btn btn-danger" onclick="deleteHoraire()"><i class="fas fa-trash"></i> Supprimer un horaire</button>
                 </div>
 
                 <div class="section-chief-table">
@@ -269,12 +302,13 @@ try {
                                 <th>Site</th>
                                 <th>Période</th>
                                 <th>Observation</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php if (empty($horaires)): ?>
                                 <tr>
-                                    <td colspan="9" class="text-center">Aucun horaire trouvé</td>
+                                    <td colspan="10" class="text-center">Aucun horaire trouvé</td>
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($horaires as $horaire): ?>
@@ -288,6 +322,14 @@ try {
                                         <td><?php echo htmlspecialchars($horaire['site']); ?></td>
                                         <td><?php echo htmlspecialchars($horaire['periode']); ?></td>
                                         <td><?php echo htmlspecialchars($horaire['observation']); ?></td>
+                                        <td class="table-actions">
+                                            <button class="btn-action btn-edit" onclick="editHoraire(<?php echo $horaire['idhoraire']; ?>)">
+                                                <i class="fas fa-edit"></i> Modifier
+                                            </button>
+                                            <button class="btn-action btn-delete" onclick="deleteHoraire(<?php echo $horaire['idhoraire']; ?>)">
+                                                <i class="fas fa-trash"></i> Supprimer
+                                            </button>
+                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php endif; ?>
@@ -597,15 +639,15 @@ try {
             document.getElementById('addHoraireModal').style.display = 'block';
         }
         
-        function openEditHoraireModal() {
-            const selectedRow = document.querySelector('tbody tr.selected');
-            if (!selectedRow) {
-                alert('Veuillez sélectionner un horaire à modifier.');
+        function editHoraire(id) {
+            // Trouver la ligne correspondante
+            const row = document.querySelector(`tr[data-id="${id}"]`);
+            if (!row) {
+                alert('Horaire non trouvé.');
                 return;
             }
             
-            const id = selectedRow.getAttribute('data-id');
-            const cells = selectedRow.querySelectorAll('td');
+            const cells = row.querySelectorAll('td');
             
             document.getElementById('edit_id').value = id;
             document.getElementById('edit_idcours').value = cells[1].textContent;
@@ -620,14 +662,7 @@ try {
             document.getElementById('editHoraireModal').style.display = 'block';
         }
         
-        function deleteHoraire() {
-            const selectedRow = document.querySelector('tbody tr.selected');
-            if (!selectedRow) {
-                alert('Veuillez sélectionner un horaire à supprimer.');
-                return;
-            }
-            
-            const id = selectedRow.getAttribute('data-id');
+        function deleteHoraire(id) {
             if (confirm('Êtes-vous sûr de vouloir supprimer cet horaire ?')) {
                 window.location.href = 'scripts/delete_horaire.php?supp=' + id;
             }
@@ -674,19 +709,8 @@ try {
             }
         }
         
-        // Sélection des lignes dans les tableaux
+        // Gestion du formulaire d'ajout de salle
         document.addEventListener('DOMContentLoaded', function() {
-            const rows = document.querySelectorAll('tbody tr');
-            rows.forEach(row => {
-                row.addEventListener('click', function() {
-                    // Retirer la sélection des autres lignes
-                    rows.forEach(r => r.classList.remove('selected'));
-                    // Ajouter la sélection à la ligne cliquée
-                    this.classList.add('selected');
-                });
-            });
-            
-            // Gestion du formulaire d'ajout de salle
             const addSalleForm = document.getElementById('addSalleForm');
             if (addSalleForm) {
                 addSalleForm.addEventListener('submit', function(e) {
