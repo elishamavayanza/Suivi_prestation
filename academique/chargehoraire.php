@@ -6,6 +6,67 @@ if (!isset($_SESSION['username']) || ($_SESSION['role'] != 'Academique' && $_SES
 }
 
 include '../config/connexion.php';
+
+// Récupérer les données pour les charges horaires
+$charges_horaires = [];
+$statistiques_departements = [];
+
+try {
+    // Récupérer toutes les charges horaires avec les informations associées
+    $stmt = $pdo->prepare("
+        SELECT ch.*, 
+               e.nom as enseignant_nom, 
+               e.postnom as enseignant_postnom,
+               e.prenom as enseignant_prenom,
+               c.nomComplet as cours_nom,
+               m.sigle as mention_sigle,
+               p.sigle_promotion as promotion_sigle
+        FROM chargehoraire ch
+        LEFT JOIN enseignant e ON ch.matricule = e.matriculeEnseignant
+        LEFT JOIN cours c ON ch.codecours = c.code_cours
+        LEFT JOIN promotion p ON ch.codepromotion = p.sigle_promotion
+        LEFT JOIN mention m ON c.code_mention = m.code_mention
+        ORDER BY e.nom
+    ");
+    $stmt->execute();
+    $charges_horaires = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Calculer les statistiques par département (mention)
+    $stats = [];
+    foreach ($charges_horaires as $charge) {
+        $departement = $charge['mention_sigle'] ?? 'Non défini';
+        if (!isset($stats[$departement])) {
+            $stats[$departement] = [
+                'nombre_enseignants' => [],
+                'charge_totale' => 0
+            ];
+        }
+        
+        // Ajouter l'enseignant à la liste (sans doublon)
+        $enseignant_id = $charge['matricule'] ?? '';
+        if (!in_array($enseignant_id, $stats[$departement]['nombre_enseignants']) && $enseignant_id) {
+            $stats[$departement]['nombre_enseignants'][] = $enseignant_id;
+        }
+        
+        // Ajouter les heures (à partir du cours)
+        $cours_heures = $charge['cours_nom'] ? 40 : 0; // Valeur par défaut
+        $stats[$departement]['charge_totale'] += $cours_heures;
+    }
+    
+    // Formater les statistiques pour l'affichage
+    foreach ($stats as $departement => $data) {
+        $statistiques_departements[] = [
+            'departement' => $departement,
+            'nombre_enseignants' => count($data['nombre_enseignants']) . ' enseignants',
+            'charge_totale' => $data['charge_totale'] . ' heures',
+            'charge_moyenne' => $data['nombre_enseignants'] ? 
+                              round($data['charge_totale'] / count($data['nombre_enseignants'])) . ' heures' : 
+                              '0 heures'
+        ];
+    }
+} catch (PDOException $e) {
+    echo "Erreur lors de la récupération des données: " . $e->getMessage();
+}
 ?>
 
 <!DOCTYPE html>
@@ -92,63 +153,27 @@ include '../config/connexion.php';
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Dupont Jean</td>
-                                <td>Mathématiques</td>
-                                <td>Mathématiques Avancées</td>
-                                <td>60 heures</td>
-                                <td>Semestre 1</td>
-                                <td><span class="status-badge status-approved"><i class="fas fa-check"></i> Validé</span></td>
-                                <td class="table-actions">
-                                    <button class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Détails</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Martin Marie</td>
-                                <td>Physique</td>
-                                <td>Physique Quantique</td>
-                                <td>45 heures</td>
-                                <td>Semestre 1</td>
-                                <td><span class="status-badge status-pending"><i class="fas fa-clock"></i> En attente</span></td>
-                                <td class="table-actions">
-                                    <button class="btn btn-sm btn-success"><i class="fas fa-check"></i> Valider</button>
-                                    <button class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Détails</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Bernard Pierre</td>
-                                <td>Chimie</td>
-                                <td>Chimie Organique</td>
-                                <td>50 heures</td>
-                                <td>Annuel</td>
-                                <td><span class="status-badge status-approved"><i class="fas fa-check"></i> Validé</span></td>
-                                <td class="table-actions">
-                                    <button class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Détails</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Robert Claire</td>
-                                <td>Biologie</td>
-                                <td>Biologie Moléculaire</td>
-                                <td>40 heures</td>
-                                <td>Semestre 1</td>
-                                <td><span class="status-badge status-approved"><i class="fas fa-check"></i> Validé</span></td>
-                                <td class="table-actions">
-                                    <button class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Détails</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Leroy Sophie</td>
-                                <td>Lettres</td>
-                                <td>Français</td>
-                                <td>55 heures</td>
-                                <td>Annuel</td>
-                                <td><span class="status-badge status-pending"><i class="fas fa-clock"></i> En attente</span></td>
-                                <td class="table-actions">
-                                    <button class="btn btn-sm btn-success"><i class="fas fa-check"></i> Valider</button>
-                                    <button class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Détails</button>
-                                </td>
-                            </tr>
+                            <?php if (!empty($charges_horaires)): ?>
+                                <?php foreach ($charges_horaires as $charge): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($charge['enseignant_nom'] ?? ''); ?> 
+                                        <?php echo htmlspecialchars($charge['enseignant_postnom'] ?? ''); ?> 
+                                        <?php echo htmlspecialchars($charge['enseignant_prenom'] ?? ''); ?></td>
+                                    <td><?php echo htmlspecialchars($charge['mention_sigle'] ?? 'Non défini'); ?></td>
+                                    <td><?php echo htmlspecialchars($charge['cours_nom'] ?? $charge['codecours']); ?></td>
+                                    <td><?php echo htmlspecialchars($charge['cours_nom'] ? '40 heures' : '0 heures'); ?></td>
+                                    <td>Semestre 1</td>
+                                    <td><span class="status-badge status-approved"><i class="fas fa-check"></i> Validé</span></td>
+                                    <td class="table-actions">
+                                        <button class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Détails</button>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="7">Aucune charge horaire trouvée</td>
+                                </tr>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -175,51 +200,23 @@ include '../config/connexion.php';
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Mathématiques</td>
-                                <td>8 enseignants</td>
-                                <td>320 heures</td>
-                                <td>40 heures</td>
-                                <td class="table-actions">
-                                    <button class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Détails</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Physique</td>
-                                <td>6 enseignants</td>
-                                <td>240 heures</td>
-                                <td>40 heures</td>
-                                <td class="table-actions">
-                                    <button class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Détails</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Chimie</td>
-                                <td>5 enseignants</td>
-                                <td>200 heures</td>
-                                <td>40 heures</td>
-                                <td class="table-actions">
-                                    <button class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Détails</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Biologie</td>
-                                <td>4 enseignants</td>
-                                <td>160 heures</td>
-                                <td>40 heures</td>
-                                <td class="table-actions">
-                                    <button class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Détails</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Lettres</td>
-                                <td>7 enseignants</td>
-                                <td>280 heures</td>
-                                <td>40 heures</td>
-                                <td class="table-actions">
-                                    <button class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Détails</button>
-                                </td>
-                            </tr>
+                            <?php if (!empty($statistiques_departements)): ?>
+                                <?php foreach ($statistiques_departements as $stat): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($stat['departement']); ?></td>
+                                    <td><?php echo htmlspecialchars($stat['nombre_enseignants']); ?></td>
+                                    <td><?php echo htmlspecialchars($stat['charge_totale']); ?></td>
+                                    <td><?php echo htmlspecialchars($stat['charge_moyenne']); ?></td>
+                                    <td class="table-actions">
+                                        <button class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Détails</button>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="5">Aucune statistique disponible</td>
+                                </tr>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
