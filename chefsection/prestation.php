@@ -375,6 +375,9 @@ try {
                                             <button class="btn btn-sm btn-danger" onclick="rejectFiche(<?php echo $fiche['id']; ?>)">
                                                 <i class="fas fa-times"></i> Rejeter
                                             </button>
+                                            <button class="btn btn-sm btn-outline" onclick="printFiche(<?php echo $fiche['id']; ?>)">
+                                                <i class="fas fa-print"></i> Imprimer
+                                            </button>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -461,6 +464,11 @@ try {
                 document.body.appendChild(form);
                 form.submit();
             }
+        }
+        
+        // Imprimer une fiche
+        function printFiche(ficheId) {
+            window.open('scripts/print_prestation.php?id=' + ficheId, '_blank');
         }
         
         // Masquer les formulaires au chargement de la page
