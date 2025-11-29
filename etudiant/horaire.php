@@ -20,20 +20,22 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Etudiant') {
     <link rel="stylesheet" href="student_styles.css">
 </head>
 <body>
-    <div class="container-fluid">
-        <!-- En-tête -->
-        <header class="row bg-primary text-white p-3 mb-4">
-            <div class="col-12">
-                <h1 class="text-center">Mon Horaire - Espace Étudiant</h1>
-                <p class="text-end mb-0">
-                    Connecté en tant que: <?php echo $_SESSION['username']; ?> |
+    <!-- En-tête -->
+    <header>
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1>Mon Horaire - Espace Étudiant</h1>
+                <div>
+                    <span><?php echo $_SESSION['username']; ?></span> | 
                     <a href="../script/logout.php" class="text-white">Déconnexion</a>
-                </p>
+                </div>
             </div>
-        </header>
+        </div>
+    </header>
 
+    <div class="container-fluid">
         <!-- Menu principal -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-secondary mb-4">
+        <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container-fluid">
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
@@ -61,82 +63,84 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Etudiant') {
         </nav>
 
         <!-- Contenu principal -->
-        <main class="row">
-            <div class="col-md-12">
-                <div class="card mb-4">
-                    <div class="card-header bg-info text-white">
-                        <h2>Mon Horaire de Cours</h2>
-                    </div>
-                    <div class="card-body">
-                        <p class="mb-4">Voici votre horaire de cours pour cette semaine :</p>
-                        
-                        <!-- Exemple d'horaire sous forme de tableau -->
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-striped table-hover">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th>Heures</th>
-                                        <th>Lundi</th>
-                                        <th>Mardi</th>
-                                        <th>Mercredi</th>
-                                        <th>Jeudi</th>
-                                        <th>Vendredi</th>
-                                        <th>Samedi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>08:00 - 09:30</td>
-                                        <td>Mathématiques<br><small class="text-muted">Salle A1</small></td>
-                                        <td>Physique<br><small class="text-muted">Salle B2</small></td>
-                                        <td>-</td>
-                                        <td>Chimie<br><small class="text-muted">Labo 1</small></td>
-                                        <td>Français<br><small class="text-muted">Salle C3</small></td>
-                                        <td>-</td>
-                                    </tr>
-                                    <tr>
-                                        <td>09:45 - 11:15</td>
-                                        <td>Anglais<br><small class="text-muted">Salle D4</small></td>
-                                        <td>-</td>
-                                        <td>Histoire<br><small class="text-muted">Salle A1</small></td>
-                                        <td>-</td>
-                                        <td>Biologie<br><small class="text-muted">Labo 2</small></td>
-                                        <td>-</td>
-                                    </tr>
-                                    <tr>
-                                        <td>11:30 - 13:00</td>
-                                        <td>Philosophie<br><small class="text-muted">Salle B2</small></td>
-                                        <td>Mathématiques<br><small class="text-muted">Salle A1</small></td>
-                                        <td>Français<br><small class="text-muted">Salle C3</small></td>
-                                        <td>Anglais<br><small class="text-muted">Salle D4</small></td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                    </tr>
-                                    <tr>
-                                        <td>14:00 - 15:30</td>
-                                        <td>-</td>
-                                        <td>EPS<br><small class="text-muted">Gymnase</small></td>
-                                        <td>-</td>
-                                        <td>Mathématiques<br><small class="text-muted">Salle B2</small></td>
-                                        <td>Physique<br><small class="text-muted">Labo 1</small></td>
-                                        <td>-</td>
-                                    </tr>
-                                    <tr>
-                                        <td>15:45 - 17:15</td>
-                                        <td>Biologie<br><small class="text-muted">Labo 2</small></td>
-                                        <td>-</td>
-                                        <td>Chimie<br><small class="text-muted">Labo 1</small></td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+        <main>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Mon Horaire de Cours</h2>
                         </div>
-                        
-                        <div class="alert alert-info">
-                            <strong>Note :</strong> Les horaires peuvent être mis à jour périodiquement. 
-                            Consultez régulièrement cette page pour les dernières modifications.
+                        <div class="card-body">
+                            <p class="mb-4">Voici votre horaire de cours pour cette semaine :</p>
+                            
+                            <!-- Exemple d'horaire sous forme de tableau -->
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Heures</th>
+                                            <th>Lundi</th>
+                                            <th>Mardi</th>
+                                            <th>Mercredi</th>
+                                            <th>Jeudi</th>
+                                            <th>Vendredi</th>
+                                            <th>Samedi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>08:00 - 09:30</td>
+                                            <td>Mathématiques<br><small class="text-muted">Salle A1</small></td>
+                                            <td>Physique<br><small class="text-muted">Salle B2</small></td>
+                                            <td>-</td>
+                                            <td>Chimie<br><small class="text-muted">Labo 1</small></td>
+                                            <td>Français<br><small class="text-muted">Salle C3</small></td>
+                                            <td>-</td>
+                                        </tr>
+                                        <tr>
+                                            <td>09:45 - 11:15</td>
+                                            <td>Anglais<br><small class="text-muted">Salle D4</small></td>
+                                            <td>-</td>
+                                            <td>Histoire<br><small class="text-muted">Salle A1</small></td>
+                                            <td>-</td>
+                                            <td>Biologie<br><small class="text-muted">Labo 2</small></td>
+                                            <td>-</td>
+                                        </tr>
+                                        <tr>
+                                            <td>11:30 - 13:00</td>
+                                            <td>Philosophie<br><small class="text-muted">Salle B2</small></td>
+                                            <td>Mathématiques<br><small class="text-muted">Salle A1</small></td>
+                                            <td>Français<br><small class="text-muted">Salle C3</small></td>
+                                            <td>Anglais<br><small class="text-muted">Salle D4</small></td>
+                                            <td>-</td>
+                                            <td>-</td>
+                                        </tr>
+                                        <tr>
+                                            <td>14:00 - 15:30</td>
+                                            <td>-</td>
+                                            <td>EPS<br><small class="text-muted">Gymnase</small></td>
+                                            <td>-</td>
+                                            <td>Mathématiques<br><small class="text-muted">Salle B2</small></td>
+                                            <td>Physique<br><small class="text-muted">Labo 1</small></td>
+                                            <td>-</td>
+                                        </tr>
+                                        <tr>
+                                            <td>15:45 - 17:15</td>
+                                            <td>Biologie<br><small class="text-muted">Labo 2</small></td>
+                                            <td>-</td>
+                                            <td>Chimie<br><small class="text-muted">Labo 1</small></td>
+                                            <td>-</td>
+                                            <td>-</td>
+                                            <td>-</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="alert alert-info">
+                                <strong>Note :</strong> Les horaires peuvent être mis à jour périodiquement. 
+                                Consultez régulièrement cette page pour les dernières modifications.
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -144,9 +148,11 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Etudiant') {
         </main>
 
         <!-- Pied de page -->
-        <footer class="row bg-dark text-white mt-4 p-3">
-            <div class="col-12 text-center">
-                <p>&copy; 2025 Institut Supérieur Pédagogique MUHANGI - Tous droits réservés</p>
+        <footer>
+            <div class="container-fluid">
+                <div class="col-12 text-center">
+                    <p>&copy; 2025 Institut Supérieur Pédagogique MUHANGI - Tous droits réservés</p>
+                </div>
             </div>
         </footer>
     </div>
