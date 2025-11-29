@@ -1,11 +1,14 @@
 <?php 
 session_start();
-if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Chefdesection') {
+if (!isset($_SESSION['username']) || ($_SESSION['role'] != 'Chefdesection' && $_SESSION['role'] != 'Academique' && $_SESSION['role'] != 'SGA')) {
     header("Location: ../../login.php");
     exit();
 }
 
 include("../../config/connexion.php");
+
+// Assurez-vous que le contenu est renvoyé en JSON
+header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action'])) {
