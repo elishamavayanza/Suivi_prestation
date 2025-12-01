@@ -1,6 +1,7 @@
 <?php
 session_start();
 include("../script/config.php");
+include("db_connect.php");
 
 // Vérifier si l'utilisateur est connecté et s'il est étudiant
 if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Etudiant') {
@@ -8,6 +9,34 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Etudiant') {
     exit();
 }
 
+// Récupérer les informations de l'étudiant
+$matricule = $_SESSION['matricule'];
+
+// Récupérer les cours de l'étudiant avec leur progression
+$stmt = $pdo->prepare("SELECT DISTINCT c.nomComplet as cours_nom, e.nom as enseignant_nom, e.postnom as enseignant_postnom,
+                       ef.volume_horaire_prevu, ef.heures_reelles_prestees, ef.statut
+                       FROM participeraucours pc
+                       JOIN cours c ON pc.code_cours = c.code_cours
+                       JOIN enseignant e ON pc.matriculeEnseignant = e.matriculeEnseignant
+                       JOIN entetefiche ef ON pc.code_cours = ef.code_cours
+                       WHERE pc.matriculeEtudiant = ?");
+$stmt->execute([$matricule]);
+$cours_progression = $stmt->fetchAll();
+
+// Récupérer les dernières fiches de prestation validées
+$stmt = $pdo->prepare("SELECT cf.*, c.nomComplet as cours_nom, e.nom as enseignant_nom, e.postnom as enseignant_postnom
+                       FROM contenufiche cf
+                       JOIN entetefiche ef ON cf.identetefiche = ef.id
+                       JOIN cours c ON ef.code_cours = c.code_cours
+                       JOIN enseignant e ON ef.matricule_enseignant = e.matriculeEnseignant
+                       WHERE ef.code_cours IN (
+                           SELECT code_cours FROM participeraucours WHERE matriculeEtudiant = ?
+                       )
+                       AND ef.statut = 'approved'
+                       ORDER BY cf.datejoure DESC
+                       LIMIT 5");
+$stmt->execute([$matricule]);
+$fiches_prestation = $stmt->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -26,7 +55,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Etudiant') {
             <div class="d-flex justify-content-between align-items-center">
                 <h1>Avancement des Cours - Espace Étudiant</h1>
                 <div>
-                    <span><?php echo $_SESSION['username']; ?></span> | 
+                    <span><?php echo htmlspecialchars($_SESSION['username']); ?></span> | 
                     <a href="../script/logout.php" class="text-white">Déconnexion</a>
                 </div>
             </div>
@@ -82,73 +111,57 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Etudiant') {
                                             <th>Enseignant</th>
                                             <th>Progression</th>
                                             <th>Statut</th>
-                                            <th>Dernière mise à jour</th>
+                                            <th>Heures prestées / Prévue</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>Mathématiques</td>
-                                            <td>Prof. Dupont</td>
-                                            <td>
-                                                <div class="progress">
-                                                    <div class="progress-bar bg-success" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">75%</div>
-                                                </div>
-                                            </td>
-                                            <td><span class="badge bg-success">En cours</span></td>
-                                            <td>24 Novembre 2025</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Physique</td>
-                                            <td>Prof. Martin</td>
-                                            <td>
-                                                <div class="progress">
-                                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">50%</div>
-                                                </div>
-                                            </td>
-                                            <td><span class="badge bg-warning">En cours</span></td>
-                                            <td>22 Novembre 2025</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Chimie</td>
-                                            <td>Prof. Leroy</td>
-                                            <td>
-                                                <div class="progress">
-                                                    <div class="progress-bar bg-success" role="progressbar" style="width: 90%" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100">90%</div>
-                                                </div>
-                                            </td>
-                                            <td><span class="badge bg-success">En cours</span></td>
-                                            <td>25 Novembre 2025</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Français</td>
-                                            <td>Prof. Dubois</td>
-                                            <td>
-                                                <div class="progress">
-                                                    <div class="progress-bar bg-danger" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
-                                                </div>
-                                            </td>
-                                            <td><span class="badge bg-warning">En cours</span></td>
-                                            <td>20 Novembre 2025</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Anglais</td>
-                                            <td>Prof. Smith</td>
-                                            <td>
-                                                <div class="progress">
-                                                    <div class="progress-bar bg-success" role="progressbar" style="width: 65%" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100">65%</div>
-                                                </div>
-                                            </td>
-                                            <td><span class="badge bg-success">En cours</span></td>
-                                            <td>23 Novembre 2025</td>
-                                        </tr>
+                                        <?php if (count($cours_progression) > 0): ?>
+                                            <?php foreach ($cours_progression as $cours): ?>
+                                            <tr>
+                                                <td><?php echo htmlspecialchars($cours['cours_nom']); ?></td>
+                                                <td><?php echo htmlspecialchars($cours['enseignant_nom'] . " " . $cours['enseignant_postnom']); ?></td>
+                                                <td>
+                                                    <?php 
+                                                    $pourcentage = 0;
+                                                    if ($cours['volume_horaire_prevu'] > 0) {
+                                                        $pourcentage = ($cours['heures_reelles_prestees'] / $cours['volume_horaire_prevu']) * 100;
+                                                    }
+                                                    ?>
+                                                    <div class="progress">
+                                                        <div class="progress-bar <?php 
+                                                        if ($pourcentage >= 75) echo 'bg-success';
+                                                        elseif ($pourcentage >= 50) echo 'bg-warning';
+                                                        else echo 'bg-danger';
+                                                        ?>" role="progressbar" style="width: <?php echo $pourcentage; ?>%" aria-valuenow="<?php echo $pourcentage; ?>" aria-valuemin="0" aria-valuemax="100"><?php echo round($pourcentage); ?>%</div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <?php if ($cours['statut'] == 'approved'): ?>
+                                                        <span class="badge bg-success">Validé</span>
+                                                    <?php elseif ($cours['statut'] == 'pending'): ?>
+                                                        <span class="badge bg-warning">En attente</span>
+                                                    <?php else: ?>
+                                                        <span class="badge bg-info"><?php echo htmlspecialchars($cours['statut']); ?></span>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td><?php echo $cours['heures_reelles_prestees'] . " / " . $cours['volume_horaire_prevu']; ?> heures</td>
+                                            </tr>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <tr>
+                                                <td colspan="5" class="text-center">Aucun cours trouvé pour votre promotion</td>
+                                            </tr>
+                                        <?php endif; ?>
                                     </tbody>
                                 </table>
                             </div>
                             
+                            <?php if (count($cours_progression) > 0): ?>
                             <div class="alert alert-info">
                                 <strong>Information :</strong> Ces informations sont mises à jour automatiquement 
                                 lorsque les fiches de prestations sont validées par les responsables.
                             </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                     
@@ -158,38 +171,30 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Etudiant') {
                             <h3>Dernières Fiches de Prestation Validées</h3>
                         </div>
                         <div class="card-body">
+                            <?php if (count($fiches_prestation) > 0): ?>
                             <div class="accordion" id="prestationAccordion">
+                                <?php foreach ($fiches_prestation as $index => $fiche): ?>
                                 <div class="accordion-item">
-                                    <h2 class="accordion-header" id="headingOne">
-                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
-                                            Mathématiques - Semaine du 18 Novembre 2025
+                                    <h2 class="accordion-header" id="heading<?php echo $index; ?>">
+                                        <button class="accordion-button <?php echo $index > 0 ? 'collapsed' : ''; ?>" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?php echo $index; ?>">
+                                            <?php echo htmlspecialchars($fiche['cours_nom']); ?> - <?php echo date('d F Y', strtotime($fiche['datejoure'])); ?>
                                         </button>
                                     </h2>
-                                    <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#prestationAccordion">
+                                    <div id="collapse<?php echo $index; ?>" class="accordion-collapse collapse <?php echo $index == 0 ? 'show' : ''; ?>" data-bs-parent="#prestationAccordion">
                                         <div class="accordion-body">
-                                            <p><strong>Contenu couvert :</strong> Intégrales définies et applications</p>
-                                            <p><strong>Objectifs atteints :</strong> Calculer des intégrales simples, appliquer aux calculs d'aires</p>
-                                            <p><strong>Difficultés rencontrées :</strong> Quelques étudiants ont des difficultés avec les changements de variable</p>
-                                            <p><strong>Remarques :</strong> Séance de révision prévue la semaine prochaine</p>
+                                            <p><strong>Contenu couvert :</strong> <?php echo htmlspecialchars($fiche['contenu']); ?></p>
+                                            <p><strong>Heures prestées :</strong> <?php echo $fiche['nbreH']; ?> heures</p>
+                                            <p><strong>Enseignant :</strong> <?php echo htmlspecialchars($fiche['enseignant_nom'] . " " . $fiche['enseignant_postnom']); ?></p>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="headingTwo">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
-                                            Physique - Semaine du 15 Novembre 2025
-                                        </button>
-                                    </h2>
-                                    <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#prestationAccordion">
-                                        <div class="accordion-body">
-                                            <p><strong>Contenu couvert :</strong> Lois de Newton et applications</p>
-                                            <p><strong>Objectifs atteints :</strong> Résoudre des problèmes de dynamique simple</p>
-                                            <p><strong>Difficultés rencontrées :</strong> Difficultés pour identifier les forces en présence</p>
-                                            <p><strong>Remarques :</strong> Des exercices supplémentaires seront donnés en TD</p>
-                                        </div>
-                                    </div>
-                                </div>
+                                <?php endforeach; ?>
                             </div>
+                            <?php else: ?>
+                            <div class="alert alert-info">
+                                Aucune fiche de prestation validée pour le moment.
+                            </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>

@@ -1,6 +1,7 @@
 <?php
 session_start();
 include("../script/config.php");
+include("db_connect.php");
 
 // Vérifier si l'utilisateur est connecté et s'il est étudiant
 if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Etudiant') {
@@ -8,6 +9,22 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Etudiant') {
     exit();
 }
 
+// Récupérer les informations de l'étudiant
+$matricule = $_SESSION['matricule'];
+$stmt = $pdo->prepare("SELECT * FROM etudiant WHERE matriculeEtudiant = ?");
+$stmt->execute([$matricule]);
+$etudiant = $stmt->fetch();
+
+// Récupérer les 5 dernières annonces
+$stmt = $pdo->prepare("SELECT cf.*, c.nomComplet as cours_nom FROM contenufiche cf 
+                      JOIN entetefiche ef ON cf.identetefiche = ef.id 
+                      JOIN cours c ON ef.code_cours = c.code_cours
+                      WHERE ef.code_promotion = (
+                          SELECT codepromotion FROM inscription WHERE matriculeEtudiant = ?
+                      )
+                      ORDER BY cf.datejoure DESC LIMIT 5");
+$stmt->execute([$matricule]);
+$annonces = $stmt->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -26,7 +43,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Etudiant') {
             <div class="d-flex justify-content-between align-items-center">
                 <h1>Espace Étudiant - Institut Supérieur Pédagogique MUHANGI</h1>
                 <div>
-                    <span><?php echo $_SESSION['username']; ?></span> | 
+                    <span><?php echo htmlspecialchars($_SESSION['username']); ?></span> | 
                     <a href="../script/logout.php" class="text-white">Déconnexion</a>
                 </div>
             </div>
@@ -68,9 +85,10 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Etudiant') {
                 <div class="col-md-12">
                     <div class="card welcome-card">
                         <div class="card-header">
-                            <h2>Bienvenue, <?php echo $_SESSION['username']; ?>!</h2>
+                            <h2>Bienvenue, <?php echo htmlspecialchars($etudiant['prenom'] . ' ' . $etudiant['nom']); ?>!</h2>
                         </div>
                         <div class="card-body">
+                            <p>Matricule: <?php echo htmlspecialchars($etudiant['matriculeEtudiant']); ?></p>
                             <p>Dans votre espace étudiant, vous pouvez :</p>
                             <ul>
                                 <li>Consulter votre horaire</li>
@@ -84,23 +102,23 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Etudiant') {
                     <!-- Section des annonces rapides -->
                     <div class="announcements-section">
                         <h3>Annonces récentes</h3>
-                        <div class="announcement-card card">
-                            <div class="card-header bg-warning text-dark">
-                                Annonce importante - 25 Novembre 2025
+                        <?php if (count($annonces) > 0): ?>
+                            <?php foreach ($annonces as $annonce): ?>
+                            <div class="announcement-card card">
+                                <div class="card-header bg-warning text-dark">
+                                    Annonce - <?php echo date('d F Y', strtotime($annonce['datejoure'])); ?>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text"><strong><?php echo htmlspecialchars($annonce['cours_nom']); ?>:</strong> <?php echo htmlspecialchars(substr($annonce['contenu'], 0, 100)) . '...'; ?></p>
+                                    <a href="annonces.php" class="btn btn-primary btn-sm">Voir détails</a>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <p class="card-text">Les examens du premier semestre commenceront le 15 décembre 2025. Consultez les horaires sur l'onglet "Mon Horaire".</p>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div class="alert alert-info">
+                                Aucune annonce récente pour le moment.
                             </div>
-                        </div>
-                        
-                        <div class="announcement-card card">
-                            <div class="card-header bg-success text-white">
-                                Information - 20 Novembre 2025
-                            </div>
-                            <div class="card-body">
-                                <p class="card-text">Les fiches de prestations du mois de novembre ont été mises à jour. Vous pouvez suivre l'avancement dans l'onglet correspondant.</p>
-                            </div>
-                        </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>

@@ -1,6 +1,7 @@
 <?php
 session_start();
 include("../script/config.php");
+include("db_connect.php");
 
 // Vérifier si l'utilisateur est connecté et s'il est étudiant
 if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Etudiant') {
@@ -8,6 +9,53 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Etudiant') {
     exit();
 }
 
+// Récupérer les informations de l'étudiant
+$matricule = $_SESSION['matricule'];
+
+// Récupérer l'horaire de l'étudiant
+$stmt = $pdo->prepare("SELECT h.*, c.nomComplet as cours_nom, e.nom as enseignant_nom, e.postnom as enseignant_postnom 
+                      FROM horaire h
+                      JOIN cours c ON h.idcours = c.code_cours
+                      JOIN enseignant e ON h.enseignant = e.matriculeEnseignant
+                      WHERE h.codepromotion = (
+                          SELECT codepromotion FROM inscription WHERE matriculeEtudiant = ?
+                      )");
+$stmt->execute([$matricule]);
+$horaires = $stmt->fetchAll();
+
+// Organiser les horaires par jour
+$horaireParJour = [
+    'Lundi' => [],
+    'Mardi' => [],
+    'Mercredi' => [],
+    'Jeudi' => [],
+    'Vendredi' => [],
+    'Samedi' => []
+];
+
+// Fonction pour obtenir le jour à partir de la chaîne jourheure
+foreach ($horaires as $horaire) {
+    // Extraire le jour de la chaîne jourheure (exemple: "Lundi - Samedi")
+    $jourheure = $horaire['jourheure'];
+    if (strpos($jourheure, 'Lundi') !== false) {
+        $horaireParJour['Lundi'][] = $horaire;
+    }
+    if (strpos($jourheure, 'Mardi') !== false) {
+        $horaireParJour['Mardi'][] = $horaire;
+    }
+    if (strpos($jourheure, 'Mercredi') !== false) {
+        $horaireParJour['Mercredi'][] = $horaire;
+    }
+    if (strpos($jourheure, 'Jeudi') !== false) {
+        $horaireParJour['Jeudi'][] = $horaire;
+    }
+    if (strpos($jourheure, 'Vendredi') !== false) {
+        $horaireParJour['Vendredi'][] = $horaire;
+    }
+    if (strpos($jourheure, 'Samedi') !== false) {
+        $horaireParJour['Samedi'][] = $horaire;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -26,7 +74,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Etudiant') {
             <div class="d-flex justify-content-between align-items-center">
                 <h1>Mon Horaire - Espace Étudiant</h1>
                 <div>
-                    <span><?php echo $_SESSION['username']; ?></span> | 
+                    <span><?php echo htmlspecialchars($_SESSION['username']); ?></span> | 
                     <a href="../script/logout.php" class="text-white">Déconnexion</a>
                 </div>
             </div>
@@ -90,57 +138,225 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Etudiant') {
                                     <tbody>
                                         <tr>
                                             <td>08:00 - 09:30</td>
-                                            <td>Mathématiques<br><small class="text-muted">Salle A1</small></td>
-                                            <td>Physique<br><small class="text-muted">Salle B2</small></td>
-                                            <td>-</td>
-                                            <td>Chimie<br><small class="text-muted">Labo 1</small></td>
-                                            <td>Français<br><small class="text-muted">Salle C3</small></td>
-                                            <td>-</td>
+                                            <td>
+                                                <?php 
+                                                foreach ($horaireParJour['Lundi'] as $horaire) {
+                                                    if (strpos($horaire['jourheure'], '08:00') !== false) {
+                                                        echo htmlspecialchars($horaire['cours_nom']) . "<br>";
+                                                        echo "<small class='text-muted'>" . htmlspecialchars($horaire['enseignant_nom'] . " " . $horaire['enseignant_postnom']) . "</small>";
+                                                        break;
+                                                    }
+                                                }
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <?php 
+                                                foreach ($horaireParJour['Mardi'] as $horaire) {
+                                                    if (strpos($horaire['jourheure'], '08:00') !== false) {
+                                                        echo htmlspecialchars($horaire['cours_nom']) . "<br>";
+                                                        echo "<small class='text-muted'>" . htmlspecialchars($horaire['enseignant_nom'] . " " . $horaire['enseignant_postnom']) . "</small>";
+                                                        break;
+                                                    }
+                                                }
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <?php 
+                                                foreach ($horaireParJour['Mercredi'] as $horaire) {
+                                                    if (strpos($horaire['jourheure'], '08:00') !== false) {
+                                                        echo htmlspecialchars($horaire['cours_nom']) . "<br>";
+                                                        echo "<small class='text-muted'>" . htmlspecialchars($horaire['enseignant_nom'] . " " . $horaire['enseignant_postnom']) . "</small>";
+                                                        break;
+                                                    }
+                                                }
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <?php 
+                                                foreach ($horaireParJour['Jeudi'] as $horaire) {
+                                                    if (strpos($horaire['jourheure'], '08:00') !== false) {
+                                                        echo htmlspecialchars($horaire['cours_nom']) . "<br>";
+                                                        echo "<small class='text-muted'>" . htmlspecialchars($horaire['enseignant_nom'] . " " . $horaire['enseignant_postnom']) . "</small>";
+                                                        break;
+                                                    }
+                                                }
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <?php 
+                                                foreach ($horaireParJour['Vendredi'] as $horaire) {
+                                                    if (strpos($horaire['jourheure'], '08:00') !== false) {
+                                                        echo htmlspecialchars($horaire['cours_nom']) . "<br>";
+                                                        echo "<small class='text-muted'>" . htmlspecialchars($horaire['enseignant_nom'] . " " . $horaire['enseignant_postnom']) . "</small>";
+                                                        break;
+                                                    }
+                                                }
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <?php 
+                                                foreach ($horaireParJour['Samedi'] as $horaire) {
+                                                    if (strpos($horaire['jourheure'], '08:00') !== false) {
+                                                        echo htmlspecialchars($horaire['cours_nom']) . "<br>";
+                                                        echo "<small class='text-muted'>" . htmlspecialchars($horaire['enseignant_nom'] . " " . $horaire['enseignant_postnom']) . "</small>";
+                                                        break;
+                                                    }
+                                                }
+                                                ?>
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td>09:45 - 11:15</td>
-                                            <td>Anglais<br><small class="text-muted">Salle D4</small></td>
-                                            <td>-</td>
-                                            <td>Histoire<br><small class="text-muted">Salle A1</small></td>
-                                            <td>-</td>
-                                            <td>Biologie<br><small class="text-muted">Labo 2</small></td>
-                                            <td>-</td>
+                                            <td>
+                                                <?php 
+                                                foreach ($horaireParJour['Lundi'] as $horaire) {
+                                                    if (strpos($horaire['jourheure'], '09:45') !== false) {
+                                                        echo htmlspecialchars($horaire['cours_nom']) . "<br>";
+                                                        echo "<small class='text-muted'>" . htmlspecialchars($horaire['enseignant_nom'] . " " . $horaire['enseignant_postnom']) . "</small>";
+                                                        break;
+                                                    }
+                                                }
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <?php 
+                                                foreach ($horaireParJour['Mardi'] as $horaire) {
+                                                    if (strpos($horaire['jourheure'], '09:45') !== false) {
+                                                        echo htmlspecialchars($horaire['cours_nom']) . "<br>";
+                                                        echo "<small class='text-muted'>" . htmlspecialchars($horaire['enseignant_nom'] . " " . $horaire['enseignant_postnom']) . "</small>";
+                                                        break;
+                                                    }
+                                                }
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <?php 
+                                                foreach ($horaireParJour['Mercredi'] as $horaire) {
+                                                    if (strpos($horaire['jourheure'], '09:45') !== false) {
+                                                        echo htmlspecialchars($horaire['cours_nom']) . "<br>";
+                                                        echo "<small class='text-muted'>" . htmlspecialchars($horaire['enseignant_nom'] . " " . $horaire['enseignant_postnom']) . "</small>";
+                                                        break;
+                                                    }
+                                                }
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <?php 
+                                                foreach ($horaireParJour['Jeudi'] as $horaire) {
+                                                    if (strpos($horaire['jourheure'], '09:45') !== false) {
+                                                        echo htmlspecialchars($horaire['cours_nom']) . "<br>";
+                                                        echo "<small class='text-muted'>" . htmlspecialchars($horaire['enseignant_nom'] . " " . $horaire['enseignant_postnom']) . "</small>";
+                                                        break;
+                                                    }
+                                                }
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <?php 
+                                                foreach ($horaireParJour['Vendredi'] as $horaire) {
+                                                    if (strpos($horaire['jourheure'], '09:45') !== false) {
+                                                        echo htmlspecialchars($horaire['cours_nom']) . "<br>";
+                                                        echo "<small class='text-muted'>" . htmlspecialchars($horaire['enseignant_nom'] . " " . $horaire['enseignant_postnom']) . "</small>";
+                                                        break;
+                                                    }
+                                                }
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <?php 
+                                                foreach ($horaireParJour['Samedi'] as $horaire) {
+                                                    if (strpos($horaire['jourheure'], '09:45') !== false) {
+                                                        echo htmlspecialchars($horaire['cours_nom']) . "<br>";
+                                                        echo "<small class='text-muted'>" . htmlspecialchars($horaire['enseignant_nom'] . " " . $horaire['enseignant_postnom']) . "</small>";
+                                                        break;
+                                                    }
+                                                }
+                                                ?>
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td>11:30 - 13:00</td>
-                                            <td>Philosophie<br><small class="text-muted">Salle B2</small></td>
-                                            <td>Mathématiques<br><small class="text-muted">Salle A1</small></td>
-                                            <td>Français<br><small class="text-muted">Salle C3</small></td>
-                                            <td>Anglais<br><small class="text-muted">Salle D4</small></td>
-                                            <td>-</td>
-                                            <td>-</td>
-                                        </tr>
-                                        <tr>
-                                            <td>14:00 - 15:30</td>
-                                            <td>-</td>
-                                            <td>EPS<br><small class="text-muted">Gymnase</small></td>
-                                            <td>-</td>
-                                            <td>Mathématiques<br><small class="text-muted">Salle B2</small></td>
-                                            <td>Physique<br><small class="text-muted">Labo 1</small></td>
-                                            <td>-</td>
-                                        </tr>
-                                        <tr>
-                                            <td>15:45 - 17:15</td>
-                                            <td>Biologie<br><small class="text-muted">Labo 2</small></td>
-                                            <td>-</td>
-                                            <td>Chimie<br><small class="text-muted">Labo 1</small></td>
-                                            <td>-</td>
-                                            <td>-</td>
-                                            <td>-</td>
+                                            <td>
+                                                <?php 
+                                                foreach ($horaireParJour['Lundi'] as $horaire) {
+                                                    if (strpos($horaire['jourheure'], '11:30') !== false) {
+                                                        echo htmlspecialchars($horaire['cours_nom']) . "<br>";
+                                                        echo "<small class='text-muted'>" . htmlspecialchars($horaire['enseignant_nom'] . " " . $horaire['enseignant_postnom']) . "</small>";
+                                                        break;
+                                                    }
+                                                }
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <?php 
+                                                foreach ($horaireParJour['Mardi'] as $horaire) {
+                                                    if (strpos($horaire['jourheure'], '11:30') !== false) {
+                                                        echo htmlspecialchars($horaire['cours_nom']) . "<br>";
+                                                        echo "<small class='text-muted'>" . htmlspecialchars($horaire['enseignant_nom'] . " " . $horaire['enseignant_postnom']) . "</small>";
+                                                        break;
+                                                    }
+                                                }
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <?php 
+                                                foreach ($horaireParJour['Mercredi'] as $horaire) {
+                                                    if (strpos($horaire['jourheure'], '11:30') !== false) {
+                                                        echo htmlspecialchars($horaire['cours_nom']) . "<br>";
+                                                        echo "<small class='text-muted'>" . htmlspecialchars($horaire['enseignant_nom'] . " " . $horaire['enseignant_postnom']) . "</small>";
+                                                        break;
+                                                    }
+                                                }
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <?php 
+                                                foreach ($horaireParJour['Jeudi'] as $horaire) {
+                                                    if (strpos($horaire['jourheure'], '11:30') !== false) {
+                                                        echo htmlspecialchars($horaire['cours_nom']) . "<br>";
+                                                        echo "<small class='text-muted'>" . htmlspecialchars($horaire['enseignant_nom'] . " " . $horaire['enseignant_postnom']) . "</small>";
+                                                        break;
+                                                    }
+                                                }
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <?php 
+                                                foreach ($horaireParJour['Vendredi'] as $horaire) {
+                                                    if (strpos($horaire['jourheure'], '11:30') !== false) {
+                                                        echo htmlspecialchars($horaire['cours_nom']) . "<br>";
+                                                        echo "<small class='text-muted'>" . htmlspecialchars($horaire['enseignant_nom'] . " " . $horaire['enseignant_postnom']) . "</small>";
+                                                        break;
+                                                    }
+                                                }
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <?php 
+                                                foreach ($horaireParJour['Samedi'] as $horaire) {
+                                                    if (strpos($horaire['jourheure'], '11:30') !== false) {
+                                                        echo htmlspecialchars($horaire['cours_nom']) . "<br>";
+                                                        echo "<small class='text-muted'>" . htmlspecialchars($horaire['enseignant_nom'] . " " . $horaire['enseignant_postnom']) . "</small>";
+                                                        break;
+                                                    }
+                                                }
+                                                ?>
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                             
+                            <?php if (count($horaires) == 0): ?>
+                            <div class="alert alert-info">
+                                <strong>Information :</strong> Aucun horaire n'a encore été défini pour votre promotion.
+                            </div>
+                            <?php else: ?>
                             <div class="alert alert-info">
                                 <strong>Note :</strong> Les horaires peuvent être mis à jour périodiquement. 
                                 Consultez régulièrement cette page pour les dernières modifications.
                             </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>

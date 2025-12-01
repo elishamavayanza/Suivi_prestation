@@ -1,6 +1,7 @@
 <?php
 session_start();
 include("../script/config.php");
+include("db_connect.php");
 
 // Vérifier si l'utilisateur est connecté et s'il est étudiant
 if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Etudiant') {
@@ -8,6 +9,28 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Etudiant') {
     exit();
 }
 
+// Récupérer les informations de l'étudiant
+$matricule = $_SESSION['matricule'];
+
+// Récupérer les descriptions de cours pour les cours de l'étudiant
+$stmt = $pdo->prepare("SELECT df.*, c.nomComplet as cours_nom, e.nom as enseignant_nom, e.postnom as enseignant_postnom
+                       FROM `descriptionfiche` df
+                       JOIN cours c ON df.code_cours = c.id
+                       JOIN enseignant e ON df.matricule_enseignant = e.matriculeEnseignant
+                       WHERE df.code_promotion = (
+                           SELECT codepromotion FROM inscription WHERE matriculeEtudiant = ?
+                       )");
+$stmt->execute([$matricule]);
+$descriptions = $stmt->fetchAll();
+
+// Organiser les descriptions par cours
+$descriptionsParCours = [];
+foreach ($descriptions as $desc) {
+    $coursNom = $desc['cours_nom'];
+    if (!isset($descriptionsParCours[$coursNom])) {
+        $descriptionsParCours[$coursNom] = $desc;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -26,7 +49,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Etudiant') {
             <div class="d-flex justify-content-between align-items-center">
                 <h1>Plan du Cours - Espace Étudiant</h1>
                 <div>
-                    <span><?php echo $_SESSION['username']; ?></span> | 
+                    <span><?php echo htmlspecialchars($_SESSION['username']); ?></span> | 
                     <a href="../script/logout.php" class="text-white">Déconnexion</a>
                 </div>
             </div>
@@ -73,279 +96,68 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'Etudiant') {
                         <div class="card-body">
                             <p class="mb-4">Consultez ci-dessous les plans de cours remplis par vos enseignants :</p>
                             
+                            <?php if (count($descriptions) > 0): ?>
                             <!-- Onglets pour chaque matière -->
                             <ul class="nav nav-tabs" id="courseTabs" role="tablist">
+                                <?php $first = true; ?>
+                                <?php foreach ($descriptionsParCours as $coursNom => $desc): ?>
                                 <li class="nav-item" role="presentation">
-                                    <button class="nav-link active" id="math-tab" data-bs-toggle="tab" data-bs-target="#math" type="button" role="tab">
-                                        Mathématiques
+                                    <button class="nav-link <?php echo $first ? 'active' : ''; ?>" id="<?php echo strtolower(str_replace(' ', '-', $coursNom)); ?>-tab" data-bs-toggle="tab" data-bs-target="#<?php echo strtolower(str_replace(' ', '-', $coursNom)); ?>" type="button" role="tab">
+                                        <?php echo htmlspecialchars($coursNom); ?>
                                     </button>
                                 </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="physics-tab" data-bs-toggle="tab" data-bs-target="#physics" type="button" role="tab">
-                                        Physique
-                                    </button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="chemistry-tab" data-bs-toggle="tab" data-bs-target="#chemistry" type="button" role="tab">
-                                        Chimie
-                                    </button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="french-tab" data-bs-toggle="tab" data-bs-target="#french" type="button" role="tab">
-                                        Français
-                                    </button>
-                                </li>
+                                <?php $first = false; ?>
+                                <?php endforeach; ?>
                             </ul>
                             
                             <div class="tab-content" id="courseTabsContent">
-                                <!-- Contenu Mathématiques -->
-                                <div class="tab-pane fade show active" id="math" role="tabpanel" aria-labelledby="math-tab">
+                                <?php $first = true; ?>
+                                <?php foreach ($descriptionsParCours as $coursNom => $desc): ?>
+                                <!-- Contenu <?php echo htmlspecialchars($coursNom); ?> -->
+                                <div class="tab-pane fade <?php echo $first ? 'show active' : ''; ?>" id="<?php echo strtolower(str_replace(' ', '-', $coursNom)); ?>" role="tabpanel">
                                     <div class="p-3">
-                                        <h3>Mathématiques - Prof. Dupont</h3>
+                                        <h3><?php echo htmlspecialchars($coursNom); ?> - <?php echo htmlspecialchars($desc['enseignant_nom'] . " " . $desc['enseignant_postnom']); ?></h3>
                                         <div class="course-details">
+                                            <?php if (!empty($desc['objectif'])): ?>
                                             <h4>Objectifs du cours :</h4>
-                                            <ul>
-                                                <li>Maîtriser les bases de l'analyse mathématique</li>
-                                                <li>Comprendre les concepts fondamentaux de l'algèbre linéaire</li>
-                                                <li>Développer des compétences en résolution de problèmes</li>
-                                            </ul>
+                                            <p><?php echo htmlspecialchars($desc['objectif']); ?></p>
+                                            <?php endif; ?>
                                             
-                                            <h4>Programme prévisionnel :</h4>
-                                            <div class="table-responsive">
-                                                <table class="table table-bordered">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Semaine</th>
-                                                            <th>Thème</th>
-                                                            <th>Contenu</th>
-                                                            <th>Modalités</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>1-2</td>
-                                                            <td>Primitives</td>
-                                                            <td>Définition, propriétés, primitives usuelles</td>
-                                                            <td>Cours magistral, TD</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>3-4</td>
-                                                            <td>Intégrales définies</td>
-                                                            <td>Théorème fondamental, calculs d'aires</td>
-                                                            <td>Cours magistral, TD, Projet</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>5-7</td>
-                                                            <td>Équations différentielles</td>
-                                                            <td>Premier et second ordre, applications</td>
-                                                            <td>Cours magistral, TP, TD</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>8-10</td>
-                                                            <td>Algèbre linéaire</td>
-                                                            <td>Matrices, déterminants, systèmes linéaires</td>
-                                                            <td>Cours magistral, TD, Contrôle continu</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                            <?php if (!empty($desc['contenu'])): ?>
+                                            <h4>Contenu du cours :</h4>
+                                            <p><?php echo nl2br(htmlspecialchars($desc['contenu'])); ?></p>
+                                            <?php endif; ?>
                                             
+                                            <?php if (!empty($desc['methode'])): ?>
+                                            <h4>Méthodes d'enseignement :</h4>
+                                            <p><?php echo htmlspecialchars($desc['methode']); ?></p>
+                                            <?php endif; ?>
+                                            
+                                            <?php if (!empty($desc['ressource'])): ?>
                                             <h4>Ressources pédagogiques :</h4>
-                                            <ul>
-                                                <li>Polycopié de cours disponible sur la plateforme numérique</li>
-                                                <li>"Analyse Mathématique" - J. Stewart (Dunod)</li>
-                                                <li>Exercices en ligne sur la plateforme Moodle</li>
-                                            </ul>
+                                            <p><?php echo nl2br(htmlspecialchars($desc['ressource'])); ?></p>
+                                            <?php endif; ?>
+                                            
+                                            <?php if (!empty($desc['evaluation'])): ?>
+                                            <h4>Modalités d'évaluation :</h4>
+                                            <p><?php echo htmlspecialchars($desc['evaluation']); ?></p>
+                                            <?php endif; ?>
+                                            
+                                            <?php if (!empty($desc['bibliographie'])): ?>
+                                            <h4>Bibliographie :</h4>
+                                            <p><?php echo nl2br(htmlspecialchars($desc['bibliographie'])); ?></p>
+                                            <?php endif; ?>
                                         </div>
                                     </div>
                                 </div>
-                                
-                                <!-- Contenu Physique -->
-                                <div class="tab-pane fade" id="physics" role="tabpanel" aria-labelledby="physics-tab">
-                                    <div class="p-3">
-                                        <h3>Physique - Prof. Martin</h3>
-                                        <div class="course-details">
-                                            <h4>Objectifs du cours :</h4>
-                                            <ul>
-                                                <li>Comprendre les lois fondamentales de la mécanique</li>
-                                                <li>Appliquer les principes physiques à des situations concrètes</li>
-                                                <li>Développer une démarche expérimentale rigoureuse</li>
-                                            </ul>
-                                            
-                                            <h4>Programme prévisionnel :</h4>
-                                            <div class="table-responsive">
-                                                <table class="table table-bordered">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Semaine</th>
-                                                            <th>Thème</th>
-                                                            <th>Contenu</th>
-                                                            <th>Modalités</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>1-3</td>
-                                                            <td>Cinématique</td>
-                                                            <td>Mouvement, vitesse, accélération</td>
-                                                            <td>Cours magistral, TD, TP</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>4-6</td>
-                                                            <td>Dynamique newtonienne</td>
-                                                            <td>Lois de Newton, applications</td>
-                                                            <td>Cours magistral, TD, TP</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>7-8</td>
-                                                            <td>Travail et énergie</td>
-                                                            <td>Théorème de l'énergie cinétique, puissance</td>
-                                                            <td>Cours magistral, TD</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>9-10</td>
-                                                            <td>Mouvement dans un champ uniforme</td>
-                                                            <td>Champ de pesanteur, champ électrostatique</td>
-                                                            <td>Cours magistral, TP, Contrôle</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            
-                                            <h4>Ressources pédagogiques :</h4>
-                                            <ul>
-                                                <li>Support de cours numérique</li>
-                                                <li>"Physique générale" - C. Richard (Ellipses)</li>
-                                                <li>Simulations interactives sur le site PhET</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Contenu Chimie -->
-                                <div class="tab-pane fade" id="chemistry" role="tabpanel" aria-labelledby="chemistry-tab">
-                                    <div class="p-3">
-                                        <h3>Chimie - Prof. Leroy</h3>
-                                        <div class="course-details">
-                                            <h4>Objectifs du cours :</h4>
-                                            <ul>
-                                                <li>Maîtriser les bases de la chimie générale</li>
-                                                <li>Comprendre les transformations chimiques</li>
-                                                <li>Acquérir des compétences expérimentales</li>
-                                            </ul>
-                                            
-                                            <h4>Programme prévisionnel :</h4>
-                                            <div class="table-responsive">
-                                                <table class="table table-bordered">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Semaine</th>
-                                                            <th>Thème</th>
-                                                            <th>Contenu</th>
-                                                            <th>Modalités</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>1-2</td>
-                                                            <td>Structure de la matière</td>
-                                                            <td>Atomes, molécules, liaisons chimiques</td>
-                                                            <td>Cours magistral, TD</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>3-5</td>
-                                                            <td>Stœchiométrie</td>
-                                                            <td>Réactions chimiques, bilan de matière</td>
-                                                            <td>Cours magistral, TD, TP</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>6-8</td>
-                                                            <td>Thermochimie</td>
-                                                            <td>Énergie des réactions, enthalpie</td>
-                                                            <td>Cours magistral, TD, TP</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>9-10</td>
-                                                            <td>Équilibres chimiques</td>
-                                                            <td>Constante d'équilibre, pH</td>
-                                                            <td>Cours magistral, TD, Contrôle</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            
-                                            <h4>Ressources pédagogiques :</h4>
-                                            <ul>
-                                                <li>Polycopié de cours</li>
-                                                <li>"Chimie générale" - P. Depovere (De Boeck)</li>
-                                                <li>Plateforme Chimie-Linux pour simulations</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Contenu Français -->
-                                <div class="tab-pane fade" id="french" role="tabpanel" aria-labelledby="french-tab">
-                                    <div class="p-3">
-                                        <h3>Français - Prof. Dubois</h3>
-                                        <div class="course-details">
-                                            <h4>Objectifs du cours :</h4>
-                                            <ul>
-                                                <li>Renforcer les compétences en expression écrite et orale</li>
-                                                <li>Approfondir la connaissance des œuvres littéraires</li>
-                                                <li>Développer l'esprit critique et analytique</li>
-                                            </ul>
-                                            
-                                            <h4>Programme prévisionnel :</h4>
-                                            <div class="table-responsive">
-                                                <table class="table table-bordered">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Semaine</th>
-                                                            <th>Thème</th>
-                                                            <th>Contenu</th>
-                                                            <th>Modalités</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>1-3</td>
-                                                            <td>Roman du XXe siècle</td>
-                                                            <td>"À la recherche du temps perdu" - Proust (extraits)</td>
-                                                            <td>Cours magistral, analyse, exposé</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>4-6</td>
-                                                            <td>Poésie contemporaine</td>
-                                                            <td>Paul Éluard, Louis Aragon</td>
-                                                            <td>Cours magistral, TD, Création poétique</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>7-8</td>
-                                                            <td>Théâtre classique</td>
-                                                            <td>"Le Cid" - Corneille</td>
-                                                            <td>Cours magistral, Lecture, Jeu théâtral</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>9-10</td>
-                                                            <td>Expression écrite</td>
-                                                            <td>Techniques de dissertation et d'expression</td>
-                                                            <td>TD, Atelier d'écriture, Contrôle</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            
-                                            <h4>Ressources pédagogiques :</h4>
-                                            <ul>
-                                                <li>Anthologie de textes fournie en début de cours</li>
-                                                <li>"Histoire de la littérature française" - P. Brunel (PUF)</li>
-                                                <li>Revues littéraires disponibles au CDI</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
+                                <?php $first = false; ?>
+                                <?php endforeach; ?>
                             </div>
+                            <?php else: ?>
+                            <div class="alert alert-info">
+                                Aucun plan de cours n'a encore été rempli par vos enseignants.
+                            </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
